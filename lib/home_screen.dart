@@ -9,6 +9,7 @@ import 'calories_screen.dart';
 import 'meals_screen.dart';
 import 'ChatBotScreen.dart';
 import 'fun_bot_screen.dart'; // ✅ استيراد شاشة البوت الترفيهي
+import 'GemawyBotScreen.dart';
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
@@ -147,13 +148,43 @@ class _HomeScreenState extends State<HomeScreen> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           themeMode: themeMode,
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+          theme: ThemeData(
+            primaryColor: Colors.blue,
+            scaffoldBackgroundColor: Colors.white, // جعل الخلفية بيضاء
+            cardColor: Colors.white, // لون الكارت الأبيض في الوضع العادي
+            buttonTheme: ButtonThemeData(buttonColor: Colors.blueAccent),
+          ),
+          darkTheme: ThemeData.dark().copyWith(
+            scaffoldBackgroundColor: Colors.black, // خلفية داكنة
+            cardColor: Colors.black, // كارت أسود في الوضع الداكن
+            textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)), // استخدام bodyMedium بدلاً من bodyText2
+          ),
+
           home: Scaffold(
             appBar: AppBar(
               title: const Text('Gym Tracker'),
               centerTitle: true,
+              backgroundColor: Colors.deepPurple, // تغيير اللون في الشريط العلوي
               actions: [
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => GemawyBotScreen()),
+                    );
+                  },
+                  splashColor: Colors.purpleAccent,
+                  borderRadius: BorderRadius.circular(50),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(color: Colors.purpleAccent, width: 3),
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(Icons.search_off),
+                  ),
+                ),
+                const SizedBox(width: 10),
                 IconButton(
                   icon: Icon(isDarkMode ? Icons.dark_mode : Icons.light_mode),
                   onPressed: toggleTheme,
@@ -165,56 +196,83 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Text(
-                      'Welcome back, $userName 👋',
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Age: $age | Weight: ${weight.toStringAsFixed(1)} kg | Height: ${height.toStringAsFixed(1)} cm | Gender: $gender',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 30),
-                    TableCalendar(
-                      focusedDay: selectedDay,
-                      firstDay: DateTime.utc(2025, 1, 1),
-                      lastDay: DateTime.utc(2035, 12, 31),
-                      selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-                      onDaySelected: (day, focusedDay) {
-                        setState(() {
-                          selectedDay = day;
-                        });
-                        handleDaySelected(day);
-                      },
-                      calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, day, _) {
-                          final normalizedDay = normalizeDate(day);
-                          final hasWorkout = workoutData.containsKey(normalizedDay) &&
-                              workoutData[normalizedDay]!.isNotEmpty;
-
-                          if (hasWorkout) {
-                            return Center(
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '${day.day}',
-                                  style: const TextStyle(
-                                      color: Colors.white, fontWeight: FontWeight.bold),
-                                ),
+                    Card(
+                      color: isDarkMode ? Colors.black : Colors.white, // تغيير اللون حسب الوضع
+                      elevation: 0, // إزالة الظل
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        side: BorderSide(color: Colors.deepPurple, width: 2), // إطار بنفسجي حول الكارت
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Welcome back, $userName 👋',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: isDarkMode ? Colors.white : Colors.black, // تغيير اللون بناءً على الوضع
                               ),
-                            );
-                          }
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Age: $age | Weight: ${weight.toStringAsFixed(1)} kg | Height: ${height.toStringAsFixed(1)} cm | Gender: $gender',
+                              style: const TextStyle(fontSize: 14, color: Colors.grey),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
 
-                          return null;
+                    const SizedBox(height: 30),
+                    Card(
+                      color: Colors.transparent, // جعل البطاقة شفافة
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        side: BorderSide(color: Colors.deepPurple, width: 2), // إطار حول التقويم
+                      ),
+                      child: TableCalendar(
+                        focusedDay: selectedDay,
+                        firstDay: DateTime.utc(2025, 1, 1),
+                        lastDay: DateTime.utc(2035, 12, 31),
+                        selectedDayPredicate: (day) => isSameDay(selectedDay, day),
+                        onDaySelected: (day, focusedDay) {
+                          setState(() {
+                            selectedDay = day;
+                          });
+                          handleDaySelected(day);
                         },
+                        calendarBuilders: CalendarBuilders(
+                          defaultBuilder: (context, day, _) {
+                            final normalizedDay = normalizeDate(day);
+                            final hasWorkout = workoutData.containsKey(normalizedDay) &&
+                                workoutData[normalizedDay]!.isNotEmpty;
+
+                            if (hasWorkout) {
+                              return Center(
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '${day.day}',
+                                    style: const TextStyle(
+                                        color: Colors.black, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return null;
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -244,84 +302,176 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WorkoutCategoriesScreen()),
-                        );
-                        await loadWorkoutData();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                        textStyle: const TextStyle(fontSize: 18),
-                      ),
-                      child: const Text("Start New Workout 🏋️"),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
+                  ],
+                ),
+              ),
+            ),
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.only(bottom: 0.0),
+              child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                currentIndex: 0,
+                onTap: (index) {
+                  if (index == 0) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => WorkoutCategoriesScreen()),
+                    );
+                  } else if (index == 1) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MealsScreen()),
+                    );
+                  } else if (index == 2) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatBotScreen()),
+                    );
+                  } else if (index == 3) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FunBotScreen()),
+                    );
+                  } else if (index == 4) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CalorieCalculatorScreen()),
+                    );
+                  } else if (index == 5) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => GemawyBotScreen()),
+                    );
+                  }
+                },
+                items: [
+                  BottomNavigationBarItem(
+                    icon: InkWell(
+                      onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => CalorieCalculatorScreen()),
+                          MaterialPageRoute(builder: (context) => WorkoutCategoriesScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                        textStyle: const TextStyle(fontSize: 18),
+                      splashColor: Colors.orange,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: Colors.orange, width: 3),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.fitness_center),
                       ),
-                      child: const Text("Calories Calculator 🔥"),
                     ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
+                    label: 'Workouts',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: InkWell(
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => MealsScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                        textStyle: const TextStyle(fontSize: 18),
+                      splashColor: Colors.orange,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: Colors.orange, width: 3),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.restaurant),
                       ),
-                      child: const Text("Add Meals 🍽️"),
                     ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
+                    label: 'Meals',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: InkWell(
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => ChatBotScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                        textStyle: const TextStyle(fontSize: 18),
+                      splashColor: Colors.blue,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: Colors.blue, width: 3),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.chat),
                       ),
-                      child: const Text("Gemawy's Tip 🤖"),
                     ),
-                    const SizedBox(height: 10),
-
-                    // ✅ زر البوت الترفيهي الجديد
-                    ElevatedButton(
-                      onPressed: () {
+                    label: 'Bot',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: InkWell(
+                      onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => FunBotScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                        textStyle: const TextStyle(fontSize: 18),
+                      splashColor: Colors.green,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: Colors.green, width: 3),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.face),
                       ),
-                      child: const Text("Ask Gimaawy 🤖"),
                     ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
+                    label: 'Fun Bot',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CalorieCalculatorScreen()),
+                        );
+                      },
+                      splashColor: Colors.purple,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: Colors.purple, width: 3),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.calculate),
+                      ),
+                    ),
+                    label: 'Calories',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GemawyBotScreen()),
+                        );
+                      },
+                      splashColor: Colors.purpleAccent,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(color: Colors.purpleAccent, width: 3),
+                        ),
+                        padding: const EdgeInsets.all(8),
+                        child: const Icon(Icons.search_off),
+                      ),
+                    ),
+                    label: 'Bot',
+                  ),
+                ],
               ),
             ),
           ),
