@@ -110,6 +110,7 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? Colors.deepPurple
             : Colors.deepPurple.shade400,
+        foregroundColor: Colors.white, // << هنا تخلي النص والأيقونات بيضاء دايمًا
       ),
       body: SafeArea(
         child: Padding(

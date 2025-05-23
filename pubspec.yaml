@@ -15,7 +15,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   table_calendar: ^3.0.0
   intl: ^0.19.0
-  flutter_animate: ^4.3.0 # أو أحدث نسخة
+  flutter_animate: ^4.3.0
+  sqflite: ^2.0.0+4
+  path_provider: ^2.0.2
+  share_plus: ^7.2.1   # 📌 أضفنا مكتبة المشاركة هنا
+  url_launcher: ^6.0.9
+  video_player: ^2.4.5
+  syncfusion_flutter_gauges: ^24.1.41
+  google_nav_bar: ^5.0.6
+  fl_chart: ^0.68.0
+intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
@@ -27,6 +36,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/icon.png
+    - assets/exercises.json
+    - assets/exercises/       # 📁 تحميل كل الصور داخل هذا المجلد
+
 
 flutter_launcher_icons:
   android: true

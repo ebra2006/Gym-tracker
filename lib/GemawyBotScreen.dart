@@ -206,6 +206,7 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
         title: Text("🤖 Gemawy Nutrition Bot"),
         centerTitle: true,
         backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white, // << هنا تخلي النص والأيقونات بيضاء دايمًا
         elevation: 5,
       ),
       body: SafeArea(

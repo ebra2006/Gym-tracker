@@ -128,6 +128,7 @@ class _FunBotScreenState extends State<FunBotScreen> {
         title: Text("Personal Trainer ChatBot"),
         centerTitle: true,
         backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white, // << هنا تخلي النص والأيقونات بيضاء دايمًا
       ),
       body: Column(
         children: [

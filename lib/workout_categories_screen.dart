@@ -103,11 +103,20 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
               final category = categories[index];
               return GestureDetector(
                 onTap: () {
-                  // الانتقال إلى صفحة WorkoutDetailsScreen مع اسم الفئة
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WorkoutDetailsScreen(categoryName: category['name']),
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return WorkoutDetailsScreen(categoryName: category['name']);
+                      },
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1.0, 0.0), // الانزلاق من اليمين
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
                     ),
                   );
                 },
@@ -128,16 +137,26 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                     ],
                   ),
                 ),
+
               );
             } else if (index < categories.length + customWorkouts.length) {
               final customWorkout = customWorkouts[index - categories.length];
               return GestureDetector(
                 onTap: () {
-                  // الانتقال إلى صفحة WorkoutDetailsScreen مع اسم التمرين المخصص
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WorkoutDetailsScreen(categoryName: customWorkout),
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return WorkoutDetailsScreen(categoryName: customWorkout);
+                      },
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1.0, 0.0),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
                     ),
                   );
                 },
@@ -149,21 +168,22 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.fitness_center, size: 40), // دمبل كأيقونة
+                      const Icon(Icons.fitness_center, size: 40),
                       const SizedBox(height: 10),
                       Text(
                         customWorkout,
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red), // أيقونة الحذف الحمراء
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          _removeCustomWorkout(customWorkout); // استدعاء دالة الحذف
+                          _removeCustomWorkout(customWorkout);
                         },
                       ),
                     ],
                   ),
                 ),
+
               );
             } else {
               // الكارد الخاص بإضافة تمرين جديد
