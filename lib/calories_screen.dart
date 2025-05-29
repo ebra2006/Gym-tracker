@@ -33,12 +33,37 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
   final FocusNode _weightFocusNode = FocusNode();
   final FocusNode _heightFocusNode = FocusNode();
 
-  // توسيع الخيارات
   final List<String> activityLevels = ['خامل', 'خفيف', 'متوسط', 'عالي', 'مكثف', 'نشاط رياضي يومي'];
   final List<String> goals = ['خسارة الوزن', 'الحفاظ', 'زيادة العضلات', 'خسارة الدهون', 'تحسين اللياقة'];
 
-  // تخزين النتائج (سجل)
   List<Map<String, dynamic>> savedResults = [];
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, textDirection: TextDirection.rtl),
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  bool validateInputs() {
+    if (age == null || age! < 10 || age! > 100) {
+      _showSnackBar('⚠️ العمر يجب أن يكون بين 10 و 100 سنة');
+      return false;
+    }
+    if (weight == null || weight! < 30 || weight! > 200) {
+      _showSnackBar('⚠️ الوزن يجب أن يكون بين 30 و 200 كجم');
+      return false;
+    }
+    if (height == null || height! < 100 || height! > 250) {
+      _showSnackBar('⚠️ الطول يجب أن يكون بين 100 و 250 سم');
+      return false;
+    }
+    return true;
+  }
 
   @override
   void initState() {
@@ -47,7 +72,6 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0.0, 0.1),
       end: Offset.zero,
@@ -55,17 +79,14 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
       parent: _controller,
       curve: Curves.easeOut,
     ));
-
     _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _controller.forward();
       }
     });
-
     loadSavedResults();
   }
 
@@ -127,51 +148,32 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
 
     switch (goal) {
       case 'خسارة الوزن':
-        suggestion = '💡 قلل حوالي 300 - 500 سعرة حرارية يوميًا للوصول إلى هدفك.';
+        suggestion = '📉 اعتمد على نمط حياة نشط ونظام غذائي غني بالبروتين والخضروات للحفاظ على الشبع والتحكم بالوزن.';
         break;
       case 'زيادة العضلات':
-        suggestion = '💪 أضف حوالي 300 - 500 سعرة حرارية يوميًا لبناء العضلات.';
+        suggestion = '💪 ركّز على تمارين المقاومة المنتظمة ونوم كافٍ لدعم بناء العضلات وتحسين الأداء.';
         break;
       case 'خسارة الدهون':
-        suggestion = '🔥 ركز على تمارين القلب مع تقليل السعرات تدريجياً.';
+        suggestion = '🔥 اجمع بين التمارين القلبية والقوة، وتناول وجبات متوازنة لدعم صحة الجسم وتقليل الدهون بشكل طبيعي.';
         break;
       case 'تحسين اللياقة':
-        suggestion = '🏃‍♂️ زد من نشاطك اليومي وتناول غذاء متوازن.';
+        suggestion = '🏃‍♂️ دمج تمارين متنوعة، كالتمارين الهوائية والمقاومة، يعزز القدرة البدنية ويقوّي عضلة القلب.';
         break;
       default:
-        suggestion = '✅ حافظ على هذا المعدل من السعرات للحفاظ على وزنك الحالي.';
+        suggestion = '✅ حافظ على نمط حياة متوازن يجمع بين التغذية السليمة والنشاط البدني الدوري لدعم صحتك العامة.';
         break;
     }
+
 
     return maintenanceCalories;
   }
 
   Map<String, List<String>> dietTips = {
-    'خسارة الوزن': [
-      'تناول البروتينات بكثرة.',
-      'قلل من السكريات والدهون المشبعة.',
-      'اشرب الماء بكثرة.',
-    ],
-    'زيادة العضلات': [
-      'زيادة البروتينات والكربوهيدرات.',
-      'كرر التمرين مع زيادة الأحمال تدريجياً.',
-      'تناول وجبات خفيفة بين الوجبات الرئيسية.',
-    ],
-    'خسارة الدهون': [
-      'مارس تمارين القلب بانتظام.',
-      'قلل السعرات الحرارية بشكل تدريجي.',
-      'اشرب شاي الأعشاب لتحفيز الحرق.',
-    ],
-    'تحسين اللياقة': [
-      'مارس التمارين الهوائية.',
-      'تناول أطعمة متوازنة غنية بالفيتامينات.',
-      'احصل على قسط كافٍ من النوم.',
-    ],
-    'الحفاظ': [
-      'حافظ على نمط حياة صحي ومتوازن.',
-      'مارس الرياضة بانتظام.',
-      'راقب وزنك بشكل دوري.',
-    ],
+    'خسارة الوزن': ['تناول البروتينات بكثرة.', 'قلل من السكريات والدهون المشبعة.', 'اشرب الماء بكثرة.'],
+    'زيادة العضلات': ['زيادة البروتينات والكربوهيدرات.', 'كرر التمرين مع زيادة الأحمال تدريجياً.', 'تناول وجبات خفيفة بين الوجبات الرئيسية.'],
+    'خسارة الدهون': ['مارس تمارين القلب بانتظام.', 'قلل السعرات الحرارية بشكل تدريجي.', 'اشرب شاي الأعشاب لتحفيز الحرق.'],
+    'تحسين اللياقة': ['مارس التمارين الهوائية.', 'تناول أطعمة متوازنة غنية بالفيتامينات.', 'احصل على قسط كافٍ من النوم.'],
+    'الحفاظ': ['حافظ على نمط حياة صحي ومتوازن.', 'مارس الرياضة بانتظام.', 'راقب وزنك بشكل دوري.'],
   };
 
   Widget _buildCard(Widget child) {
@@ -188,19 +190,54 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white
-        : Colors.black87;
+    final textColor = Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: const Text('🔥 حساب السعرات الحرارية', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        elevation: 4,
-
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        color: Theme.of(context).iconTheme.color,
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: const EdgeInsets.all(4),
+                        constraints: const BoxConstraints(),
+                      ),
+                      const Spacer(),
+                      Text(
+                        'Calories calcolator',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).primaryColor
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+                    ],
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Divider(height: 1, thickness: 1),
+              ),
+            ],
+          ),
+        ),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: FadeTransition(
@@ -221,7 +258,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                           value: 'Male',
                           groupValue: gender,
                           onChanged: (val) => setState(() => gender = val!),
-                          activeColor: Colors.deepPurple,
+                          activeColor: Theme.of(context).primaryColor,
                         ),
                       ),
                       Expanded(
@@ -230,7 +267,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                           value: 'Female',
                           groupValue: gender,
                           onChanged: (val) => setState(() => gender = val!),
-                          activeColor: Colors.deepPurple,
+                          activeColor: Theme.of(context).primaryColor,
                         ),
                       ),
                     ],
@@ -271,10 +308,16 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                     value: activityLevel,
                     isExpanded: true,
                     underline: const SizedBox(),
-                    items: activityLevels
-                        .map((level) => DropdownMenuItem(value: level, child: Text(level)))
-                        .toList(),
-                    onChanged: (val) => setState(() => activityLevel = val!),
+                    items: activityLevels.map((level) => DropdownMenuItem(value: level, child: Text(level))).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        activityLevel = val!;
+                        final calories = calculateCalories();
+                        if (calories != null) {
+                          result = '🍽️ السعرات اليومية اللازمة: ${calories.toStringAsFixed(0)} سعرة حرارية في اليوم';
+                        }
+                      });
+                    },
                   )),
                   const SizedBox(height: 10),
                   const Text("الهدف", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -282,31 +325,32 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                     value: goal,
                     isExpanded: true,
                     underline: const SizedBox(),
-                    items: goals
-                        .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                        .toList(),
-                    onChanged: (val) => setState(() => goal = val!),
+                    items: goals.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        goal = val!;
+                        calculateCalories();
+                      });
+                    },
                   )),
                   const SizedBox(height: 20),
                   Center(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: Theme.of(context).primaryColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        if (!validateInputs()) return;
+
                         final calories = calculateCalories();
                         if (calories != null) {
                           saveResult(calories);
                           setState(() {
                             result = '🍽️ السعرات اليومية اللازمة: ${calories.toStringAsFixed(0)} سعرة حرارية في اليوم';
-                          });
-                        } else {
-                          setState(() {
-                            result = '⚠️ من فضلك أدخل كل القيم المطلوبة';
-                            suggestion = '';
                           });
                         }
                       },
@@ -316,12 +360,10 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                   ),
                   const SizedBox(height: 25),
                   if (result.isNotEmpty) ...[
-                    Text(result,
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
+                    Text(result, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
                     const SizedBox(height: 10),
                     if (suggestion.isNotEmpty)
-                      Text(suggestion,
-                          style: TextStyle(fontSize: 16, color: textColor.withOpacity(0.7))),
+                      Text(suggestion, style: TextStyle(fontSize: 16, color: textColor.withOpacity(0.7))),
                     const SizedBox(height: 10),
                     const Text("نصائح غذائية:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     ...?dietTips[goal]?.map((tip) => Padding(

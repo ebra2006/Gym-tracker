@@ -25,6 +25,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   int _groupNumber = 1;
   int tasbihCount = 0;
 
+  Key _resetKey = UniqueKey(); // 🔹 أضفه هنا
   // <-- هنا بالضبط، بعد تعريف كل المتغيرات فوق، ضيف:
   final StreakManager streakManager = StreakManager();
 
@@ -170,25 +171,59 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.categoryName} Workout', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
-        centerTitle: true,
-        elevation: 4,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.deepPurple, Colors.purpleAccent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+      //الاب باااااااااار
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: Builder(
+          builder: (context) {
+            final theme = Theme.of(context);
+            final titleText = '${widget.categoryName} Workout';
+
+            return Container(
+              color: Colors.transparent,
+              child: Stack(
+                children: [
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: () => Navigator.of(context).pop(),
+                            color: theme.iconTheme.color,
+                          ),
+                          const Spacer(),
+                          Text(
+                            titleText,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: theme.primaryColor,
+                            ),
+                          ),
+                          const Spacer(flex: 2),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Divider(height: 1, thickness: 1),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
+
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
         child: Column(
@@ -199,166 +234,165 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                foreground: Paint()
-                  ..shader = LinearGradient(
-                    colors: Theme.of(context).brightness == Brightness.dark
-                        ? <Color>[Colors.deepPurple.shade200, Colors.purpleAccent.shade100]
-                        : <Color>[Colors.deepPurple.shade700, Colors.purpleAccent.shade400],
-                  ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                color: theme.colorScheme.onBackground,
               ),
               textAlign: TextAlign.center,
             ),
 
             const SizedBox(height: 25),
 
-            _buildCounterCard('Reps', reps, () {
-              if (reps > 0) setState(() => reps--);
-            }, () {
-              setState(() => reps++);
-            }),
+            _buildCounterCard(
+              'Reps',
+              reps,
+                  () {
+                if (reps > 0) setState(() => reps--);
+              },
+                  () {
+                setState(() => reps++);
+              },
+              theme.primaryColor,
+            ),
 
             const SizedBox(height: 15),
 
-            _buildCounterCard('Weight (kg)', weight.toStringAsFixed(1), () {
-              if (weight > 0) setState(() => weight -= 2.5);
-            }, () {
-              setState(() => weight += 2.5);
-            }),
+            _buildCounterCard(
+              'Weight (kg)',
+              weight.toStringAsFixed(1),
+                  () {
+                if (weight > 0) setState(() => weight -= 2.5);
+              },
+                  () {
+                setState(() => weight += 2.5);
+              },
+              theme.primaryColor,
+            ),
 
             const SizedBox(height: 20),
-//الوان الكلمة
+
             Text(
               'Timer',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.deepPurple.shade700,
-                shadows: Theme.of(context).brightness == Brightness.dark
-                    ? []
-                    : [
-                  Shadow(
-                    blurRadius: 5,
-                    color: Colors.deepPurple.shade200,
-                    offset: const Offset(2, 2),
-                  ),
-                ],
+                color: theme.colorScheme.onBackground,
               ),
             ),
 
             const SizedBox(height: 20),
-//حجم الساعة
+
             Center(
               child: Container(
                 width: 150,
                 height: 150,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(110),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.deepPurple.shade100.withOpacity(0.5),
-                      blurRadius: 15,
-                      spreadRadius: 5,
-                    ),
-                  ],
+                  color: theme.colorScheme.surface,
                 ),
                 child: AnalogClock(stopwatch: _stopwatch),
               ),
             ),
 
             const SizedBox(height: 20),
-//الوان التيكست
+
             Text(
               formattedTime,
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.deepPurple.shade900,
+                color: theme.colorScheme.onBackground,
                 letterSpacing: 3,
-                shadows: Theme.of(context).brightness == Brightness.dark
-                    ? []
-                    : [
-                  Shadow(
-                    blurRadius: 7,
-                    color: Colors.deepPurple.shade200,
-                    offset: const Offset(1, 1),
-                  ),
-                ],
               ),
             ),
 
             const SizedBox(height: 20),
 
-            Wrap(
-              spacing: 16,
-              runSpacing: 10,
-              alignment: WrapAlignment.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildTimerButton('Start', startTimer),
-                _buildTimerButton('Stop', stopTimer),
-                _buildTimerButton('Reset', resetTimer),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(scale: animation, child: child);
+                  },
+                  child: _buildTimerIconButton(
+                    isTimerRunning ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                        () {
+                      if (isTimerRunning) {
+                        stopTimer();
+                      } else {
+                        startTimer();
+                      }
+                    },
+                    key: ValueKey<bool>(isTimerRunning),
+                    size: 48,
+                    padding: 16,
+                    color: theme.primaryColor,
+                  ),
+                ),
+
+                const SizedBox(width: 24),
+
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(scale: animation, child: child);
+                  },
+                  child: _buildTimerIconButton(
+                    Icons.refresh,
+                        () {
+                      setState(() {
+                        resetTimer();
+                        _resetKey = UniqueKey();
+                      });
+                    },
+                    key: _resetKey,
+                    size: 48,
+                    padding: 16,
+                    color: theme.primaryColor,
+                  ),
+                ),
               ],
             ),
 
             const SizedBox(height: 30),
 
             Text(
-              'سبحة إلكترونية',
+              'Tasbeeh counter',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.deepPurple.shade700,
-                shadows: Theme.of(context).brightness == Brightness.dark
-                    ? [] // بدون ظل في الوضع الليلي
-                    : [
-                  Shadow(
-                    blurRadius: 4,
-                    color: Colors.deepPurple.shade200,
-                    offset: const Offset(2, 2),
-                  ),
-                ],
+                color: theme.colorScheme.onBackground,
               ),
             ),
 
-
-
             const SizedBox(height: 30),
-//حجم السبحة في السايز
-            ElevatedButton(
+
+            OutlinedButton(
               onPressed: () => setState(() => tasbihCount++),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                minimumSize: const Size(70, 70),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: theme.primaryColor, width: 2),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70)),
-                shadowColor: Colors.deepPurpleAccent,
-                elevation: 12,
-              ),//حجم رقم السبحة
+                minimumSize: const Size(70, 70),
+                padding: EdgeInsets.zero,
+              ),
               child: Text(
                 '$tasbihCount',
-                style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: theme.primaryColor),
               ),
             ),
 
             const SizedBox(height: 25),
 
-            ElevatedButton(
+            OutlinedButton(
               onPressed: _saveWorkout,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple.shade800,
-                padding:
-                    // حجم الزرار
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: theme.primaryColor, width: 2),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                elevation: 10,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               ),
-              child: const Text(
+              child: Text(
                 'Save Workout',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primaryColor),
               ),
             ),
           ],
@@ -367,19 +401,23 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     );
   }
 
+// تعديل الدالة _buildCounterCard لتكون الأزرار بإطار فقط بدون تعبئة
   Widget _buildCounterCard(
       String label,
       dynamic value,
       VoidCallback onDecrement,
       VoidCallback onIncrement,
+      Color themeColor,
       ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black87;
+
     return Card(
       elevation: 6,
       shadowColor: Colors.deepPurple.shade200,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: SizedBox(
-        //عرض البطاقة
-        width: 265, // عرض ثابت للبطاقة
+        width: 265,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
@@ -389,25 +427,23 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: Colors.deepPurple.shade700,
+                  color: textColor,
                 ),
               ),
               const SizedBox(height: 12),
- //حجم المربعين بتوع العدات والكيلو جرامات
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
+                  OutlinedButton(
                     onPressed: onDecrement,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple.shade300,
-                      minimumSize: const Size(40, 40),
+                    style: OutlinedButton.styleFrom(
                       shape: const CircleBorder(),
-                      elevation: 6,
+                      side: BorderSide(color: themeColor, width: 2),
+                      minimumSize: const Size(40, 40),
+                      padding: EdgeInsets.zero,
                     ),
-                    child: const Icon(Icons.remove, size: 28, color: Colors.white),
+                    child: Icon(Icons.remove, size: 28, color: themeColor),
                   ),
-
                   Expanded(
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
@@ -416,31 +452,26 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                         style: TextStyle(
                           fontSize: 38,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.deepPurple.shade900,
+                          color: textColor,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                      )
-                      ,
+                      ),
                     ),
                   ),
-
-                  ElevatedButton(
+                  OutlinedButton(
                     onPressed: onIncrement,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple.shade400,
-                      minimumSize: const Size(40, 40),
+                    style: OutlinedButton.styleFrom(
                       shape: const CircleBorder(),
-                      elevation: 6,
+                      side: BorderSide(color: themeColor, width: 2),
+                      minimumSize: const Size(40, 40),
+                      padding: EdgeInsets.zero,
                     ),
-                    child: const Icon(Icons.add, size: 28, color: Colors.white),
+                    child: Icon(Icons.add, size: 28, color: themeColor),
                   ),
                 ],
               ),
-
             ],
           ),
         ),
@@ -448,21 +479,29 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     );
   }
 
-
-
-
-  Widget _buildTimerButton(String label, VoidCallback onPressed) {
-    return ElevatedButton(
+  Widget _buildTimerIconButton(
+      IconData icon,
+      VoidCallback onPressed, {
+        Key? key,
+        double size = 28,
+        double padding = 16,
+        Color? color,
+      }) {
+    return OutlinedButton(
+      key: key,
       onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple.shade600,
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        elevation: 8,
+      style: OutlinedButton.styleFrom(
+        shape: const CircleBorder(),
+        side: BorderSide(color: color ?? Colors.blue, width: 2),
+        padding: EdgeInsets.all(padding),
+        minimumSize: Size(size + padding * 2, size + padding * 2),
       ),
-      child: Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white)),
+      child: Icon(icon, size: size, color: color),
     );
   }
+
+
+
 }
 
 class AnalogClock extends StatelessWidget {
@@ -472,36 +511,93 @@ class AnalogClock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return CustomPaint(
-      painter: _ClockPainter(stopwatch.elapsed),
+      painter: _ClockPainter(stopwatch.elapsed, theme.brightness, theme.primaryColor),
       size: const Size(220, 220),
     );
   }
 }
 
+
 class _ClockPainter extends CustomPainter {
   final Duration elapsed;
+  final Brightness brightness;
+  final Color themeColor;
 
-  _ClockPainter(this.elapsed);
+  _ClockPainter(this.elapsed, this.brightness, this.themeColor);
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    final paint = Paint()
-      ..color = Colors.deepPurple.shade100
+
+    // لون عكس الخلفية
+    final oppositeColor = brightness == Brightness.dark ? Colors.white : Colors.black87;
+
+    // رسم وجه الساعة (خلفية)
+    final facePaint = Paint()
+      ..color = brightness == Brightness.dark ? Colors.black : Colors.white
       ..style = PaintingStyle.fill;
-    // Draw clock face
-    canvas.drawCircle(center, radius, paint);
+    canvas.drawCircle(center, radius, facePaint);
 
-// Draw outer circle border
-    paint
-      ..color = Colors.deepPurple.shade700
+    // رسم الفريم الخارجي بخط رفيع وواضح
+    final framePaint = Paint()
+      ..color = oppositeColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 6;
-    canvas.drawCircle(center, radius - 3, paint);
+      ..strokeWidth = 3;
+    canvas.drawCircle(center, radius - 1.5, framePaint);
 
-// Calculate angles
+    // رسم شرطات الدقائق (كل دقيقة، خط صغير جداً)
+    final tickPaint = Paint()
+      ..color = oppositeColor.withOpacity(0.5)
+      ..strokeWidth = 1;
+
+    for (int i = 0; i < 60; i++) {
+      final angle = i * 6 * pi / 180;
+      final tickLength = (i % 5 == 0) ? 8.0 : 4.0;
+      final start = Offset(
+        center.dx + (radius - tickLength - 10) * sin(angle),
+        center.dy - (radius - tickLength - 10) * cos(angle),
+      );
+      final end = Offset(
+        center.dx + (radius - 10) * sin(angle),
+        center.dy - (radius - 10) * cos(angle),
+      );
+      canvas.drawLine(start, end, tickPaint);
+    }
+
+    // رسم أرقام الساعة من 5 إلى 60 كل 5 دقائق
+    final textPainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    final textStyle = TextStyle(
+      color: oppositeColor,
+      fontSize: radius * 0.12,
+      fontWeight: FontWeight.w600,
+    );
+
+    for (int i = 1; i <= 12; i++) {
+      final number = (i * 5).toString();
+      final angle = i * 30 * pi / 180;
+      final position = Offset(
+        center.dx + (radius - 30) * sin(angle),
+        center.dy - (radius - 30) * cos(angle),
+      );
+
+      textPainter.text = TextSpan(text: number, style: textStyle);
+      textPainter.layout();
+
+      final offset = Offset(
+        position.dx - textPainter.width / 2,
+        position.dy - textPainter.height / 2,
+      );
+      textPainter.paint(canvas, offset);
+    }
+
+    // حساب الزوايا للعقارب
     final seconds = elapsed.inSeconds % 60;
     final milliseconds = (elapsed.inMilliseconds % 1000) / 1000;
     final secondsAngle = (seconds + milliseconds) * 6 * pi / 180;
@@ -512,61 +608,53 @@ class _ClockPainter extends CustomPainter {
     final hours = (elapsed.inHours % 12).toDouble();
     final hoursAngle = (hours * 30 + minutes * 0.5) * pi / 180;
 
-// Draw hour hand
+    // رسم عقرب الساعة (عكس لون الخلفية)
     final hourHandLength = radius * 0.5;
     final hourHandPaint = Paint()
-      ..color = Colors.deepPurple.shade900
-      ..strokeWidth = 6
-      ..strokeCap = StrokeCap.round;
-    final hourHandEnd = Offset(center.dx + hourHandLength * sin(hoursAngle),
-        center.dy - hourHandLength * cos(hoursAngle));
-    canvas.drawLine(center, hourHandEnd, hourHandPaint);
-
-// Draw minute hand
-    final minuteHandLength = radius * 0.7;
-    final minuteHandPaint = Paint()
-      ..color = Colors.deepPurple.shade700
+      ..color = oppositeColor
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
-    final minuteHandEnd = Offset(center.dx + minuteHandLength * sin(minutesAngle),
-        center.dy - minuteHandLength * cos(minutesAngle));
+    final hourHandEnd = Offset(
+      center.dx + hourHandLength * sin(hoursAngle),
+      center.dy - hourHandLength * cos(hoursAngle),
+    );
+    canvas.drawLine(center, hourHandEnd, hourHandPaint);
+
+    // رسم عقرب الدقائق (عكس لون الخلفية)
+    final minuteHandLength = radius * 0.7;
+    final minuteHandPaint = Paint()
+      ..color = oppositeColor
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    final minuteHandEnd = Offset(
+      center.dx + minuteHandLength * sin(minutesAngle),
+      center.dy - minuteHandLength * cos(minutesAngle),
+    );
     canvas.drawLine(center, minuteHandEnd, minuteHandPaint);
 
-// Draw second hand
+    // رسم عقرب الثواني (لون الثيم)
     final secondHandLength = radius * 0.85;
     final secondHandPaint = Paint()
-      ..color = Colors.purpleAccent
+      ..color = themeColor
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
-    final secondHandEnd = Offset(center.dx + secondHandLength * sin(secondsAngle),
-        center.dy - secondHandLength * cos(secondsAngle));
+    final secondHandEnd = Offset(
+      center.dx + secondHandLength * sin(secondsAngle),
+      center.dy - secondHandLength * cos(secondsAngle),
+    );
     canvas.drawLine(center, secondHandEnd, secondHandPaint);
 
-// Draw center circle
-    paint
-      ..color = Colors.deepPurple.shade800
+    // نقطة مركز الساعة
+    final centerDotPaint = Paint()
+      ..color = themeColor
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, 8, paint);
-
-// Draw ticks for every 5 seconds
-    final tickPaint = Paint()
-      ..color = Colors.deepPurple.shade600
-      ..strokeWidth = 2;
-    for (int i = 0; i < 60; i += 5) {
-      final tickLength = (i % 15 == 0) ? 15.0 : 8.0;
-      final angle = i * 6 * pi / 180;
-      final start = Offset(center.dx + (radius - tickLength - 10) * sin(angle),
-          center.dy - (radius - tickLength - 10) * cos(angle));
-      final end = Offset(center.dx + (radius - 10) * sin(angle),
-          center.dy - (radius - 10) * cos(angle));
-      canvas.drawLine(start, end, tickPaint);
-    }
+    canvas.drawCircle(center, 6, centerDotPaint);
   }
 
   @override
   bool shouldRepaint(covariant _ClockPainter oldDelegate) {
-    return oldDelegate.elapsed != elapsed;
+    return oldDelegate.elapsed != elapsed ||
+        oldDelegate.brightness != brightness ||
+        oldDelegate.themeColor != themeColor;
   }
 }
-
-

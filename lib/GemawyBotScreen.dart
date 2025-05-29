@@ -141,7 +141,8 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         margin: EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.deepPurple,
+          color: Theme.of(context).primaryColor,
+
           borderRadius: BorderRadius.circular(15),
         ),
         child: Text(
@@ -202,13 +203,50 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
     return Scaffold(
       resizeToAvoidBottomInset: true, // ✅ علشان الكيبورد ميسببش مشاكل
       backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[850] : Colors.grey[100],
-      appBar: AppBar(
-        title: Text("🤖 Gemawy Nutrition Bot"),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white, // << هنا تخلي النص والأيقونات بيضاء دايمًا
-        elevation: 5,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        color: Theme.of(context).iconTheme.color,
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: const EdgeInsets.all(4),
+                        constraints: const BoxConstraints(),
+                      ),
+                      const Spacer(),
+                      Text(
+                        ' Gemawy Nutrition Bot',
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).primaryColor
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+                    ],
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Divider(height: 1, thickness: 1),
+              ),
+            ],
+          ),
+        ),
       ),
+
       body: SafeArea(
         child: Column(
           children: [
@@ -259,7 +297,7 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
                           onPressed: _restartConversation,
                           child: Text("🔄 ابدأ من جديد"),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
+                            backgroundColor: Theme.of(context).primaryColor,
                             padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                             textStyle: TextStyle(fontSize: 18),
                             shape: RoundedRectangleBorder(

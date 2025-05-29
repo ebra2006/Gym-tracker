@@ -29,7 +29,6 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
     _loadCustomWorkouts(); // تحميل التمارين المخصصة عند بدء التطبيق
   }
 
-  // تحميل التمارين من shared preferences
   void _loadCustomWorkouts() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -37,7 +36,6 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
     });
   }
 
-  // حفظ التمرين المخصص في shared preferences
   void _addCustomWorkout(String workout) async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -46,7 +44,6 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
     prefs.setStringList('customWorkouts', customWorkouts);
   }
 
-  // حذف التمرين من shared preferences بعد التأكد
   void _removeCustomWorkout(String workout) async {
     showDialog(
       context: context,
@@ -66,10 +63,10 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 setState(() {
-                  customWorkouts.remove(workout); // حذف التمرين
+                  customWorkouts.remove(workout);
                 });
-                prefs.setStringList('customWorkouts', customWorkouts); // تحديث الذاكرة
-                Navigator.of(context).pop(); // إغلاق الحوار
+                prefs.setStringList('customWorkouts', customWorkouts);
+                Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('"$workout" deleted')),
                 );
@@ -83,15 +80,57 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Workout Categories'),
-        centerTitle: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        color: theme.iconTheme.color,
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: const EdgeInsets.all(4),
+                        constraints: const BoxConstraints(),
+                      ),
+                      const Spacer(),
+                      Text(
+                        'Workout Categories',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+                    ],
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Divider(height: 1, thickness: 1),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.builder(
-          itemCount: categories.length + customWorkouts.length + 1, // نضيف واحدة لـ "إضافة تمرين"
+          itemCount: categories.length + customWorkouts.length + 1,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 16,
@@ -108,10 +147,11 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                       pageBuilder: (context, animation, secondaryAnimation) {
                         return WorkoutDetailsScreen(categoryName: category['name']);
                       },
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
                         return SlideTransition(
                           position: Tween<Offset>(
-                            begin: const Offset(1.0, 0.0), // الانزلاق من اليمين
+                            begin: const Offset(1.0, 0.0),
                             end: Offset.zero,
                           ).animate(animation),
                           child: child,
@@ -132,12 +172,12 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                       const SizedBox(height: 10),
                       Text(
                         category['name'],
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
-
               );
             } else if (index < categories.length + customWorkouts.length) {
               final customWorkout = customWorkouts[index - categories.length];
@@ -148,7 +188,8 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                       pageBuilder: (context, animation, secondaryAnimation) {
                         return WorkoutDetailsScreen(categoryName: customWorkout);
                       },
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
                         return SlideTransition(
                           position: Tween<Offset>(
                             begin: const Offset(1.0, 0.0),
@@ -172,7 +213,8 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                       const SizedBox(height: 10),
                       Text(
                         customWorkout,
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
@@ -183,10 +225,9 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                     ],
                   ),
                 ),
-
               );
             } else {
-              // الكارد الخاص بإضافة تمرين جديد
+              // إضافة تمرين جديد
               return GestureDetector(
                 onTap: () {
                   showDialog(
@@ -199,7 +240,8 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                           onChanged: (value) {
                             customWorkout = value;
                           },
-                          decoration: const InputDecoration(hintText: 'Enter workout name'),
+                          decoration: const InputDecoration(
+                              hintText: 'Enter workout name'),
                         ),
                         actions: [
                           TextButton(
@@ -208,7 +250,9 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                               if (customWorkout.trim().isNotEmpty) {
                                 _addCustomWorkout(customWorkout);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('"${customWorkout}" added')),
+                                  SnackBar(
+                                      content:
+                                      Text('"${customWorkout}" added')),
                                 );
                               }
                             },

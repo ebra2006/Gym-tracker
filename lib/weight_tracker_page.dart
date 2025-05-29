@@ -17,8 +17,21 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
   @override
   void initState() {
     super.initState();
-    _loadSavedData();
+    _loadSavedData().then((_) {
+      if (_results.length >= 1000) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('عندك أكثر من 1000 إدخال، يُنصح بحذف أو تصدير بعض البيانات.'),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 5),
+            ),
+          );
+        });
+      }
+    });
   }
+
 
   Future<void> _loadSavedData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -53,7 +66,25 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('الرجاء إدخال وزن صحيح أقل من 300 كجم'),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final today = DateTime.now();
+    final alreadyAdded = _results.any((entry) {
+      final entryDate = DateTime.parse(entry['date']);
+      return entryDate.year == today.year &&
+          entryDate.month == today.month &&
+          entryDate.day == today.day;
+    });
+
+    if (alreadyAdded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('غير مسموح إلا بقيمة واحدة فقط يوميًا'),
+          backgroundColor: Colors.orange,
         ),
       );
       return;
@@ -70,13 +101,6 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
   }
 
 
-  void _clearAllEntries() {
-    setState(() {
-      _results.clear();
-    });
-    _saveData();
-  }
-
   List<FlSpot> getWeightSpots() {
     return List.generate(_results.length, (i) {
       final weight = _results[i]['weight'] as num;
@@ -87,6 +111,13 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
   String formatDate(String dateStr) {
     DateTime date = DateTime.parse(dateStr);
     return "${date.day}/${date.month}";
+  }
+  // ✅ أضف دي هنا:
+  void _clearAllEntries() {
+    setState(() {
+      _results.clear();
+    });
+    _saveData();
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
@@ -141,7 +172,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
           'متتبع الوزن',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Theme.of(context).primaryColor,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           if (!isEmpty)
@@ -222,7 +253,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
             ElevatedButton(
               onPressed: _addWeightEntry,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: Theme.of(context).primaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 5,
@@ -243,7 +274,8 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                     Icon(
                       Icons.monitor_weight_outlined,
                       size: 60,
-                      color: Colors.deepPurple,
+                      color: Theme.of(context).primaryColor,
+
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -278,8 +310,11 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                         getTooltipColor: (touchedSpot) => Colors.deepPurple.withOpacity(0.7),
                         getTooltipItems: (touchedSpots) {
                           return touchedSpots.map((spot) {
+                            final index = spot.spotIndex;
+                            final entry = _results[index];
+                            final dateStr = formatDate(entry['date']);
                             return LineTooltipItem(
-                              '${spot.y.toStringAsFixed(1)} كجم',
+                              'الوزن: ${spot.y.toStringAsFixed(1)} كجم\nالتاريخ: $dateStr',
                               const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -287,6 +322,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                             );
                           }).toList();
                         },
+
                       ),
                       handleBuiltInTouches: true,
                     ),
@@ -305,7 +341,8 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                     titlesData: FlTitlesData(
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
-                          showTitles: true,
+                          showTitles: false,
+
                           reservedSize: 30,
                           interval: 1,
                           getTitlesWidget: bottomTitleWidgets,
@@ -340,7 +377,8 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                       LineChartBarData(
                         spots: getWeightSpots(),
                         isCurved: true,
-                        color: Colors.deepPurple,
+                        color: Theme.of(context).primaryColor,
+
                         barWidth: 4,
                         dotData: FlDotData(show: true),
                         belowBarData: BarAreaData(
@@ -381,8 +419,47 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       subtitle: Text("التاريخ: $formattedDate"),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete_outline, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.red),
+                        tooltip: 'مسح هذا الإدخال',
+                        onPressed: () {
+                          final isDark = Theme.of(context).brightness == Brightness.dark;
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+                              title: Text(
+                                'تأكيد الحذف',
+                                style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                              ),
+                              content: Text(
+                                'هل أنت متأكد من حذف هذا الإدخال؟',
+                                style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(ctx).pop(),
+                                  child: Text('إلغاء', style: TextStyle(color: isDark ? Colors.grey : Colors.grey)),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _results.removeAt(index);
+                                    });
+                                    _saveData();
+                                    Navigator.of(ctx).pop();
+                                  },
+                                  child: const Text('مسح', style: TextStyle(color: Colors.red)),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+
                     ),
                   );
+
                 },
               ),
             ),

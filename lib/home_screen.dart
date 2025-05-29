@@ -206,146 +206,138 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> toggleTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final newThemeMode = isDarkMode ? ThemeMode.light : ThemeMode.dark;
-    themeNotifier.value = newThemeMode;
-    setState(() {
-      isDarkMode = !isDarkMode;
-    });
-    prefs.setBool('isDarkMode', isDarkMode);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Restart Required'),
-          content: const Text('To apply the theme change, please close the app and reopen it.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, themeMode, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          themeMode: themeMode,
-          theme: ThemeData(
-            primaryColor: Colors.blue,
-            scaffoldBackgroundColor: Colors.white,
-            cardColor: Colors.white,
-            buttonTheme: ButtonThemeData(buttonColor: Colors.blueAccent),
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-            scaffoldBackgroundColor: Colors.black,
-            cardColor: Colors.black,
-            textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.white)),
-          ),
-          home: Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          SettingsScreen(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        final offsetAnimation = Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        ).animate(animation);
+    return Scaffold(
 
-                        return SlideTransition(
-                          position: offsetAnimation,
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              title: const Text('Gym Tracker'),
-              centerTitle: true,
-              backgroundColor: Colors.deepPurple,
-              foregroundColor: Colors.white,
-              actions: [
-                // أيقونة النار مع رقم الاستريك
-                InkWell(
-                  onTap: () {
-                    showAnimatedStreakDialog(context, currentStreak);
-                  },
-                  borderRadius: BorderRadius.circular(50),
-                  splashColor: Colors.deepOrangeAccent.withOpacity(0.3),
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.orange.shade600,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.orange.withOpacity(0.3),
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Center(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),  // الطول الافتراضي
+        child: Builder(
+          builder: (context) {
+            final theme = Theme.of(context);
+            final titleText = 'Gym Tracker';
+
+            return Container(
+              color: Colors.transparent,
+              child: Stack(
+                children: [
+                  SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.local_fire_department, color: Colors.white, size: 20),
-                          SizedBox(width: 2),
+                          IconButton(
+                            icon: const Icon(Icons.menu),
+                            color: theme.iconTheme.color,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation, secondaryAnimation) =>
+                                      SettingsScreen(),
+                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    final offsetAnimation = Tween<Offset>(
+                                      begin: const Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(animation);
+                                    return SlideTransition(
+                                      position: offsetAnimation,
+                                      child: child,
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+
+                          const Spacer(),
+
                           Text(
-                            '$currentStreak',
+                            titleText,
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: theme.primaryColor,
+                            ),
+                          ),
+
+                          const Spacer(),
+
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: InkWell(
+                              onTap: () {
+                                showAnimatedStreakDialog(context, currentStreak);
+                              },
+                              borderRadius: BorderRadius.circular(50),
+                              splashColor: Colors.deepOrangeAccent.withOpacity(0.3),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.shade600,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.orange.withOpacity(0.3),
+                                      blurRadius: 1,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.local_fire_department,
+                                          color: Colors.white, size: 20),
+                                      const SizedBox(width: 2),
+                                      Text(
+                                        '$currentStreak',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
+
+                  const Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Divider(height: 1, thickness: 1),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
 
 
 
-                const SizedBox(width: 10),
-
-                IconButton(
-                  icon: Icon(isDarkMode ? Icons.dark_mode : Icons.light_mode),
-                  onPressed: toggleTheme,
-                ),
-              ],
-            ),
-
-            body: SingleChildScrollView(
+      body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
                     Card(
-                      color: isDarkMode ? Colors.black : Colors.white,
+                      color: Theme.of(context).cardColor,
+
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
-                        side: BorderSide(color: Colors.deepPurple, width: 2),
+                        side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -356,10 +348,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: isDarkMode ? Colors.white : Colors.black,
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.white
+                                    : Colors.black,
                               ),
                               textAlign: TextAlign.center,
                             ),
+
                             const SizedBox(height: 8),
                             Text(
                               'Age: $age | Weight: ${weight.toStringAsFixed(1)} kg | Height: ${height.toStringAsFixed(1)} cm | Gender: $gender',
@@ -413,7 +408,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: _currentPage == index
-                                      ? Colors.deepPurple
+                                      ? Theme.of(context).primaryColor
+
                                       : Colors.grey.shade400,
                                 ),
                               );
@@ -423,17 +419,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       ),
                     ),
 
-
-
-
                     const SizedBox(height: 30),
 
-
                     Card(
-                      color: isDarkMode ? Colors.black : Colors.white,
+                      color: Theme.of(context).cardColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
-                        side: BorderSide(color: Colors.deepPurple, width: 2),
+                        side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+
                       ),
                       child: TableCalendar(
                         focusedDay: selectedDay,
@@ -485,17 +478,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               ),
             ),
 
-
-          ),
-        );
-      },
     );
   }
 }
 
-
 //نافدة منبثقة للاستريك
-
 
 void showAnimatedStreakDialog(BuildContext context, int currentStreak) {
   showGeneralDialog(

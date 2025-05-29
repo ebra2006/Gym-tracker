@@ -1,128 +1,160 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'exercises_screen.dart';  // استيراد صفحة التمارين
-import 'weight_tracker_page.dart'; // استيراد صفحة متتبع الوزن (تأكد من المسار الصحيح)
+import 'main.dart'; // للوصول لل-notifiers
+import 'exercises_screen.dart';
+import 'weight_tracker_page.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool isDarkMode = false;
+  bool isPurpleTheme = true;
 
   @override
   void initState() {
     super.initState();
-    loadTheme();
+    loadPreferences();
   }
 
-  Future<void> loadTheme() async {
+  Future<void> loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = prefs.getBool('isDarkMode') ?? false;
+      isPurpleTheme = prefs.getBool('isPurpleTheme') ?? true;
     });
   }
 
-  Future<void> toggleTheme() async {
+  Future<void> toggleDarkMode(bool value) async {
     final prefs = await SharedPreferences.getInstance();
-    final newThemeMode = !isDarkMode;
-    setState(() {
-      isDarkMode = newThemeMode;
-    });
-    prefs.setBool('isDarkMode', isDarkMode);
+    setState(() => isDarkMode = value);
+    await prefs.setBool('isDarkMode', value);
+    themeModeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  Future<void> toggleColorTheme(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() => isPurpleTheme = value);
+    await prefs.setBool('isPurpleTheme', value);
+    isPurpleThemeNotifier.value = value;
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final textColor = theme.brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black87;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-        centerTitle: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56), // ارتفاع appbar افتراضي
+        child: Container(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        color: theme.iconTheme.color,
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: const EdgeInsets.all(4),
+                        constraints: const BoxConstraints(),
+                      ),
+                      const Spacer(),
+                      Text(
+                        'Settings',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: primaryColor,
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+                    ],
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Divider(height: 1, thickness: 1),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                title: const Text('Dark Mode', style: TextStyle(fontSize: 18)),
-                trailing: Switch(
-                  value: isDarkMode,
-                  onChanged: (value) {
-                    toggleTheme();
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Restart Required'),
-                          content: const Text(
-                              'Please restart the app to apply the theme change.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  activeColor: Colors.deepPurple,
-                ),
-                leading: Icon(
-                  isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                  color: Colors.deepPurple,
+            SwitchListTile(
+              title: const Text('Dark Mode'),
+              value: isDarkMode,
+              activeColor: primaryColor,
+              onChanged: toggleDarkMode,
+            ),
+            SwitchListTile(
+              title: const Text('Use Purple Theme'),
+              subtitle: const Text('Turn off to switch to Blue Theme'),
+              value: isPurpleTheme,
+              activeColor: primaryColor,
+              onChanged: toggleColorTheme,
+            ),
+            const SizedBox(height: 24),
+            ListTile(
+              leading: Icon(Icons.fitness_center, color: primaryColor),
+              title: Text(
+                'مكتبة التمارين',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
                 ),
               ),
+              trailing: Icon(Icons.arrow_forward_ios,
+                  size: 16, color: textColor.withOpacity(0.6)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ExercisesScreen(),
+                ),
+              ),
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
             ),
-
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            ListTile(
+              leading: Icon(Icons.monitor_weight, color: primaryColor),
+              title: Text(
+                'متتبع الوزن',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
               ),
-              child: ListTile(
-                title: const Text('مكتبة التمارين', style: TextStyle(fontSize: 18)),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ExercisesScreen()),
-                  );
-                },
-                leading: const Icon(Icons.fitness_center, color: Colors.deepPurple),
+              trailing: Icon(Icons.arrow_forward_ios,
+                  size: 16, color: textColor.withOpacity(0.6)),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WeightTrackerPage(),
+                ),
               ),
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
             ),
-
-            // زر جديد لمتتبع الوزن
-            Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ListTile(
-                title: const Text('متتبع الوزن', style: TextStyle(fontSize: 18)),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const WeightTrackerPage()),
-                  );
-                },
-                leading: const Icon(Icons.monitor_weight, color: Colors.deepPurple),
-              ),
-            ),
-
           ],
         ),
       ),

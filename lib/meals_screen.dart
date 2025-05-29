@@ -269,20 +269,56 @@ class _MealsScreenState extends State<MealsScreen> {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: const Text('وجباتي'),
-        backgroundColor: const Color(0xFF5E35B1),
-        foregroundColor: Colors.white, // << هنا تخلي النص والأيقونات بيضاء دايمًا// بنفسجي غامق ثابت
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: addMeal,
-            color: Colors.white,
-            iconSize: 28,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          color: Colors.transparent,  // خلي الخلفية شفافة عشان الـ theme يأثر عليها لو حبيت
+          child: Stack(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        color: Theme.of(context).iconTheme.color,  // لون الأيقونة حسب الثيم
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: const EdgeInsets.all(4),
+                        constraints: const BoxConstraints(),
+                      ),
+                      const Spacer(),
+                      Text(
+                        'وجباتي',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).primaryColor,  // لون النص حسب الثيم
+                        ),
+                      ),
+                      const Spacer(flex: 2),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: addMeal,
+                        color: Theme.of(context).iconTheme.color,  // لون الأيقونة حسب الثيم
+                        iconSize: 28,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Divider(height: 1, thickness: 1),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+
       body: meals.isEmpty
           ? Center(
         child: Text(

@@ -86,18 +86,7 @@ class _MainScreenState extends State<MainScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              color: _selectedIndex == 0 ? Colors.deepPurple : Colors.grey,
-              onPressed: () => _navigateTo(context, 0),
-              tooltip: 'Home',
-            ),
-            IconButton(
-              icon: const Icon(Icons.fitness_center),
-              color: Colors.deepPurple,
-              onPressed: () => _navigateTo(context, 1),
-              tooltip: 'Workouts',
-            ),
+
             IconButton(
               icon: const Icon(Icons.restaurant),
               color: Colors.orange,
@@ -111,17 +100,18 @@ class _MainScreenState extends State<MainScreen> {
               tooltip: 'ChatBot',
             ),
             IconButton(
+              icon: const Icon(Icons.fitness_center),
+              color: Colors.deepPurple,
+              onPressed: () => _navigateTo(context, 1),
+              tooltip: 'Workouts',
+            ),
+            IconButton(
               icon: const Icon(Icons.calculate),
               color: Colors.deepPurple,
               onPressed: () => _navigateTo(context, 4),
               tooltip: 'Calories',
             ),
-            IconButton(
-              icon: const Icon(Icons.record_voice_over),
-              color: Colors.purple,
-              onPressed: () => _navigateTo(context, 5),
-              tooltip: 'Fun Bot',
-            ),
+
             IconButton(
               icon: const Icon(Icons.face),
               color: Colors.indigo,

@@ -65,7 +65,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                 icon: const Icon(Icons.share),
                 label: const Text('مشاركة'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -81,7 +81,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('استكشاف التمارين'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         actions: [
           IconButton(
@@ -141,7 +141,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                       icon: const Icon(Icons.info_outline),
                       label: const Text('عرض التفاصيل'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                        backgroundColor: Theme.of(context).primaryColor,
                         foregroundColor: Colors.white,
                       ),
                     ),
