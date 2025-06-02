@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'workout_details_screen.dart'; // استيراد صفحة WorkoutDetailsScreen
+import 'exercise_screens/chest_exercises_screen.dart';
+import 'exercise_screens/abs_exercises_screen.dart';
+import 'exercise_screens/biceps_exercises_screen.dart';
+import 'exercise_screens/cardio_exercises_screen.dart';
+import 'exercise_screens/legs_exercises_screen.dart';
+import 'exercise_screens/shoulders_exercises_screen.dart';
+import 'exercise_screens/triceps_exercises_screen.dart';
+import 'exercise_screens/back_exercises_screen.dart';
+import 'workout_details_screen.dart';
 
 class WorkoutCategoriesScreen extends StatefulWidget {
   const WorkoutCategoriesScreen({super.key});
@@ -12,71 +19,15 @@ class WorkoutCategoriesScreen extends StatefulWidget {
 
 class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
   final List<Map<String, dynamic>> categories = const [
-    {'name': 'Chest', 'icon': Icons.fitness_center},
-    {'name': 'Abs', 'icon': Icons.accessibility},
-    {'name': 'Biceps', 'icon': Icons.sports_mma},
-    {'name': 'Cardio', 'icon': Icons.directions_run},
-    {'name': 'Legs', 'icon': Icons.directions_walk},
-    {'name': 'Shoulders', 'icon': Icons.accessibility_new},
-    {'name': 'Triceps', 'icon': Icons.sports_kabaddi},
+    {'name': 'Chest', 'image': 'assets/images/chest.png'},
+    {'name': 'Abs', 'image': 'assets/images/abs.png'},
+    {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
+    {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
+    {'name': 'Legs', 'image': 'assets/images/legs.png'},
+    {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
+    {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
+    {'name': 'Back', 'image': 'assets/images/back.png'},
   ];
-
-  List<String> customWorkouts = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCustomWorkouts(); // تحميل التمارين المخصصة عند بدء التطبيق
-  }
-
-  void _loadCustomWorkouts() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      customWorkouts = prefs.getStringList('customWorkouts') ?? [];
-    });
-  }
-
-  void _addCustomWorkout(String workout) async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      customWorkouts.add(workout);
-    });
-    prefs.setStringList('customWorkouts', customWorkouts);
-  }
-
-  void _removeCustomWorkout(String workout) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Are you sure?"),
-          content: const Text("Do you really want to delete this workout?"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("Cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text("Delete"),
-              onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                setState(() {
-                  customWorkouts.remove(workout);
-                });
-                prefs.setStringList('customWorkouts', customWorkouts);
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('"$workout" deleted')),
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +43,8 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
             children: [
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -130,23 +82,60 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: GridView.builder(
-          itemCount: categories.length + customWorkouts.length + 1,
+          itemCount: categories.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 16,
+            crossAxisSpacing: 8,
             mainAxisSpacing: 16,
-            childAspectRatio: 1,
+            childAspectRatio: 0.85,
           ),
           itemBuilder: (context, index) {
-            if (index < categories.length) {
-              final category = categories[index];
-              return GestureDetector(
+            final category = categories[index];
+            return Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                splashColor: Colors.white.withOpacity(0.3),
+                highlightColor: Colors.white.withOpacity(0.1),
                 onTap: () {
+                  Widget targetPage;
+
+                  switch (category['name']) {
+                    case 'Chest':
+                      targetPage = const ChestExercisesScreen();
+                      break;
+                    case 'Abs':
+                      targetPage = const AbsExercisesScreen();
+                      break;
+                    case 'Biceps':
+                      targetPage = const BicepsExercisesScreen();
+                      break;
+                    case 'Cardio':
+                      targetPage = const CardioExercisesScreen();
+                      break;
+                    case 'Legs':
+                      targetPage = const LegsExercisesScreen();
+                      break;
+                    case 'Shoulders':
+                      targetPage = const ShouldersExercisesScreen();
+                      break;
+                    case 'Triceps':
+                      targetPage = const TricepsExercisesScreen();
+                      break;
+                    case 'Back':
+                      targetPage = const BackExercisesScreen();
+                      break;
+                    default:
+                      targetPage =
+                          WorkoutDetailsScreen(categoryName: category['name']);
+                  }
+
                   Navigator.of(context).push(
                     PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return WorkoutDetailsScreen(categoryName: category['name']);
-                      },
+                      pageBuilder:
+                          (context, animation, secondaryAnimation) =>
+                      targetPage,
                       transitionsBuilder:
                           (context, animation, secondaryAnimation, child) {
                         return SlideTransition(
@@ -160,121 +149,47 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                     ),
                   );
                 },
+                onLongPress: () {}, // لتفعيل تأثير الضغط
                 child: Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Icon(category['icon'], size: 40),
-                      const SizedBox(height: 10),
-                      Text(
-                        category['name'],
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                      Image.asset(
+                        category['image'],
+                        fit: BoxFit.cover,
                       ),
-                    ],
-                  ),
-                ),
-              );
-            } else if (index < categories.length + customWorkouts.length) {
-              final customWorkout = customWorkouts[index - categories.length];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return WorkoutDetailsScreen(categoryName: customWorkout);
-                      },
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(1.0, 0.0),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
-                },
-                child: Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.fitness_center, size: 40),
-                      const SizedBox(height: 10),
-                      Text(
-                        customWorkout,
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _removeCustomWorkout(customWorkout);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              // إضافة تمرين جديد
-              return GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      String customWorkout = '';
-                      return AlertDialog(
-                        title: const Text('Add Custom Workout'),
-                        content: TextField(
-                          onChanged: (value) {
-                            customWorkout = value;
-                          },
-                          decoration: const InputDecoration(
-                              hintText: 'Enter workout name'),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              if (customWorkout.trim().isNotEmpty) {
-                                _addCustomWorkout(customWorkout);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content:
-                                      Text('"${customWorkout}" added')),
-                                );
-                              }
-                            },
-                            child: const Text('Add'),
+                      Container(
+                        alignment: Alignment.bottomCenter,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.5),
+                            ],
                           ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Card(
-                  elevation: 4,
-                  color: Colors.grey.shade300,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.add, size: 40, color: Colors.black87),
+                        ),
+                        child: Text(
+                          category['name'],
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-            }
+              ),
+            );
           },
         ),
       ),

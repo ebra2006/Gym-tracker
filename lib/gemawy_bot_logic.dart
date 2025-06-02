@@ -1,4 +1,5 @@
 // هذا الملف يحتوي على بيانات الأكل ومنطق الردود
+import 'package:shared_preferences/shared_preferences.dart';
 
 final Map<String, Map<String, dynamic>> foodItems = {
   // بروتينات
@@ -134,19 +135,29 @@ final Map<String, Map<String, dynamic>> foodItems = {
   },
 };
 
-String getBotResponse(String userInput) {
+// دالة لجلب اسم المستخدم من SharedPreferences (async)
+Future<String> getUserName() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('name') ?? "صديقي";
+}
+
+// دالة الردود تكون async وتستدعي getUserName
+Future<String> getBotResponse(String userInput) async {
+  final userName = await getUserName();
+
   if (userInput.isEmpty) {
-    return "أهلاً بيك! 🍽️\n\nاختار أكلة من اللي تحت علشان أقولك معلوماتها الغذائية لكل 100 جرام! 👨‍🍳👇";
+    return "مرحبًا $userName في Gymee Assistant! 🧠🥗\n\n"
+        "اكتب اسم أي أكلة تحب تعرف معلوماتها الغذائية لكل 100 جرام! 👨‍🍳👇";
   }
 
   final food = foodItems[userInput];
   if (food != null) {
     return "📋 معلومات ${userInput}:\n\n"
         "🔸 السعرات الحرارية: ${food['Calories']} كالوري\n"
-        "🔸 البروتين: ${food['Protein']} جم\n"
-        "🔸 الدهون: ${food['Fat']} جم\n"
-        "🔸 الكاربوهيدرات: ${food['Carbs']} جم\n";
+        "🔸 البروتين: ${food['Protein']} جرام\n"
+        "🔸 الدهون: ${food['Fat']} جرام\n"
+        "🔸 الكاربوهيدرات: ${food['Carbs']} جرام\n";
   } else {
-    return "معذرةً، مش لاقي بيانات للأكلة دي 😅. اختار أكلة من اللي موجودة تحت!";
+    return "معذرةً $userName، مش لاقي بيانات للأكلة دي 😅. انتظر حتى يتم اضافتها في تحديث قادم!";
   }
 }

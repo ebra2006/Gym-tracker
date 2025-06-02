@@ -14,7 +14,8 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final isDarkMode = prefs.getBool('isDarkMode') ?? false;
-  final isPurpleTheme = prefs.getBool('isPurpleTheme') ?? true;
+  final isPurpleTheme = prefs.getBool('isPurpleTheme') ?? false;
+
 
   themeModeNotifier.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
   isPurpleThemeNotifier.value = isPurpleTheme;
@@ -69,9 +70,9 @@ class _MyAppState extends State<MyApp> {
         final darkTheme = ThemeData(
           useMaterial3: true,
           brightness: Brightness.dark,
-          primaryColor: isPurple ? Colors.deepPurple : Colors.blue[700],
+          primaryColor: isPurple ? Colors.deepPurple : Colors.blue,
           appBarTheme: AppBarTheme(
-            backgroundColor: isPurple ? Colors.deepPurple : Colors.blue[700],
+            backgroundColor: isPurple ? Colors.deepPurple : Colors.blue,
             foregroundColor: Colors.white,
           ),
           colorScheme: ColorScheme.fromSeed(

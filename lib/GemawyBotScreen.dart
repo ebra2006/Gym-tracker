@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'gemawy_bot_logic.dart'; // لوجيك البوت
 import 'package:intl/intl.dart'; // حساب الوقت
 import 'dart:async'; // للتايمرز
+import 'package:string_similarity/string_similarity.dart';
+import 'package:flutter/services.dart';
+
 
 class GemawyBotScreen extends StatefulWidget {
   @override
@@ -12,20 +16,59 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
   final List<Map<String, String>> _messages = [];
   bool _isTyping = false;
   bool _showOptions = true;
-  bool _showRestartButton = false;
   String _searchQuery = '';
   String _typingText = '';
   Timer? _typingTimer;
 
+  late TextEditingController _searchController;
+  late FlutterTts _flutterTts;
+
+  // إضافة للتحكم في أنيميشن الرسائل
+  late final List<AnimationController> _userMessageAnimControllers;
+
+  String _getGreetingByTime() {
+    int hour = DateTime.now().hour;
+    if (hour >= 0 && hour < 4)
+      return "اظن الوقت اتأخر !!، خلي بالك تاخد راحة كويسة وتنام عدد ساعات مناسبة عشان صحتك! 🌙";
+    else if (hour >= 4 && hour < 12)
+      return "صباح الخير، أتمنى لك بداية يوم مشرقة ومليانة حيوية! ☀️";
+    else if (hour >= 12 && hour < 18)
+      return "نهارك سعيد! خليك نشيط واستمتع بيومك! ☀️";
+    else
+      return "مساء الخير، استغل الوقت ده في راحة تستاهلها علشان بكرة تبدأ بقوة. 🌙";
+  }
+
   @override
   void initState() {
     super.initState();
-    _simulateTyping(getBotResponse(''));
+    _searchController = TextEditingController();
+    _flutterTts = FlutterTts();
+    _userMessageAnimControllers = [];
+
+    // إضافة رسالة ترحيبية حسب الوقت عند بداية الشاشة
+    _messages.add({
+      'sender': 'bot',
+      'message': _getGreetingByTime(),
+      'time': _getCurrentTime(),
+    });
+
+    // استدعاء رد البوت الابتدائي بشكل async
+    _initBotResponse();
+  }
+
+  Future<void> _initBotResponse() async {
+    String response = await getBotResponse('');
+    _simulateTyping(response);
   }
 
   @override
   void dispose() {
     _typingTimer?.cancel();
+    _searchController.dispose();
+    _flutterTts.stop();
+    for (var controller in _userMessageAnimControllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -35,24 +78,61 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
     return formatter.format(now);
   }
 
-  void _sendMessage(String text) {
+  Future<void> _sendMessage(String text) async {
+    if (text.trim().isEmpty) return;
+
+    if (_isTyping) {
+      // إذا البوت يكتب، لا تسمح بإرسال رسالة جديدة
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('الرجاء الانتظار حتى انهي الكتابة')),
+      );
+      return;
+    }
+
+    final input = text.trim().toLowerCase();
+
+    String matchedOption = '';
+    double bestScore = 0.0;
+
+    for (var option in foodItems.keys) {
+      final optionLower = option.toLowerCase();
+      final similarity = optionLower.similarityTo(input);
+      if (similarity > bestScore) {
+        bestScore = similarity;
+        matchedOption = option;
+      }
+    }
+
+    if (bestScore < 0.5) {
+      matchedOption = '';
+    }
+
     setState(() {
-      _messages.add({'sender': 'user', 'message': text, 'time': _getCurrentTime()});
-      _isTyping = true;
-      _showOptions = false;
-      _showRestartButton = false;
+      // أضف رسالة المستخدم مع أنيميشن
+      _messages.add({'sender': 'user', 'message': text.trim(), 'time': _getCurrentTime()});
+      _showOptions = false; // تخفي الاختيارات بعد الضغط على اختيار أو إرسال رسالة
+
+      final animController = AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: 400),
+      );
+      _userMessageAnimControllers.add(animController);
+      animController.forward();
     });
 
-    Future.delayed(Duration(milliseconds: 500), () {
-      String botResponse = getBotResponse(text);
-      _simulateTyping(botResponse);
-      if (botResponse.isNotEmpty) {
-        setState(() {
-          _showRestartButton = true;
-        });
-      }
-    });
+    _searchController.clear();  // مسح النص بعد الإرسال
+
+    await Future.delayed(Duration(milliseconds: 500));
+
+    String botResponse;
+    if (matchedOption.isNotEmpty) {
+      botResponse = await getBotResponse(matchedOption);
+    } else {
+      botResponse = await getBotResponse(text);
+    }
+    _simulateTyping(botResponse);
   }
+
 
   void _simulateTyping(String fullText) {
     _typingText = '';
@@ -60,7 +140,7 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
     _typingTimer?.cancel();
     int charIndex = 0;
 
-    _typingTimer = Timer.periodic(Duration(milliseconds: 30), (timer) {
+    _typingTimer = Timer.periodic(Duration(milliseconds: 1), (timer) {
       if (charIndex < fullText.length) {
         setState(() {
           _typingText += fullText[charIndex];
@@ -81,110 +161,187 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
     });
   }
 
-  void _restartConversation() {
-    setState(() {
-      _messages.clear();
-      _showOptions = true;
-      _showRestartButton = false;
-      _searchQuery = '';
-      _simulateTyping(getBotResponse(''));
-    });
+  Future<void> _speakText(String text) async {
+    String textWithoutEmojis = text.replaceAll(RegExp(
+        r'[\u{1F600}-\u{1F64F}'  // Emoticons
+        r'\u{1F300}-\u{1F5FF}'   // Symbols & Pictographs
+        r'\u{1F680}-\u{1F6FF}'   // Transport & Map symbols
+        r'\u{2600}-\u{26FF}'     // Misc symbols
+        r'\u{2700}-\u{27BF}'
+        r'\u{1F900}-\u{1F9FF}'   // Supplemental Symbols and Pictographs
+        r'\u{1FA70}-\u{1FAFF}'   // Symbols and Pictographs Extended-A
+        r'\u{200D}'              // Zero Width Joiner
+        r'\u{23E9}-\u{23EF}'     // Miscellaneous Technical
+        r'\u{25B6}\u{25C0}'      // Play/Stop buttons
+        r'\u{2934}-\u{2935}'     // Arrows
+        r'\u{2B05}-\u{2B07}'     // Arrows
+        r'\u{2B1B}-\u{2B1C}'     // Squares
+        r'\u{2B50}'              // Star
+        r'\u{2B55}'              // Heavy large circle
+        r'\u{3030}\u{303D}'      // Wavy dash, part alternates
+        r'\u{3297}\u{3299}]+',
+        unicode: true), '');
+
+    await _flutterTts.setLanguage("ar-SA");
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
+
+    List<dynamic> voices = await _flutterTts.getVoices;
+
+    Map<String, String>? maleVoice;
+
+    for (var voice in voices) {
+      if (voice is Map) {
+        String? name = voice['name']?.toString().toLowerCase();
+        String? lang = (voice['locale'] ?? voice['lang'])?.toString().toLowerCase();
+
+        if (name != null && lang != null) {
+          if (name.contains('male') && lang.contains('ar')) {
+            maleVoice = voice.map((key, value) => MapEntry(key.toString(), value.toString()));
+            break;
+          }
+        }
+      }
+    }
+
+    if (maleVoice != null) {
+      await _flutterTts.setVoice(maleVoice);
+    }
+
+    await _flutterTts.speak(textWithoutEmojis);
   }
 
-  Widget _buildMessage(Map<String, String> message) {
+  Widget _buildMessage(Map<String, String> message, [AnimationController? animController]) {
     bool isUserMessage = message['sender'] == 'user';
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    double maxWidth = MediaQuery.of(context).size.width * 0.7;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Align(
-        alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+    Widget messageContent = Container(
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: Container(
-          padding: EdgeInsets.all(12),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
             color: isUserMessage
                 ? Colors.blueAccent
                 : (isDarkMode ? Colors.grey[800]! : Colors.blueGrey[100]!),
             borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+            isUserMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              SelectableText(
                 message['message']!,
                 style: TextStyle(
-                  color: isUserMessage ? Colors.white : (isDarkMode ? Colors.white : Colors.black),
-                  fontSize: 16,
+                  color: isUserMessage
+                      ? Colors.white
+                      : (isDarkMode ? Colors.white : Colors.black),
+                  fontSize: 15,
+                  height: 1.4,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 5),
-              Text(
-                message['time']!,
-                style: TextStyle(
-                  color: isUserMessage ? Colors.white70 : (isDarkMode ? Colors.white54 : Colors.black54),
-                  fontSize: 12,
-                ),
+              SizedBox(height: 6),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    message['time']!,
+                    style: TextStyle(
+                      color: isUserMessage
+                          ? Colors.white70
+                          : (isDarkMode ? Colors.white54 : Colors.black54),
+                      fontSize: 12,
+                    ),
+                  ),
+                  if (!isUserMessage)
+                    Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: GestureDetector(
+                        onTap: () {
+                          _speakText(message['message']!);
+                        },
+                        child: Icon(
+                          Icons.volume_up,
+                          size: 20,
+                          color: isDarkMode ? Colors.white : Colors.black54,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
         ),
       ),
     );
+
+    if (isUserMessage && animController != null) {
+      return SizeTransition(
+        sizeFactor: CurvedAnimation(parent: animController, curve: Curves.easeOut),
+        axisAlignment: 1,
+        child: messageContent,
+      );
+    } else {
+      return messageContent;
+    }
   }
 
   Widget _buildOptionButton(String label) {
-    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: () => _sendMessage(label),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        margin: EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-
-          borderRadius: BorderRadius.circular(15),
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return OutlinedButton(
+      onPressed: () {
+        _sendMessage(label);
+        setState(() {
+          _showOptions = false; // تخفي الاختيارات بعد الضغط على زر
+        });
+      },
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 14,
+          color: isDark ? Colors.white : Colors.black,
         ),
-        child: Text(
-          label,
-          style: TextStyle(fontSize: 12, color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
+// مساحة الاختيارات445464
 
   Widget _buildOptions() {
+    if (!_showOptions || _searchQuery.isEmpty) {
+      return SizedBox.shrink();
+    }
+
     List<String> filteredFoods = foodItems.keys
         .where((foodName) => foodName.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
 
-    return _showOptions
-        ? Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: '🔎 ابحث عن أكلة...',
-              filled: true,
-              fillColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[700] : Colors.grey[200],
-              contentPadding: EdgeInsets.symmetric(horizontal: 15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(25),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            onChanged: (value) {
-              setState(() {
-                _searchQuery = value;
-              });
-            },
-          ),
-        ),
-        SizedBox(height: 10),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: 140, // لا يتجاوز هذا الارتفاع
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: SingleChildScrollView(
           child: Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -193,16 +350,18 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
             }).toList(),
           ),
         ),
-      ],
-    )
-        : SizedBox.shrink();
+      ),
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true, // ✅ علشان الكيبورد ميسببش مشاكل
-      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[850] : Colors.grey[100],
+      resizeToAvoidBottomInset: true,
+      //المسؤول عن لون الصفحة في الدارك مود
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: Container(
@@ -224,7 +383,7 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
                       ),
                       const Spacer(),
                       Text(
-                        ' Gemawy Nutrition Bot',
+                        'Gymee Assistant',
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
@@ -252,35 +411,45 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
           children: [
             Expanded(
               child: SingleChildScrollView(
-                reverse: true, // عشان الجديد ينزل تحت
+                reverse: true,
                 child: Column(
                   children: [
                     ListView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(), // ✅ علشان ميحصلش Scroll مرتين
+                      physics: NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.only(top: 10),
                       itemCount: _messages.length + (_isTyping ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index < _messages.length) {
-                          return _buildMessage(_messages[index]);
+                          final msg = _messages[index];
+                          if (msg['sender'] == 'user') {
+                            // ربط أنيميشن لكل رسالة مستخدم
+                            final animIndex = index < _userMessageAnimControllers.length ? index : null;
+                            final animController = animIndex != null ? _userMessageAnimControllers[animIndex] : null;
+                            return _buildMessage(msg, animController);
+                          } else {
+                            return _buildMessage(msg);
+                          }
                         } else {
+                          double maxWidth = MediaQuery.of(context).size.width * 0.7;
+                          bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Container(
+                                constraints: BoxConstraints(maxWidth: maxWidth),
                                 padding: EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).brightness == Brightness.dark
-                                      ? Colors.grey[800]!
-                                      : Colors.blueGrey[100]!,
+                                  color: isDarkMode ? Colors.grey[800] : Colors.blueGrey[100],
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Text(
                                   _typingText,
                                   style: TextStyle(
-                                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                                    fontSize: 16,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: isDarkMode ? Colors.white : Colors.black87,
                                   ),
                                 ),
                               ),
@@ -289,25 +458,62 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
                         }
                       },
                     ),
-                    _buildOptions(), // ✅ هي دي اللي كانت بتعمل Overflow مع الكيبورد
-                    if (_showRestartButton)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: _restartConversation,
-                          child: Text("🔄 ابدأ من جديد"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                            textStyle: TextStyle(fontSize: 18),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
+              ),
+            ),
+
+            // اختيارات الاقتراحات
+            _buildOptions(),
+
+            // شريط الادخال
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child:
+                    // شريط الادخال
+                    TextField(
+                      controller: _searchController,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(20),
+                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\u0600-\u06FF\s]')),
+                      ],
+
+                      onChanged: (val) {
+                        setState(() {
+                          _searchQuery = val;
+                          _showOptions = val.isNotEmpty;
+                        });
+                      },
+                      onSubmitted: (val) {
+                        _sendMessage(val);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'اكتب رسالة أو اختر من الأسفل',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      ),
+                    ),
+
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      _sendMessage(_searchController.text);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                    ),
+                    child: Icon(Icons.send),
+                  ),
+                ],
               ),
             ),
           ],

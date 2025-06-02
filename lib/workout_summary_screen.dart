@@ -24,6 +24,20 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
   void initState() {
     super.initState();
     workoutData = widget.workoutData;
+
+    for (var workout in workoutData) {
+      print('📌 Workout note: ${workout['note']}');
+    }
+
+    _saveWorkoutData();
+  }
+
+
+  Future<void> _saveWorkoutData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final formattedDate = DateFormat('yyyy-MM-dd').format(widget.selectedDay);
+    final encodedData = jsonEncode(workoutData);
+    await prefs.setString('workouts_$formattedDate', encodedData);
   }
 
   String formatDate(DateTime date) {
@@ -31,6 +45,9 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
   }
 
   Widget animatedWorkoutItem(Map<String, dynamic> workout, int index) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 300 + index * 70),
       curve: Curves.easeOutCubic,
@@ -43,14 +60,80 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
         ),
       ),
       child: Card(
+        elevation: 6,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         margin: const EdgeInsets.symmetric(vertical: 10),
-        child: ListTile(
-          title: Text('${workout['group']} - ${workout['category']}'),
-          subtitle: Text(
-            'Reps: ${workout['reps']}  •  Weight: ${workout['weight']} kg  •  Time: ${workout['duration']}',
+        shadowColor: primaryColor.withOpacity(0.3),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${workout['group']} - ${workout['category']}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: primaryColor,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  _buildInfoField('Reps', workout['reps'].toString()),
+                  _verticalDivider(),
+                  _buildInfoField('Weight', '${workout['weight']} kg'),
+                  _verticalDivider(),
+                  _buildInfoField('Time', workout['duration'].toString()),
+                ],
+              ),
+              if (workout.containsKey('note') &&
+                  workout['note'] != null &&
+                  workout['note'].toString().trim().isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 14),
+                  child: Text(
+                    'ملاحظة: ${workout['note']}',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+
+  Widget _buildInfoField(String label, String value) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey,
+              )),
+          const SizedBox(height: 2),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _verticalDivider() {
+    return Container(
+      height: 30,
+      width: 1,
+      color: Colors.grey[300],
+      margin: const EdgeInsets.symmetric(horizontal: 12),
     );
   }
 
@@ -68,8 +151,7 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
             children: [
               SafeArea(
                 child: Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

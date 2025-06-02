@@ -85,39 +85,47 @@ class _MainScreenState extends State<MainScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+
           children: [
 
             IconButton(
-              icon: const Icon(Icons.restaurant),
-              color: Colors.orange,
-              onPressed: () => _navigateTo(context, 2),
-              tooltip: 'Meals',
+              icon: const Icon(Icons.restaurant_menu),
+              color: Colors.green,
+              onPressed: () => _navigateTo(context, 2), // إضافة وجبات
+              tooltip: 'Add Meals',
             ),
             IconButton(
-              icon: const Icon(Icons.face_retouching_natural),
-              color: Colors.blue,
-              onPressed: () => _navigateTo(context, 3),
-              tooltip: 'ChatBot',
+              icon: const Icon(Icons.smart_toy),
+              color: Colors.lightBlue,
+              iconSize: 25.0,
+              onPressed: () => _navigateTo(context, 3), // مساعد ذكي
+              tooltip: 'AI Assistant',
             ),
             IconButton(
               icon: const Icon(Icons.fitness_center),
-              color: Colors.deepPurple,
-              onPressed: () => _navigateTo(context, 1),
+              color: Colors.purple,
+              onPressed: () => _navigateTo(context, 1), // تمارين
               tooltip: 'Workouts',
             ),
             IconButton(
-              icon: const Icon(Icons.calculate),
-              color: Colors.deepPurple,
+              icon: const Icon(Icons.local_fire_department),
+              color: Colors.orangeAccent,
+              iconSize: 28.0,  // حجم الأيقونة بالبيكسل
               onPressed: () => _navigateTo(context, 4),
               tooltip: 'Calories',
             ),
 
             IconButton(
-              icon: const Icon(Icons.face),
-              color: Colors.indigo,
+              icon: const Icon(Icons.search),
+              color: Colors.grey,
+              iconSize: 27.0,// يمكن تجربة Colors.cyan أو Colors.indigo إذا كنت تفضل ذلك
               onPressed: () => _navigateTo(context, 6),
-              tooltip: 'Gemawy Bot',
+              tooltip: 'Food Search Bot',
             ),
+
+
+
           ],
         ),
       ),

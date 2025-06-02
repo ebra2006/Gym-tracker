@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:math';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 import 'ChatBotLogic.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 enum ChatMode {
   initialChoice,
@@ -65,6 +66,88 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     "كل تمرين بيخلي جسمك أقوى وأذكى! 🧠💪",
   ];
 
+
+  // هنا تضيف الدالة _speakText
+  final FlutterTts _flutterTts = FlutterTts();
+  bool _isPlaying = false; // نتابع حالة الصوت
+
+  Future<void> _speakText(String text) async {
+    if (_isPlaying) {
+      await _flutterTts.stop();
+      _isPlaying = false;
+      return;
+    }
+
+    String textWithoutEmojis = text.replaceAll(RegExp(
+        r'[\u{1F600}-\u{1F64F}'  // Emoticons
+        r'\u{1F300}-\u{1F5FF}'   // Symbols & Pictographs
+        r'\u{1F680}-\u{1F6FF}'   // Transport & Map symbols
+        r'\u{2600}-\u{26FF}'     // Misc symbols
+        r'\u{2700}-\u{27BF}'
+        r'\u{1F900}-\u{1F9FF}'   // Supplemental Symbols and Pictographs
+        r'\u{1FA70}-\u{1FAFF}'   // Symbols and Pictographs Extended-A
+        r'\u{200D}'              // Zero Width Joiner
+        r'\u{23E9}-\u{23EF}'     // Miscellaneous Technical
+        r'\u{25B6}\u{25C0}'      // Play/Stop buttons
+        r'\u{2934}-\u{2935}'     // Arrows
+        r'\u{2B05}-\u{2B07}'     // Arrows
+        r'\u{2B1B}-\u{2B1C}'     // Squares
+        r'\u{2B50}'              // Star
+        r'\u{2B55}'              // Heavy large circle
+        r'\u{3030}\u{303D}'      // Wavy dash, part alternates
+        r'\u{3297}\u{3299}]+',
+        unicode: true), '');
+
+    await _flutterTts.setLanguage("ar-SA");
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
+
+    List<dynamic> voices = await _flutterTts.getVoices;
+
+    Map<String, String>? maleVoice;
+
+    for (var voice in voices) {
+      if (voice is Map) {
+        String? name = voice['name']?.toString().toLowerCase();
+        String? lang = (voice['locale'] ?? voice['lang'])?.toString().toLowerCase();
+
+        if (name != null && lang != null) {
+          if (name.contains('male') && lang.contains('ar')) {
+            maleVoice = voice.map((key, value) => MapEntry(key.toString(), value.toString()));
+            break;
+          }
+        }
+      }
+    }
+
+    if (maleVoice != null) {
+      await _flutterTts.setVoice(maleVoice);
+    }
+
+    // تابع الحالة
+    _flutterTts.setStartHandler(() {
+      _isPlaying = true;
+    });
+
+    _flutterTts.setCompletionHandler(() {
+      _isPlaying = false;
+    });
+
+    _flutterTts.setCancelHandler(() {
+      _isPlaying = false;
+    });
+
+    await _flutterTts.speak(textWithoutEmojis);
+  }
+
+
+// دالة لجلب اسم المستخدم من SharedPreferences (async)
+  Future<String> getUserName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('name') ?? "صديقي";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -108,26 +191,38 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
     }
   }
 
+// تعديل هنا ليشمل اسم المستخدم في الترحيب
   Future<void> _startConversation() async {
-    await _addBotMessage(_getGreetingByTime());
+    final userName = await getUserName();
+
+    // رسالة الترحيب بالوقت + الاسم
+    await _addBotMessage(_getGreetingByTime(userName));
+
     await _addBotMessage(
-        "أنا Gymee، المدرب الشخصي بتاعك ! تحب نصايح عن التغذية والتمرين ولا تفضل خطط تمرين جاهزة؟ 😊 أنا جاهز لمساعدتك في أي وقت!");
+        "أنا Gymee، المدرب الشخصي بتاعك!\n$userName\nتحب تاخد نصايح عن التغذية والتمرين؟ ولا تحب خطط تمرين جاهزة؟ 😊\nأنا جاهز أساعدك في أي وقت!"
+    );
+
+
     setState(() {
       chatMode = ChatMode.initialChoice;
     });
   }
 
-  String _getGreetingByTime() {
+// رسالة ترحيبية حسب الوقت + اسم المستخدم
+  String _getGreetingByTime(String userName) {
     int hour = DateTime.now().hour;
+
     if (hour >= 0 && hour < 4)
-      return "اظن الوقت اتأخر !!، خلي بالك تاخد راحة كويسة وتنام عدد ساعات مناسبة عشان صحتك! 🌙";
+      return "اظن الوقت اتأخر!! يا $userName\nخلي بالك تاخد راحة كويسة وتنام عدد ساعات مناسبة عشان صحتك! 🌙";
     else if (hour >= 4 && hour < 12)
-      return "صباح الخير، أتمنى لك بداية يوم مشرقة ومليانة حيوية! ☀️";
+      return "صباح الخير يا $userName 🌞\nأتمنى لك بداية يوم مشرقة ومليانة حيوية!";
     else if (hour >= 12 && hour < 18)
-      return "نهارك سعيد! خليك نشيط واستمتع بيومك! ☀️";
+      return "نهارك سعيد يا ! $userName☀️\nخليك نشيط واستمتع بيومك!";
     else
-      return "مساء الخير، استغل الوقت ده في راحة تستاهلها علشان بكرة تبدأ بقوة. 🌙";
+      return "مساء الخير يا $userName 🌙\nاستغل الوقت ده في راحة تستاهلها علشان بكرة تبدأ بقوة.";
   }
+
+
 
 
 
@@ -344,15 +439,28 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
         );
 
       case ChatMode.ended:
-        return Center(
-          child: Text(
-            "شكراً لك! 🌟",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
+        return FutureBuilder<String>(
+          future: getUserName(), // دالة استدعاء الاسم
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              final userName = snapshot.data ?? '';
+              return Center(
+                child: Text(
+                  "$userName نورتنا يا\n!💪🤗Remember Gymee always with you !",
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
+                ),
+
+              );
+            }
+          },
         );
+
     }
   }
-
+//الرسايل بتاعت البوت
   Widget _buildMessageBubble(Map<String, String> message) {
     bool isUser = message["sender"] == "user";
 
@@ -397,22 +505,44 @@ class _ChatBotScreenState extends State<ChatBotScreen> {
               ),
             ],
           ),
-          child: SelectableText(
-            message["text"] ?? "",
-            style: TextStyle(
-              color: isUser
-                  ? theme.colorScheme.onPrimaryContainer
-                  : botTextColor,
-              fontSize: 15,
-              height: 1.4,
-              fontWeight: FontWeight.w500,
-            ),
+          child: Column(
+            crossAxisAlignment:
+            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SelectableText(
+                message["text"] ?? "",
+                style: TextStyle(
+                  color: isUser
+                      ? theme.colorScheme.onPrimaryContainer
+                      : botTextColor,
+                  fontSize: 15,
+                  height: 1.4,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              // فقط للبوت وبشرط عدم الكتابة الآن
+              if (!isUser && !isTyping)
+                Padding(
+                  padding: EdgeInsets.only(top: 8),
+                  child: GestureDetector(
+                    onTap: () {
+                      // تشغيل النص بالصوت
+                      _speakText(message["text"] ?? "");
+                    },
+                    child: Icon(
+                      Icons.volume_up,
+                      size: 24,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),
     );
   }
-
 
   // إضافة ويدجت يظهر "gymee يكتب..." أثناء الكتابة
   Widget _buildTypingIndicator() {

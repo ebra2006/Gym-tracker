@@ -166,53 +166,87 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
         : _results.map((e) => e['weight'] as num).reduce((a, b) => a > b ? a : b).toDouble() + 1;
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.grey[100],
-      appBar: AppBar(
-        title: const Text(
-          'متتبع الوزن',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          if (!isEmpty)
-            IconButton(
-              tooltip: 'مسح السجل',
-              icon: Icon(Icons.delete_outline, color: Colors.white),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-                    title: Text(
-                      'تأكيد الحذف',
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        backgroundColor: isDark ? Colors.black : Colors.grey[100],
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Container(
+            color: Colors.transparent,
+            child: Stack(
+              children: [
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          color: Theme.of(context).iconTheme.color,
+                          onPressed: () => Navigator.of(context).pop(),
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                        ),
+                        const Spacer(),
+                        Text(
+                          'متتبع الوزن',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        const Spacer(flex: 2),
+                        if (!isEmpty)
+                          IconButton(
+                            tooltip: 'مسح السجل',
+                            icon: Icon(Icons.delete_outline, color: Theme.of(context).iconTheme.color),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+                                  title: Text(
+                                    'تأكيد الحذف',
+                                    style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                                  ),
+                                  content: Text(
+                                    'هل أنت متأكد من مسح كل بيانات الوزن؟',
+                                    style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(ctx).pop(),
+                                      child: Text('إلغاء', style: TextStyle(color: isDark ? Colors.grey : Colors.grey)),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop();
+                                        _clearAllEntries();
+                                      },
+                                      child: const Text('مسح', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                      ],
                     ),
-                    content: Text(
-                      'هل أنت متأكد من مسح كل بيانات الوزن؟',
-                      style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(ctx).pop(),
-                        child: Text('إلغاء', style: TextStyle(color: isDark ? Colors.grey : Colors.grey)),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(ctx).pop();
-                          _clearAllEntries();
-                        },
-                        child: const Text('مسح', style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
                   ),
-                );
-              },
-            )
-        ],
-        elevation: 3,
-      ),
-      body: Padding(
+                ),
+                const Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Divider(height: 1, thickness: 1),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+
+    body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -221,6 +255,9 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
               builder: (context) {
                 final isDark = Theme.of(context).brightness == Brightness.dark;
 
+                final theme = Theme.of(context);
+                final colorScheme = theme.colorScheme;
+// الوان
                 return TextField(
                   controller: _weightController,
                   keyboardType: TextInputType.number,
@@ -231,38 +268,42 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                   ),
                   decoration: InputDecoration(
                     labelText: 'أدخل وزنك الحالي (كجم)',
-                    labelStyle: TextStyle(color: isDark ? Colors.white : Colors.deepPurple),
+                    labelStyle: TextStyle(color: isDark ? Colors.white : colorScheme.primary),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: isDark ? Colors.white : Colors.deepPurple, width: 2),
+                      borderSide: BorderSide(color: isDark ? Colors.white : colorScheme.primary, width: 2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     prefixIcon: Icon(
                       Icons.monitor_weight_outlined,
-                      color: isDark ? Colors.white : Colors.deepPurple,
+                      color: isDark ? Colors.white : colorScheme.primary,
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     fillColor: isDark ? Colors.grey[900] : Colors.white,
                     filled: true,
                   ),
-                  cursorColor: isDark ? Colors.white : Colors.deepPurple,
+                  cursorColor: isDark ? Colors.white : colorScheme.primary,
                 );
               },
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: _addWeightEntry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                elevation: 5,
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               ),
-              child: const Text(
+              child: Text(
                 'حفظ الوزن',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
+
             const SizedBox(height: 30),
             Expanded(
               flex: 2,
@@ -307,7 +348,8 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                   LineChartData(
                     lineTouchData: LineTouchData(
                       touchTooltipData: LineTouchTooltipData(
-                        getTooltipColor: (touchedSpot) => Colors.deepPurple.withOpacity(0.7),
+                        getTooltipColor: (touchedSpot) => Theme.of(context).colorScheme.primary.withOpacity(0.7),
+
                         getTooltipItems: (touchedSpots) {
                           return touchedSpots.map((spot) {
                             final index = spot.spotIndex;
@@ -383,8 +425,9 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                         dotData: FlDotData(show: true),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: Colors.deepPurple.withOpacity(0.3),
+                          color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
                         ),
+
                       ),
                     ],
                   ),
@@ -412,7 +455,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                     child: ListTile(
                       leading: Icon(
                         Icons.monitor_weight,
-                        color: isDark ? Colors.white : Colors.deepPurple,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       title: Text(
                         "الوزن: $weight كجم",
@@ -420,7 +463,12 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                       ),
                       subtitle: Text("التاريخ: $formattedDate"),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete_outline, color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.red),
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.red,
+                        ),
                         tooltip: 'مسح هذا الإدخال',
                         onPressed: () {
                           final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -439,7 +487,10 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.of(ctx).pop(),
-                                  child: Text('إلغاء', style: TextStyle(color: isDark ? Colors.grey : Colors.grey)),
+                                  child: Text(
+                                    'إلغاء',
+                                    style: TextStyle(color: isDark ? Colors.grey : Colors.grey),
+                                  ),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -456,9 +507,9 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                           );
                         },
                       ),
-
                     ),
                   );
+
 
                 },
               ),

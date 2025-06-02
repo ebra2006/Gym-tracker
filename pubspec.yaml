@@ -26,6 +26,8 @@ dependencies:
   google_nav_bar: ^5.0.6
   fl_chart: ^0.68.0
   http: ^1.4.0   # تم التحديث هنا
+  flutter_tts: ^3.5.2
+  string_similarity: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -39,6 +41,7 @@ flutter:
     - assets/icon/icon.png
     - assets/exercises.json
     - assets/exercises/
+    - assets/images/
 
 flutter_launcher_icons:
   android: true

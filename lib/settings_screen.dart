@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'main.dart'; // للوصول لل-notifiers
 import 'exercises_screen.dart';
 import 'weight_tracker_page.dart';
+import 'start_screen.dart'; // استيراد صفحة StartScreen
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -47,13 +48,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
-    final textColor = theme.brightness == Brightness.dark
-        ? Colors.white
-        : Colors.black87;
+    final textColor = theme.brightness == Brightness.dark ? Colors.white : Colors.black87;
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56), // ارتفاع appbar افتراضي
+        preferredSize: const Size.fromHeight(56),
         child: Container(
           color: Colors.transparent,
           child: Stack(
@@ -113,49 +112,155 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onChanged: toggleColorTheme,
             ),
             const SizedBox(height: 24),
-            ListTile(
-              leading: Icon(Icons.fitness_center, color: primaryColor),
-              title: Text(
-                'مكتبة التمارين',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                ),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios,
-                  size: 16, color: textColor.withOpacity(0.6)),
+
+            // زر مكتبة التمارين محسّن
+            _buildCustomTile(
+              icon: Icons.fitness_center,
+              label: 'مكتبة التمارين',
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const ExercisesScreen(),
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => const ExercisesScreen(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
                 ),
               ),
-              contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              primaryColor: primaryColor,
+              textColor: textColor,
+              isDarkMode: theme.brightness == Brightness.dark,
             ),
-            ListTile(
-              leading: Icon(Icons.monitor_weight, color: primaryColor),
-              title: Text(
-                'متتبع الوزن',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                ),
-              ),
-              trailing: Icon(Icons.arrow_forward_ios,
-                  size: 16, color: textColor.withOpacity(0.6)),
+
+            // زر متتبع الوزن محسّن
+            _buildCustomTile(
+              icon: Icons.monitor_weight,
+              label: 'متتبع الوزن',
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const WeightTrackerPage(),
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => const WeightTrackerPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    final offsetAnimation = Tween<Offset>(
+                      begin: const Offset(0, 1), // تبدأ من الأسفل
+                      end: Offset.zero,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ));
+                    return SlideTransition(position: offsetAnimation, child: child);
+                  },
                 ),
               ),
-              contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              primaryColor: primaryColor,
+              textColor: textColor,
+              isDarkMode: theme.brightness == Brightness.dark,
+            ),
+
+
+            const Spacer(),
+
+            // زر تعديل المعلومات الشخصية في أسفل الصفحة
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 4,
+              ),
+              icon: const Icon(Icons.edit),
+              label: const Text(
+                'تعديل المعلومات الشخصية',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => StartScreen(
+                      onFinished: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      final scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+                        CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                      );
+                      final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+                        CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                      );
+                      return FadeTransition(
+                        opacity: fadeAnimation,
+                        child: ScaleTransition(
+                          scale: scaleAnimation,
+                          child: child,
+                        ),
+                      );
+                    },
+                  ),
+                ).then((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('يجب إعادة تشغيل التطبيق لتطبيق التغييرات'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                });
+              },
+
+
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required Color primaryColor,
+    required Color textColor,
+    required bool isDarkMode,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        splashColor: isDarkMode ? Colors.white24 : primaryColor.withOpacity(0.2),
+        highlightColor: isDarkMode ? Colors.white10 : primaryColor.withOpacity(0.1),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Icon(icon, color: primaryColor),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, size: 16, color: textColor.withOpacity(0.6)),
+            ],
+          ),
         ),
       ),
     );

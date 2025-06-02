@@ -12,6 +12,10 @@ class MealsScreen extends StatefulWidget {
 class _MealsScreenState extends State<MealsScreen> {
   List<Map<String, dynamic>> meals = [];
 
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController caloriesController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -54,64 +58,119 @@ class _MealsScreenState extends State<MealsScreen> {
   }
 
   void addMeal() {
-    String name = '';
-    String grams = '';
-    String calories = '';
-    String protein = '';
+    nameController.clear();
+    caloriesController.clear();
+    noteController.clear();
+
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
 
     showDialog(
       context: context,
-      builder: (_) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final labelColor = isDark ? Colors.white70 : const Color(0xFF5E35B1);
-        final borderColor = isDark ? Colors.white54 : const Color(0xFF7E57C2);
-
+      builder: (context) {
         return AlertDialog(
-          backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+          backgroundColor: theme.dialogBackgroundColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('إضافة وجبة', style: TextStyle(color: labelColor)),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                _customTextField('اسم الوجبة', (v) => name = v,
-                    labelColor: labelColor, borderColor: borderColor),
-                _customTextField('جرام', (v) => grams = v,
-                    num: true, labelColor: labelColor, borderColor: borderColor),
-                _customTextField('سعرات حرارية', (v) => calories = v,
-                    num: true, labelColor: labelColor, borderColor: borderColor),
-                _customTextField('بروتين (جم)', (v) => protein = v,
-                    num: true, labelColor: labelColor, borderColor: borderColor),
-              ],
-            ),
+          title: Text('إضافة وجبة',
+              style: TextStyle(
+                color: primaryColor,
+                fontWeight: FontWeight.bold,
+              )),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                maxLength: 20,
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
+                ),
+                decoration: InputDecoration(
+                  labelText: 'اسم الوجبة',
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+              TextField(
+                controller: caloriesController,
+                keyboardType: TextInputType.number,
+                maxLength: 5,
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
+                ),
+                decoration: InputDecoration(
+                  labelText: 'عدد السعرات (اختياري)',
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+              TextField(
+                controller: noteController,
+                maxLength: 100,
+                style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
+                ),
+                decoration: InputDecoration(
+                  labelText: 'ملاحظة (اختياري)',
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF7E57C2), // بنفسجي متوسط
-              ),
-              child: const Text('إلغاء'),
+              child: Text('إلغاء', style: TextStyle(color: primaryColor)),
+              onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
-              onPressed: () {
-                if (name.isNotEmpty) {
-                  setState(() {
-                    meals.add({
-                      'name': name,
-                      'grams': grams,
-                      'calories': calories,
-                      'protein': protein,
-                      'taken': false,
-                    });
-                  });
-                  saveMeals();
-                  Navigator.pop(context);
-                }
-              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF5E35B1), // بنفسجي غامق
+                backgroundColor: primaryColor,
+                foregroundColor: theme.colorScheme.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: const Text('إضافة'),
+              //المدخلات5455665
+              onPressed: () {
+                if (nameController.text.trim().isEmpty) {
+                  // اسم الوجبة مطلوب فقط
+                  return;
+                }
+                setState(() {
+                  meals.add({
+                    'name': nameController.text.trim(),
+                    'calories': caloriesController.text.trim(), // ممكن تكون فاضية
+                    'note': noteController.text.trim(),
+                    'taken': false,
+                  });
+                });
+                saveMeals();
+                Navigator.of(context).pop();
+              },
+
             ),
           ],
         );
@@ -119,56 +178,40 @@ class _MealsScreenState extends State<MealsScreen> {
     );
   }
 
-  Widget _customTextField(String label, Function(String) onChanged,
-      {bool num = false, Color? labelColor, Color? borderColor}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: labelColor),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: borderColor ?? Colors.purple),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: borderColor ?? Colors.deepPurple),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        style: TextStyle(color: labelColor),
-        keyboardType: num ? TextInputType.number : TextInputType.text,
-        onChanged: onChanged,
-      ),
-    );
-  }
-
   void confirmDeleteMeal(int index) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final colorSecondary = theme.colorScheme.secondary;
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF2C2C2C) : Colors.white,
+        backgroundColor: theme.dialogBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'تأكيد الحذف',
-          style: TextStyle(color: isDark ? Colors.white : const Color(0xFF5E35B1)),
+          style: TextStyle(
+              color: primaryColor, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         content: Text(
           'هل أنت متأكد من حذف هذه الوجبة؟',
-          style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
+          style: TextStyle(color: textColor),
         ),
         actions: [
           TextButton(
-            child: Text('إلغاء',
-                style: TextStyle(color: isDark ? Colors.white54 : const Color(0xFF7E57C2))),
+            child: Text('إلغاء', style: TextStyle(color: colorSecondary)),
             onPressed: () => Navigator.pop(context),
           ),
           ElevatedButton(
             child: const Text('حذف'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade400,
+              backgroundColor: Colors.red.shade600,
               foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 3,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -194,20 +237,33 @@ class _MealsScreenState extends State<MealsScreen> {
     saveMeals();
 
     if (meals[index]['taken']) {
+      final theme = Theme.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('أحسنت! تم إنجاز هذه الوجبة 🎉'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: const Text('أحسنت! تم إنجاز هذه الوجبة 🎉'),
+          backgroundColor: Colors.green.shade600,
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          elevation: 5,
         ),
       );
     }
   }
-
-  Widget animatedMealItem(Map<String, dynamic> meal, int index) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final titleColor = isDark ? Colors.white : const Color(0xFF5E35B1);
-    final subtitleColor = isDark ? Colors.white70 : Colors.black87;
+// تصميم الكارداااااااااات
+  Widget animatedMealItem(
+      Map<String, dynamic> meal,
+      int index,
+      Color primaryColor,
+      Color onBackground,
+      ) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    final backgroundGradient = isDark
+        ? [const Color(0xFF1E1E1E), const Color(0xFF2C2C2C)]
+        : [Colors.white, Colors.grey.shade100];
 
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 400 + index * 50),
@@ -219,60 +275,96 @@ class _MealsScreenState extends State<MealsScreen> {
           child: child,
         ),
       ),
-      child: Card(
-        color: cardColor,
-        elevation: 4,
-        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: backgroundGradient,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withOpacity(0.4)
+                  : Colors.grey.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          leading: Icon(
+            meal['taken'] ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
+            color: meal['taken'] ? Colors.green : primaryColor,
+            size: 30,
+          ),
           title: Text(
             meal['name'],
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: titleColor,
               fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: textColor,
             ),
           ),
-          subtitle: Text(
-            'جرام: ${meal['grams']} | سعرات: ${meal['calories']} | بروتين: ${meal['protein']} جم',
-            style: TextStyle(color: subtitleColor),
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                icon: Icon(
-                  meal['taken']
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  color: meal['taken'] ? Colors.green.shade400 : Colors.grey,
-                  size: 28,
+              if ((meal['calories'] ?? '').toString().isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    'السعرات: ${meal['calories']}',
+                    style: TextStyle(
+                      color: textColor.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
-                onPressed: () => toggleMealTaken(index),
-              ),
-              IconButton(
-                icon: Icon(Icons.delete,
-                    color: Colors.red.shade400, size: 28),
-                onPressed: () => confirmDeleteMeal(index),
-              ),
+              if ((meal['note'] ?? '').toString().isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    'ملاحظة: ${meal['note']}',
+                    style: TextStyle(
+                      color: textColor.withOpacity(0.5),
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
             ],
           ),
+          trailing: InkWell(
+            onTap: () => confirmDeleteMeal(index),
+            borderRadius: BorderRadius.circular(30),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(Icons.delete_outline, color: Colors.red.shade400),
+            ),
+          ),
+          onTap: () => toggleMealTaken(index),
         ),
       ),
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? const Color(0xFF121212) : const Color(0xFFE3F2FD);
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: Container(
-          color: Colors.transparent,  // خلي الخلفية شفافة عشان الـ theme يأثر عليها لو حبيت
+          color: Colors.transparent,
           child: Stack(
             children: [
               SafeArea(
@@ -283,27 +375,21 @@ class _MealsScreenState extends State<MealsScreen> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.arrow_back),
-                        color: Theme.of(context).iconTheme.color,  // لون الأيقونة حسب الثيم
+                        color: theme.iconTheme.color,
                         onPressed: () => Navigator.of(context).pop(),
                         padding: const EdgeInsets.all(4),
                         constraints: const BoxConstraints(),
                       ),
                       const Spacer(),
                       Text(
-                        'وجباتي',
+                        'Meals',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          color: Theme.of(context).primaryColor,  // لون النص حسب الثيم
+                          color: primaryColor, // العنوان بالـ primaryColor فقط
                         ),
                       ),
                       const Spacer(flex: 2),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: addMeal,
-                        color: Theme.of(context).iconTheme.color,  // لون الأيقونة حسب الثيم
-                        iconSize: 28,
-                      ),
                     ],
                   ),
                 ),
@@ -318,22 +404,25 @@ class _MealsScreenState extends State<MealsScreen> {
           ),
         ),
       ),
-
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: primaryColor,
+        child: Icon(Icons.add, size: 30, color: theme.colorScheme.onPrimary),
+        onPressed: addMeal,
+        elevation: 6,
+      ),
       body: meals.isEmpty
           ? Center(
         child: Text(
-          'لا توجد وجبات بعد',
-          style: TextStyle(
-            fontSize: 18,
-            color: isDark ? Colors.white70 : const Color(0xFF5E35B1),
-            fontWeight: FontWeight.w500,
-          ),
+          'لم تضف أي وجبة بعد',
+          style: TextStyle(fontSize: 18, color: textColor.withOpacity(0.6)),
         ),
       )
           : ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 12),
         itemCount: meals.length,
-        itemBuilder: (context, index) =>
-            animatedMealItem(meals[index], index),
+        itemBuilder: (context, index) {
+          return animatedMealItem(meals[index], index, primaryColor, textColor);
+        },
       ),
     );
   }

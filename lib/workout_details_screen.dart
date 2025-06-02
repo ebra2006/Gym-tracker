@@ -24,6 +24,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   bool isTimerRunning = false;
   int _groupNumber = 1;
   int tasbihCount = 0;
+  String workoutNote = ''; // النوتات
 
   Key _resetKey = UniqueKey(); // 🔹 أضفه هنا
   // <-- هنا بالضبط، بعد تعريف كل المتغيرات فوق، ضيف:
@@ -56,6 +57,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
       'group': groupName,
       'date': currentDate,
       'tasbih': tasbihCount,
+      'note': workoutNote,  // ← أضف السطر ده الموتاتتتتتت65564545
     };
 
     savedWorkouts.add(workout);
@@ -73,8 +75,10 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
       formattedTime = "00.00.00";
       tasbihCount = 0;
       _stopwatch.reset();
+      workoutNote = '';  // ← مسح نص الملاحظة بعد الحفظ
     });
   }
+
 
 
   List<Map<String, dynamic>> _loadSavedWorkouts(SharedPreferences prefs, String date) {
@@ -85,6 +89,90 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     }
     return [];
   }
+//النوتات 5456456456456
+  Future<void> _showNoteBottomSheet(BuildContext context) async {
+    final TextEditingController _noteController = TextEditingController(text: workoutNote);
+    final RegExp validChars = RegExp(r'^[a-zA-Z0-9\u0600-\u06FF\s]*$'); // حروف عربي، إنجليزي، أرقام ومسافات
+
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          child: StatefulBuilder(
+            builder: (context, setModalState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _noteController,
+                    autofocus: true,
+                    maxLength: 100,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      labelText: 'Enter your note',
+                      border: OutlineInputBorder(),
+                      counterText: '${_noteController.text.length}/100',
+                    ),
+                    onChanged: (value) {
+                      setModalState(() {}); // فقط لتحديث العداد
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      String noteText = _noteController.text.trim();
+
+                      if (!validChars.hasMatch(noteText)) {
+                        // لو فيه رموز غير مسموحة، نعرض تحذير
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: const Text('تحذير'),
+                            content: const Text('يرجى إدخال حروف أو أرقام فقط بدون رموز غريبة.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop(); // إغلاق التنبيه
+                                },
+                                child: const Text('حسناً'),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        Navigator.pop(context, noteText); // ترجع الملاحظة فقط لو صحيحة
+                      }
+                    },
+                    child: const Text('Save Note'),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+
+    // حفظ النتيجة
+    if (result != null) {
+      setState(() {
+        workoutNote = result;
+      });
+    }
+  }
+
+
+
 
   void _showSnackBar(String date) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -197,17 +285,44 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                             color: theme.iconTheme.color,
                           ),
                           const Spacer(),
-                          Text(
-                            titleText,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: theme.primaryColor,
+
+                          // هنا نستخدم شرط بسيط
+                          if (widget.categoryName.length <= 13)
+                            Text(
+                              '${widget.categoryName} Workout',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
+                                color: theme.primaryColor,
+                              ),
+                            )
+                          else
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.categoryName.substring(0, 13) + '…',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: theme.primaryColor,
+                                  ),
+                                ),
+                                Text(
+                                  'Workout',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: theme.primaryColor,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+
                           const Spacer(flex: 2),
                         ],
                       ),
+
                     ),
                   ),
                   const Positioned(
@@ -382,9 +497,25 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
             ),
 
             const SizedBox(height: 25),
+//زر النوتات 846456456456
+            OutlinedButton(
+              onPressed: () => _showNoteBottomSheet(context),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: theme.primaryColor, width: 2),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              ),
+              child: Text(
+                'Add Note',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primaryColor),
+              ),
+            ),
+            const SizedBox(height: 15),
 
             OutlinedButton(
-              onPressed: _saveWorkout,
+              onPressed: () {
+                _saveWorkout(); // دالتك الأصلية لحفظ التمرين
+              },
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: theme.primaryColor, width: 2),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
@@ -395,6 +526,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primaryColor),
               ),
             ),
+
           ],
         ),
       ),

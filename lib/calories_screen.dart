@@ -335,12 +335,11 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                   )),
                   const SizedBox(height: 20),
                   Center(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                       ),
                       onPressed: () {
                         FocusScope.of(context).unfocus();
@@ -354,10 +353,14 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                           });
                         }
                       },
-                      icon: const Icon(Icons.calculate),
-                      label: const Text("احسب السعرات", style: TextStyle(fontSize: 16)),
+                      icon: Icon(Icons.calculate, color: Theme.of(context).primaryColor),
+                      label: Text(
+                        "احسب السعرات",
+                        style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
+                      ),
                     ),
                   ),
+
                   const SizedBox(height: 25),
                   if (result.isNotEmpty) ...[
                     Text(result, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor)),
