@@ -81,10 +81,9 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
   Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty) return;
 
-    if (_isTyping) {
-      // إذا البوت يكتب، لا تسمح بإرسال رسالة جديدة
+    if (_messages.isNotEmpty && _messages.last['sender'] == 'user') {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('الرجاء الانتظار حتى انهي الكتابة')),
+        SnackBar(content: Text('الرجاء الانتظار حتى ينهي Gymee الكتابة')),
       );
       return;
     }
@@ -478,8 +477,10 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
                       controller: _searchController,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(20),
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\u0600-\u06FF\s]')),
+                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\u0600-\u06FF\s]')),
+                        FilteringTextInputFormatter.deny(RegExp(r'[؟?,;؛٫]')),
                       ],
+
 
                       onChanged: (val) {
                         setState(() {
@@ -491,11 +492,11 @@ class _GemawyBotScreenState extends State<GemawyBotScreen> with TickerProviderSt
                         _sendMessage(val);
                       },
                       decoration: InputDecoration(
-                        hintText: 'اكتب رسالة أو اختر من الأسفل',
+                        hintText: 'ابحث عن اي اكلة ',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 11),
                       ),
                     ),
 

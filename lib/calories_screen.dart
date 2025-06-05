@@ -312,12 +312,9 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                     onChanged: (val) {
                       setState(() {
                         activityLevel = val!;
-                        final calories = calculateCalories();
-                        if (calories != null) {
-                          result = '🍽️ السعرات اليومية اللازمة: ${calories.toStringAsFixed(0)} سعرة حرارية في اليوم';
-                        }
                       });
                     },
+
                   )),
                   const SizedBox(height: 10),
                   const Text("الهدف", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),

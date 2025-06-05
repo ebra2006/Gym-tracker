@@ -537,72 +537,85 @@ class _FireDialogState extends State<_FireDialog> with TickerProviderStateMixin 
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Center(
-      child: Material(
-        color: Colors.transparent,
-        child: Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 🔥 النار المتحركة مع تقليل الحجم شويه
-                ScaleTransition(
-                  scale: Tween<double>(begin: 1, end: 1.3)
-                      .animate(CurvedAnimation(parent: _fireController, curve: Curves.easeInOut)),    // حجم النار
-                  child: Icon(Icons.local_fire_department, color: Colors.orange.shade600, size: 60),
-                ),
-
-                const SizedBox(height: 12), // قللت المسافة شوية
-
-                Text(
-                  '🔥 ممتاز يا بطل!',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 8), // قللت المسافة
-
-                Text(
-                  'أنت محافظ على تمرينك بقالك ${widget.currentStreak} يوم! 👏\n'
-                      'الاستمرارية هي سر النجاح الحقيقي 💪 استمر كده وحقق كل أهدافك! 🚀',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 20),
-
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange.shade700,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop(); // ✅ تأكد إن النافذة لسه مفتوحة قبل ما تغلقها
+        }
+      },
+      child: Center(
+        child: Material(
+          color: Colors.transparent,
+          child: GestureDetector(
+            onTap: () {}, // منع الغلق عند الضغط داخل النافذة
+            child: Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ScaleTransition(
+                      scale: Tween<double>(begin: 1, end: 1.3).animate(
+                        CurvedAnimation(parent: _fireController, curve: Curves.easeInOut),
+                      ),
+                      child: Icon(Icons.local_fire_department, color: Colors.orange.shade600, size: 60),
                     ),
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
-                    'استمر 🚀',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '🔥 أداء منتظم! ',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+
+                      '${widget.currentStreak} يوم وانت منتظم ، دي مش بس عادة، ده أسلوب حياة جديد. 💪\n'
+                          'كل يوم بتحافظ عليه بيقربك أكتر لهدفك، خلّيها عادة ما تتخلاش عنها، خليك قدها! 🚀',
+
+
+
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop(); // ✅ نفس الحماية عند الضغط على الزر
+                        }
+                      },
+                      child: const Text(
+                        'استمرار 🚀',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 }
 
 

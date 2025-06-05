@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class WeightTrackerPage extends StatefulWidget {
   const WeightTrackerPage({Key? key}) : super(key: key);
@@ -62,15 +63,16 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
   void _addWeightEntry() {
     if (_weightController.text.isEmpty) return;
     final weight = double.tryParse(_weightController.text);
-    if (weight == null || weight > 300) {
+    if (weight == null || weight < 30 || weight > 300) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('الرجاء إدخال وزن صحيح أقل من 300 كجم'),
+          content: Text('الرجاء إدخال وزن صحيح بين 30 و 300 كجم'),
           backgroundColor: Colors.orange,
         ),
       );
       return;
     }
+
 
     final today = DateTime.now();
     final alreadyAdded = _results.any((entry) {
@@ -260,7 +262,10 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
 // الوان
                 return TextField(
                   controller: _weightController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}(\.\d{0,1})?$')),
+                  ],
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,

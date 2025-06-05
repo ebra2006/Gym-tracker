@@ -8,10 +8,11 @@ class WorkoutSummaryScreen extends StatefulWidget {
   final List<Map<String, dynamic>> workoutData;
 
   const WorkoutSummaryScreen({
-    Key? key,
+    super.key,
     required this.selectedDay,
     required this.workoutData,
-  }) : super(key: key);
+  });
+
 
   @override
   State<WorkoutSummaryScreen> createState() => _WorkoutSummaryScreenState();
@@ -26,8 +27,9 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
     workoutData = widget.workoutData;
 
     for (var workout in workoutData) {
-      print('📌 Workout note: ${workout['note']}');
+      debugPrint('📌 Workout note: ${workout['note']}');
     }
+
 
     _saveWorkoutData();
   }
@@ -65,7 +67,7 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
           borderRadius: BorderRadius.circular(16),
         ),
         margin: const EdgeInsets.symmetric(vertical: 10),
-        shadowColor: primaryColor.withOpacity(0.3),
+        shadowColor: primaryColor.withAlpha((0.3 * 255).round()),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           child: Column(

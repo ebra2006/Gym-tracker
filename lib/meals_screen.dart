@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/services.dart';
+
 
 class MealsScreen extends StatefulWidget {
   const MealsScreen({super.key});
@@ -84,6 +86,9 @@ class _MealsScreenState extends State<MealsScreen> {
               TextField(
                 controller: nameController,
                 maxLength: 20,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zأ-ي0-9 ]')),
+                ],
                 style: TextStyle(
                   color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
                 ),
@@ -102,7 +107,10 @@ class _MealsScreenState extends State<MealsScreen> {
               TextField(
                 controller: caloriesController,
                 keyboardType: TextInputType.number,
-                maxLength: 5,
+                maxLength: 3,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
                 style: TextStyle(
                   color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
                 ),
@@ -120,7 +128,10 @@ class _MealsScreenState extends State<MealsScreen> {
               ),
               TextField(
                 controller: noteController,
-                maxLength: 100,
+                maxLength: 50,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Zأ-ي0-9 ]')),
+                ],
                 style: TextStyle(
                   color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
                 ),

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+
 
 class StartScreen extends StatefulWidget {
   final VoidCallback onFinished;
@@ -8,11 +10,12 @@ class StartScreen extends StatefulWidget {
   const StartScreen({super.key, required this.onFinished});
 
   @override
-  _StartScreenState createState() => _StartScreenState();
+  StartScreenState createState() => StartScreenState();
 }
 
-class _StartScreenState extends State<StartScreen> {
+class StartScreenState extends State<StartScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _controller = TextEditingController();
   String? name, gender;
   double? weight, height;
   int? age;
@@ -37,6 +40,7 @@ class _StartScreenState extends State<StartScreen> {
 
       widget.onFinished();
     } catch (e) {
+      if (!mounted) return; // إذا تم تفكيك الwidget، لا تعمل شيء
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving data: $e')),
       );
@@ -162,22 +166,82 @@ class _StartScreenState extends State<StartScreen> {
 
       // داخل switch case currentStep:
         case 1:
-          return TextFormField(
-            initialValue: name ?? '',
-            decoration: InputDecoration(
-              labelText: 'Name',
-              border: const OutlineInputBorder(),
-            ),
-            style: TextStyle(color: textColor),
-            validator: (value) =>
-            value == null || value.isEmpty ? 'Please enter your name' : null,
-            onChanged: (value) {
-              setState(() {
-                name = value;
+          bool canShowSnackBar = true;
+
+          void showSnackBarWithDelay(String message) {
+            if (canShowSnackBar) {
+              canShowSnackBar = false;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message)),
+              );
+              Future.delayed(const Duration(seconds: 7), () {
+                canShowSnackBar = true;
               });
+            }
+          }
+
+          bool hasRepeatedChar(String value, int count) {
+            if (value.isEmpty) return false;
+            int repeatCounter = 1;
+            for (int i = 1; i < value.length; i++) {
+              if (value[i] == value[i - 1]) {
+                repeatCounter++;
+                if (repeatCounter >= count) return true;
+              } else {
+                repeatCounter = 1;
+              }
+            }
+            return false;
+          }
+
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return TextFormField(
+                controller: _controller,  // استخدم الكنترولر هنا فقط
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+                style: TextStyle(color: textColor),
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(15),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your name';
+                  }
+                  if (hasRepeatedChar(value, 5)) {
+                    return 'الرجاء كتابة اسم صحيح لتجربة مستخدم افضل';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  setState(() {
+                    name = value;
+                  });
+
+                  final clean = value.replaceAll(RegExp(r'[^a-zA-Z\u0600-\u06FF\s]'), '');
+
+                  if (clean != value) {
+                    _controller.value = TextEditingValue(
+                      text: clean,
+                      selection: TextSelection.collapsed(offset: clean.length),
+                    );
+                    showSnackBarWithDelay('الرجاء كتابة اسم صحيح بدون رموز او ارقام لتجربة مستخدم افضل');
+                  }
+
+                  if (hasRepeatedChar(clean, 5)) {
+                    showSnackBarWithDelay('الرجاء كتابة الاسم صحيح لتجربة مستخدم افضل و عدم تكرار نفس الحرف 5 مرات أو أكثر');
+                  }
+                },
+                onSaved: (value) => name = value,
+              );
             },
-            onSaved: (value) => name = value,
           );
+
+
+
+
 
         case 2:
           return DropdownButtonFormField<String>(
@@ -335,7 +399,8 @@ class _StartScreenState extends State<StartScreen> {
             LinearProgressIndicator(
               value: (currentStep + 1) / 6,
               color: primaryColor,
-              backgroundColor: primaryColor.withOpacity(0.3),
+              backgroundColor: primaryColor.withAlpha((255 * 0.3).round()),
+
               minHeight: 6,
             ),
             const SizedBox(height: 20),
@@ -374,7 +439,8 @@ class _StartScreenState extends State<StartScreen> {
               child: Text(
                 "أنت الآن تستخدم النسخة التجريبية من تطبيق Gym Tracker...",
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onBackground.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withAlpha((255 * 0.6).round()),
+
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -385,7 +451,8 @@ class _StartScreenState extends State<StartScreen> {
                 "Powered by: Ibrahim Zaid",
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontStyle: FontStyle.italic,
-                  color: theme.colorScheme.onBackground.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withAlpha((255 * 0.6).round()),
+
                 ),
                 textAlign: TextAlign.center,
               ),

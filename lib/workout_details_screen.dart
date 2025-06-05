@@ -18,7 +18,7 @@ class WorkoutDetailsScreen extends StatefulWidget {
 class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   int reps = 0;
   double weight = 0.0;
-  Stopwatch _stopwatch = Stopwatch();
+  final Stopwatch _stopwatch = Stopwatch();
   String formattedTime = "00.00.00";
   Timer? _timer;
   bool isTimerRunning = false;
@@ -184,16 +184,17 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
             final prefs = await SharedPreferences.getInstance();
             List<Map<String, dynamic>> workoutData = _loadSavedWorkouts(prefs, date);
 
+            if (!mounted) return;  // متأكد أن الـ widget موجودة
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => WorkoutSummaryScreen(
                   workoutData: workoutData,
                   selectedDay: DateTime.parse(date),
-
                 ),
               ),
             );
+
           },
         ),
       ),
@@ -202,20 +203,110 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   // دالة التهنءة
 // هنا تحط دالة التهنئة
   void _showCongratulationDialog() {
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('🎉 مبروك!'),
-        content: Text('أنت حافظ التمرين ليوم ${streakManager.currentStreak} على التوالي! استمر كده 💪'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('تمام'),
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+                return Container(
+                  padding: const EdgeInsets.all(24),
+                  margin: const EdgeInsets.symmetric(horizontal: 30),
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey[900] : Colors.white,  // خلفية تناسب الوضع
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: -8.0, end: 8.0),
+                        duration: const Duration(milliseconds: 800),
+                        curve: Curves.easeInOut,
+                        builder: (context, value, child) {
+                          double scale = 1 + (value.abs() / 40);
+                          double rotation = value / 50;
+                          return Transform.translate(
+                            offset: Offset(value, 0),
+                            child: Transform.rotate(
+                              angle: rotation,
+                              child: Transform.scale(
+                                scale: scale,
+                                child: child,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Icon(Icons.emoji_events, color: Colors.amber, size: 64),
+                        onEnd: () {
+                          Future.delayed(Duration.zero, () {
+                            setState(() {});
+                          });
+                        },
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      Text(
+                        '🚀 ممتاز!',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade600, // لون ممتاز وجذاب
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      Text(
+                        '🔥 سلسلة نجاح مستمرة!\nتمرين اليوم رقم ${streakManager.currentStreak} على التوالي!\nأنت بطل بحق 💪 استمر في التألق!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          height: 1.5,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                      ),
+
+
+                      const SizedBox(height: 24),
+
+                      ElevatedButton.icon(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.check_circle),
+                        label: const Text('استمر'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
+
   }
+
+
+
+
   @override
   void dispose() {
     _stopwatch.stop();
@@ -301,13 +392,14 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.categoryName.substring(0, 13) + '…',
+                                  '${widget.categoryName.substring(0, 13)}…',
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w700,
                                     color: theme.primaryColor,
                                   ),
                                 ),
+
                                 Text(
                                   'Workout',
                                   style: TextStyle(
@@ -349,7 +441,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
@@ -389,7 +481,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
             ),
 
@@ -414,7 +506,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.w700,
-                color: theme.colorScheme.onBackground,
+                color: theme.colorScheme.onSurface,
                 letterSpacing: 3,
               ),
             ),
@@ -476,7 +568,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onBackground,
+                color: theme.colorScheme.onSurface,
               ),
             ),
 
@@ -682,8 +774,9 @@ class _ClockPainter extends CustomPainter {
 
     // رسم شرطات الدقائق (كل دقيقة، خط صغير جداً)
     final tickPaint = Paint()
-      ..color = oppositeColor.withOpacity(0.5)
+      ..color = oppositeColor.withAlpha((0.5 * 255).round())
       ..strokeWidth = 1;
+
 
     for (int i = 0; i < 60; i++) {
       final angle = i * 6 * pi / 180;
