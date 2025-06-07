@@ -447,32 +447,35 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
             ),
 
             const SizedBox(height: 25),
-
-            _buildCounterCard(
-              'Reps',
-              reps,
-                  () {
-                if (reps > 0) setState(() => reps--);
-              },
-                  () {
-                setState(() => reps++);
-              },
-              theme.primaryColor,
+//تبع الاسكرول
+            Row(
+              children: [
+                _buildScrollPickerCard(
+                  label: 'Reps',
+                  initialValue: reps,
+                  minValue: 0,
+                  maxValue: 100,
+                  onSelectedItemChanged: (val) {
+                    setState(() => reps = val);
+                  },
+                  themeColor: theme.primaryColor,
+                ),
+                const SizedBox(width: 12),
+                _buildScrollPickerCard(
+                  label: 'Weight (kg)',
+                  initialValue: (weight ~/ 2.5), // خطوات 2.5
+                  minValue: 0,
+                  maxValue: 200, // 200 * 2.5 = 500 kg
+                  onSelectedItemChanged: (val) {
+                    setState(() => weight = val * 2.5);
+                  },
+                  themeColor: theme.primaryColor,
+                  isWeight: true,
+                ),
+              ],
             ),
 
-            const SizedBox(height: 15),
 
-            _buildCounterCard(
-              'Weight (kg)',
-              weight.toStringAsFixed(1),
-                  () {
-                if (weight > 0) setState(() => weight -= 2.5);
-              },
-                  () {
-                setState(() => weight += 2.5);
-              },
-              theme.primaryColor,
-            ),
 
             const SizedBox(height: 20),
 
@@ -624,84 +627,92 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
       ),
     );
   }
-
+// تبع الاسكرول
 // تعديل الدالة _buildCounterCard لتكون الأزرار بإطار فقط بدون تعبئة
-  Widget _buildCounterCard(
-      String label,
-      dynamic value,
-      VoidCallback onDecrement,
-      VoidCallback onIncrement,
-      Color themeColor,
-      ) {
+  Widget _buildScrollPickerCard({
+    required String label,
+    required int initialValue,
+    required int minValue,
+    required int maxValue,
+    required ValueChanged<int> onSelectedItemChanged,
+    required Color themeColor,
+    bool isWeight = false,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black87;
+    final controller = FixedExtentScrollController(initialItem: initialValue - minValue);
 
-    return Card(
-      elevation: 6,
-      shadowColor: Colors.deepPurple.shade200,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: SizedBox(
-        width: 265,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          child: Column(
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
+    return Expanded(
+      child: Card(
+        elevation: 6,
+        shadowColor: themeColor.withAlpha((0.3 * 255).round()),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: SizedBox(
+          height: 250,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  OutlinedButton(
-                    onPressed: onDecrement,
-                    style: OutlinedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      side: BorderSide(color: themeColor, width: 2),
-                      minimumSize: const Size(40, 40),
-                      padding: EdgeInsets.zero,
+                const SizedBox(height: 12),
+                Expanded(
+                  child: ListWheelScrollView.useDelegate(
+                    itemExtent: 50,
+                    diameterRatio: 1.2,
+                    perspective: 0.002,
+                    controller: controller,
+                    physics: const FixedExtentScrollPhysics(),
+                    onSelectedItemChanged: onSelectedItemChanged,
+                    childDelegate: ListWheelChildBuilderDelegate(
+                      builder: (context, index) {
+                        final value = minValue + index;
+                        final displayValue = isWeight
+                            ? (value * 2.5).toStringAsFixed(1)
+                            : value.toString();
+
+                        final isSelected = (controller.selectedItem == index);
+
+                        return Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isSelected)
+                                Icon(Icons.arrow_left, color: themeColor, size: 24),
+                              Text(
+                                displayValue,
+                                style: TextStyle(
+                                  fontSize: 28, //حجم الارقام
+                                  fontWeight: FontWeight.bold,
+                                  color: themeColor,
+                                ),
+                              ),
+                              if (isSelected)
+                                Icon(Icons.arrow_right, color: themeColor, size: 24),
+                            ],
+                          ),
+                        );
+                      },
+                      childCount: maxValue - minValue + 1,
                     ),
-                    child: Icon(Icons.remove, size: 28, color: themeColor),
                   ),
-                  Expanded(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        '$value',
-                        style: TextStyle(
-                          fontSize: 38,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  OutlinedButton(
-                    onPressed: onIncrement,
-                    style: OutlinedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      side: BorderSide(color: themeColor, width: 2),
-                      minimumSize: const Size(40, 40),
-                      padding: EdgeInsets.zero,
-                    ),
-                    child: Icon(Icons.add, size: 28, color: themeColor),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+
+
 
   Widget _buildTimerIconButton(
       IconData icon,

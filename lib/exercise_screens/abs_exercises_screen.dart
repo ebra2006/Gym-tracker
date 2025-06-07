@@ -17,14 +17,19 @@ class _AbsExercisesScreenState extends State<AbsExercisesScreen> {
     'Chest',
     'Biceps',
     'Cardio',
+    'Shoulders',
+    'Triceps',
+    'Back',
     'Legs',
-
   ];
 
-  // بيانات التمارين
+// بيانات التمارين
   List<String> customWorkouts = [];
   List<String> favoriteWorkouts = [];
   List<String> recentWorkouts = [];
+
+  String gender = 'Male'; // افتراضيًا ذكر
+  List<Map<String, String>> categories = [];
 
   @override
   void initState() {
@@ -32,6 +37,7 @@ class _AbsExercisesScreenState extends State<AbsExercisesScreen> {
     _loadCustomWorkouts();
     _loadFavorites();
     _loadRecent();
+    _loadGenderAndSetCategories();
   }
 
   void _loadCustomWorkouts() async {
@@ -53,6 +59,37 @@ class _AbsExercisesScreenState extends State<AbsExercisesScreen> {
     setState(() {
       recentWorkouts = prefs.getStringList('recentAbsWorkouts') ?? [];
     });
+  }
+
+  Future<void> _loadGenderAndSetCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    gender = prefs.getString('gender') ?? 'Male';
+
+    if (gender == 'Male') {
+      categories = [
+        {'name': 'Chest', 'image': 'assets/images/chest.png'},
+        {'name': 'Abs', 'image': 'assets/images/abs.png'},
+        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
+        {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
+        {'name': 'Legs', 'image': 'assets/images/legs.png'},
+        {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
+        {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
+        {'name': 'Back', 'image': 'assets/images/back.png'},
+      ];
+    } else {
+      categories = [
+        {'name': 'Legs', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Cardio', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Abs', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Shoulders', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Biceps', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Triceps', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Back', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Chest', 'image': 'assets/exercises/image1.jpg'},
+      ];
+    }
+
+    setState(() {});
   }
 
   void _toggleFavorite(String name) async {
@@ -120,29 +157,19 @@ class _AbsExercisesScreenState extends State<AbsExercisesScreen> {
                 );
               },
             ),
-
           ],
         );
       },
     );
   }
 
-  // صورة التمرين الأساسي حسب اسمه (للعرض فقط)
+// صورة التمرين الأساسي حسب اسمه (للعرض فقط) من قائمة categories
   String getWorkoutImage(String name) {
-    switch (name) {
-      case 'Abs':
-        return 'assets/images/abs.png';
-      case 'Chest':
-        return 'assets/images/chest.png';
-      case 'Biceps':
-        return 'assets/images/biceps.png';
-      case 'Cardio':
-        return 'assets/images/cardio.png';
-      case 'Legs':
-        return 'assets/images/legs.png';
-      default:
-        return ''; // مخصص أو غير معروف
-    }
+    final category = categories.firstWhere(
+          (cat) => cat['name'] == name,
+      orElse: () => {'name': '', 'image': ''},
+    );
+    return category['image'] ?? '';
   }
 
   // جمع كل التمارين الأساسية + المخصصة بدون تكرار

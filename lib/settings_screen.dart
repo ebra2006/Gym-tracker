@@ -4,6 +4,7 @@ import 'main.dart'; // للوصول لل-notifiers
 import 'exercises_screen.dart';
 import 'weight_tracker_page.dart';
 import 'start_screen.dart'; // استيراد صفحة StartScreen
+import '../screens/feedback_page.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -156,6 +157,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
               isDarkMode: theme.brightness == Brightness.dark,
             ),
 
+            _buildCustomTile(
+              icon: Icons.feedback_outlined,
+              label: 'إرسال ملاحظات',
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => const FeedbackPage(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                  ),
+                );
+
+                // هنا نتحقق بعد العودة من صفحة FeedbackPage وليس داخلها
+                if (result == true) {
+                  // تأخير بسيط لضمان انتهاء عملية العودة
+                  await Future.delayed(const Duration(milliseconds: 300));
+
+                  // عرض الـ SnackBar في الصفحة الحالية (SettingsScreen)
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.email_outlined, color: Colors.white),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'شكرًا لملاحظاتك القيّمة! لقد تلقيناها بالفعل. سنعمل باستمرار على تحسين التطبيق لتقديم تجربة أفضل تليق بك 💪',
+                              style: const TextStyle(color: Colors.white, fontSize: 15),
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Theme.of(context).primaryColor,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      margin: const EdgeInsets.all(16),
+                      duration: const Duration(hours: 1),
+                      action: SnackBarAction(
+                        label: 'تم',
+                        textColor: Colors.white,
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        },
+                      ),
+                    ),
+                  );
+
+
+                }
+              },
+              primaryColor: primaryColor,
+              textColor: textColor,
+              isDarkMode: theme.brightness == Brightness.dark,
+            ),
+
+
+
 
             const Spacer(),
 
@@ -202,7 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('يجب إعادة تشغيل التطبيق لتطبيق التغييرات'),
-                      duration: Duration(seconds: 3),
+                      duration: Duration(seconds: 5),
                     ),
                   );
                 });

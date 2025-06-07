@@ -253,16 +253,31 @@ class StartScreenState extends State<StartScreen> {
             items: genders
                 .map((g) => DropdownMenuItem<String>(
               value: g,
-              child: Text(g, style: TextStyle(color: textColor)),
+              child: Row(
+                children: [
+                  Icon(
+                    g == 'Male' ? Icons.male : Icons.female,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    g,
+                    style: TextStyle(color: textColor),
+                  ),
+                ],
+              ),
             ))
                 .toList(),
-            validator: (value) => value == null ? 'Please select your gender' : null,
+            validator: (value) =>
+            value == null ? 'Please select your gender' : null,
             onChanged: (value) {
               setState(() {
-                gender = value;
+                gender = value!;
               });
             },
           );
+
+
         case 3:
           return InkWell(
             onTap: () => _showNumberPicker(

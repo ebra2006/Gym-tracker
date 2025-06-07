@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'exercise_screens/chest_exercises_screen.dart';
 import 'exercise_screens/abs_exercises_screen.dart';
 import 'exercise_screens/biceps_exercises_screen.dart';
@@ -18,16 +20,46 @@ class WorkoutCategoriesScreen extends StatefulWidget {
 }
 
 class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
-  final List<Map<String, dynamic>> categories = const [
-    {'name': 'Chest', 'image': 'assets/images/chest.png'},
-    {'name': 'Abs', 'image': 'assets/images/abs.png'},
-    {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
-    {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
-    {'name': 'Legs', 'image': 'assets/images/legs.png'},
-    {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
-    {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
-    {'name': 'Back', 'image': 'assets/images/back.png'},
-  ];
+  String? gender;
+  List<Map<String, dynamic>> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGenderAndSetCategories();
+  }
+
+  Future<void> _loadGenderAndSetCategories() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    gender = prefs.getString('gender') ?? 'Male'; // افتراضيًا ذكر
+
+    if (gender == 'Male') {
+      categories = [
+        {'name': 'Chest', 'image': 'assets/images/chest.png'},
+        {'name': 'Abs', 'image': 'assets/images/abs.png'},
+        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
+        {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
+        {'name': 'Legs', 'image': 'assets/images/legs.png'},
+        {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
+        {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
+        {'name': 'Back', 'image': 'assets/images/back.png'},
+      ];
+    } else {
+      // مثال: عضلات مختلفة أو ترتيب مختلف للإناث
+      categories = [
+        {'name': 'Legs', 'image': 'assets/images/legs.png'},
+        {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
+        {'name': 'Abs', 'image': 'assets/images/abs.png'},
+        {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
+        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
+        {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
+        {'name': 'Back', 'image': 'assets/images/back.png'},
+        {'name': 'Chest', 'image': 'assets/images/chest.png'},
+      ];
+    }
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +113,12 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: GridView.builder(
+        child: categories.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : GridView.builder(
           itemCount: categories.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate:
+          const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 8,
             mainAxisSpacing: 16,
