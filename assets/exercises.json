@@ -1,10 +1,5 @@
 [
-  {
-    "id": 1,
-    "name": "بنش مستوي بار - Barbell Bench Press",
-    "description": "استلقِ على بنش مستقيم وامسك البار بقبضة أوسع من الكتف، انزل البار إلى منتصف الصدر وادفعه لأعلى. يقوّي عضلات الصدر الأمامي والكتف الأمامي والتراي.",
-    "image": "assets/exercises/barbell_bench_press.jpg"
-  },
+
   {
     "id": 2,
     "name": "بنش عالي دمبل - Incline Dumbbell Press",
@@ -13,7 +8,7 @@
   },
   {
     "id": 3,
-    "name": "ضغط كتف (شويدر برس) - Overhead Shoulder Press",
+    "name": " Overhead Shoulder Press",
     "description": "قف أو اجلس وادفع البار لأعلى من مستوى الكتف حتى استقامة الذراع. تمرين رئيسي للكتف الأمامي والجانبي والترايسبس.",
     "image": "assets/exercises/shoulder_press.jpg"
   },
@@ -25,19 +20,19 @@
   },
   {
     "id": 5,
-    "name": "سحب أمامي (لات قدام) - Lat Pulldown",
+    "name": "سحب عالي - Lat Pulldown",
     "description": "اجلس على الجهاز وامسك البار بقبضة واسعة، اسحب البار لأسفل أمام الوجه حتى الذقن ثم ارجع ببطء. تمرين أساسي للظهر العلوي.",
     "image": "assets/exercises/lat_pulldown.jpg"
   },
   {
     "id": 6,
-    "name": "تي بار (رو بار) - Barbell Bent-Over Row",
+    "name": " Barbell Bent-Over Row",
     "description": "قم بالانحناء للأمام واثنِ الركب قليلاً، اسحب البار إلى البطن مع إبقاء الظهر مستقيمًا. يقوي عضلات الظهر الأوسط والسفلي.",
     "image": "assets/exercises/barbell_row.jpg"
   },
   {
     "id": 7,
-    "name": "باي بار - Barbell Curl",
+    "name": "باي بالبار - Barbell Curl",
     "description": "امسك البار بقبضة على عرض الكتف وارفعه لأعلى بتحكم دون تحريك المرفقين. تمرين رئيسي لتضخيم عضلة البايسبس.",
     "image": "assets/exercises/barbell_curl.jpg"
   },
@@ -55,7 +50,7 @@
   },
   {
     "id": 10,
-    "name": "تراي فوق الرأس - Overhead Dumbbell Extension",
+    "name": " Overhead Dumbbell Extension",
     "description": "احمل دامبل واحد بكلتا اليدين فوق الرأس وانزله خلف الرأس، ثم ارفعه لأعلى. يستهدف الرأس الطويل للترايسبس.",
     "image": "assets/exercises/overhead_triceps_extension.jpg"
   }

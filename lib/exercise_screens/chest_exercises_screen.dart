@@ -13,14 +13,11 @@ class ChestExercisesScreen extends StatefulWidget {
 class _ChestExercisesScreenState extends State<ChestExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Abs',
-    'Chest',
-    'Biceps',
-    'Cardio',
-    'Shoulders',
-    'Triceps',
-    'Back',
-    'Legs',
+    'bench bress',
+    'incline bench press',
+    'fly',
+    'incline chest fly',
+    'push-ups',
   ];
 
 // بيانات التمارين
@@ -67,25 +64,18 @@ class _ChestExercisesScreenState extends State<ChestExercisesScreen> {
 
     if (gender == 'Male') {
       categories = [
-        {'name': 'Chest', 'image': 'assets/images/chest.png'},
-        {'name': 'Abs', 'image': 'assets/images/abs.png'},
-        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
-        {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
-        {'name': 'Legs', 'image': 'assets/images/legs.png'},
-        {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
-        {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
-        {'name': 'Back', 'image': 'assets/images/back.png'},
+        {'name': 'bench bress', 'image': 'assets/female/benchbress.jpg'},
+        {'name': 'fly', 'image': 'assets/female/fly.png'},
+        {'name': 'incline bench press', 'image': 'assets/female/bench2.jpg'},
+        {'name': 'incline chest fly', 'image': 'assets/female/inclinechestfly.jpg'},
+        {'name': 'push-ups', 'image': 'assets/female/push-ups.jpg'},
       ];
     } else {
       categories = [
-        {'name': 'Legs', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Cardio', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Abs', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Shoulders', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Biceps', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Triceps', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Back', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Chest', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'bench bress', 'image': 'assets/female/chest.png'},
+        {'name': 'fly', 'image': 'assets/female/flygirl.jpg'},
+        {'name': 'incline chest fly', 'image': 'assets/female/inclinechestflygirl.jpg'},
+        {'name': 'push-ups', 'image': 'assets/female/push-upsgirl.jpg'},
       ];
     }
 

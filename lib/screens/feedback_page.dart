@@ -23,7 +23,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
     final Uri emailUri = Uri(
       scheme: 'mailto',
-      path: 'ebrahimzaid87@gmail.com',
+      path: 'gymtracker849@gmail.com',
       queryParameters: {
         'subject': 'User Feedback',
         'body': message,

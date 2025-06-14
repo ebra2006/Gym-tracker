@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../workout_details_screen.dart';
+import '../../cardio_workout_detailes.dart';
 import 'package:flutter/services.dart';
 
 class CardioExercisesScreen extends StatefulWidget {
@@ -13,14 +13,7 @@ class CardioExercisesScreen extends StatefulWidget {
 class _CardioExercisesScreenState extends State<CardioExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Abs',
-    'Chest',
-    'Biceps',
     'Cardio',
-    'Shoulders',
-    'Triceps',
-    'Back',
-    'Legs',
   ];
 
 // بيانات التمارين
@@ -67,25 +60,11 @@ class _CardioExercisesScreenState extends State<CardioExercisesScreen> {
 
     if (gender == 'Male') {
       categories = [
-        {'name': 'Chest', 'image': 'assets/images/chest.png'},
-        {'name': 'Abs', 'image': 'assets/images/abs.png'},
-        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
         {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
-        {'name': 'Legs', 'image': 'assets/images/legs.png'},
-        {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
-        {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
-        {'name': 'Back', 'image': 'assets/images/back.png'},
       ];
     } else {
       categories = [
-        {'name': 'Legs', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Cardio', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Abs', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Shoulders', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Biceps', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Triceps', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Back', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Chest', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Cardio', 'image': 'assets/female/cardio.png'},
       ];
     }
 
@@ -290,10 +269,9 @@ class _CardioExercisesScreenState extends State<CardioExercisesScreen> {
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         pageBuilder: (context, animation, secondaryAnimation) {
-                          return WorkoutDetailsScreen(categoryName: name);
+                          return CardioWorkoutDetailsScreen(categoryName: name);// تم التعديل هنا
                         },
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
                           return SlideTransition(
                             position: Tween<Offset>(
                               begin: const Offset(1.0, 0.0),
@@ -304,7 +282,8 @@ class _CardioExercisesScreenState extends State<CardioExercisesScreen> {
                         },
                       ),
                     );
-                  },//زر اضافة تمارين مخصصة
+                  },
+//زر اضافة تمارين مخصصة
                   child: Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(

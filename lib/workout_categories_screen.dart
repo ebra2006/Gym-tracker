@@ -47,14 +47,14 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
     } else {
       // مثال: عضلات مختلفة أو ترتيب مختلف للإناث
       categories = [
-        {'name': 'Legs', 'image': 'assets/images/legs.png'},
-        {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
-        {'name': 'Abs', 'image': 'assets/images/abs.png'},
-        {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
-        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
-        {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
-        {'name': 'Back', 'image': 'assets/images/back.png'},
-        {'name': 'Chest', 'image': 'assets/images/chest.png'},
+        {'name': 'Back', 'image': 'assets/female/back.png'},
+        {'name': 'Chest', 'image': 'assets/female/chest.png'},
+        {'name': 'Legs', 'image': 'assets/female/legs.png'},
+        {'name': 'Cardio', 'image': 'assets/female/cardio.png'},
+        {'name': 'Abs', 'image': 'assets/female/abs.png'},
+        {'name': 'Shoulders', 'image': 'assets/female/shoulders.png'},
+        {'name': 'Biceps', 'image': 'assets/female/biceps.png'},
+        {'name': 'Triceps', 'image': 'assets/female/triceps.png'},
       ];
     }
 

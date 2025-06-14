@@ -13,14 +13,7 @@ class ShouldersExercisesScreen extends StatefulWidget {
 class _ShouldersExercisesScreenState extends State<ShouldersExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Abs',
-    'Chest',
-    'Biceps',
-    'Cardio',
     'Shoulders',
-    'Triceps',
-    'Back',
-    'Legs',
   ];
 
 // بيانات التمارين
@@ -67,25 +60,11 @@ class _ShouldersExercisesScreenState extends State<ShouldersExercisesScreen> {
 
     if (gender == 'Male') {
       categories = [
-        {'name': 'Chest', 'image': 'assets/images/chest.png'},
-        {'name': 'Abs', 'image': 'assets/images/abs.png'},
-        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
-        {'name': 'Cardio', 'image': 'assets/images/cardio.png'},
-        {'name': 'Legs', 'image': 'assets/images/legs.png'},
         {'name': 'Shoulders', 'image': 'assets/images/shoulders.png'},
-        {'name': 'Triceps', 'image': 'assets/images/triceps.png'},
-        {'name': 'Back', 'image': 'assets/images/back.png'},
       ];
     } else {
       categories = [
-        {'name': 'Legs', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Cardio', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Abs', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Shoulders', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Biceps', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Triceps', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Back', 'image': 'assets/exercises/image1.jpg'},
-        {'name': 'Chest', 'image': 'assets/exercises/image1.jpg'},
+        {'name': 'Shoulders', 'image': 'assets/female/shoulders.png'},
       ];
     }
 

@@ -113,49 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onChanged: toggleColorTheme,
             ),
             const SizedBox(height: 24),
-
-            // زر مكتبة التمارين محسّن
-            _buildCustomTile(
-              icon: Icons.fitness_center,
-              label: 'مكتبة التمارين',
-              onTap: () => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const ExercisesScreen(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-                ),
-              ),
-              primaryColor: primaryColor,
-              textColor: textColor,
-              isDarkMode: theme.brightness == Brightness.dark,
-            ),
-
-            // زر متتبع الوزن محسّن
-            _buildCustomTile(
-              icon: Icons.monitor_weight,
-              label: 'متتبع الوزن',
-              onTap: () => Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const WeightTrackerPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    final offsetAnimation = Tween<Offset>(
-                      begin: const Offset(0, 1), // تبدأ من الأسفل
-                      end: Offset.zero,
-                    ).animate(CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOutCubic,
-                    ));
-                    return SlideTransition(position: offsetAnimation, child: child);
-                  },
-                ),
-              ),
-              primaryColor: primaryColor,
-              textColor: textColor,
-              isDarkMode: theme.brightness == Brightness.dark,
-            ),
+            
 
             _buildCustomTile(
               icon: Icons.feedback_outlined,

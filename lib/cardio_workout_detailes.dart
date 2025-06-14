@@ -2,26 +2,29 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 import 'workout_summary_screen.dart';
 import 'streak.dart';
 
-class WorkoutDetailsScreen extends StatefulWidget {
+class CardioWorkoutDetailsScreen extends StatefulWidget {
   final String categoryName;
 
-  const WorkoutDetailsScreen({super.key, required this.categoryName});
+  const CardioWorkoutDetailsScreen({super.key, required this.categoryName});
 
   @override
-  _WorkoutDetailsScreenState createState() => _WorkoutDetailsScreenState();
+  _CardioWorkoutDetailsScreenState createState() => _CardioWorkoutDetailsScreenState();
 }
-// ال streal
-class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
-  int reps = 0;
-  double weight = 0.0;
+
+class _CardioWorkoutDetailsScreenState extends State<CardioWorkoutDetailsScreen> {
+  final Stopwatch _stopwatch = Stopwatch();
+  String formattedTime = "00.00.00";
+  Timer? _timer;
+  bool isTimerRunning = false;
   int _groupNumber = 1;
   int tasbihCount = 0;
   String workoutNote = ''; // النوتات
 
-   // 🔹 أضفه هنا
+  Key _resetKey = UniqueKey(); // 🔹 أضفه هنا
   // <-- هنا بالضبط، بعد تعريف كل المتغيرات فوق، ضيف:
   final StreakManager streakManager = StreakManager();
 
@@ -46,8 +49,8 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     String groupName = "Group $_groupNumber";
     Map<String, dynamic> workout = {
       'category': widget.categoryName,
-      'reps': reps,
-      'weight': weight,
+
+      'duration': formattedTime,
       'group': groupName,
       'date': currentDate,
       'tasbih': tasbihCount,
@@ -64,9 +67,9 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     _showSnackBar(currentDate);
 
     setState(() {
-      reps = 0;
-      weight = 0.0;
+      formattedTime = "00.00.00";
       tasbihCount = 0;
+      _stopwatch.reset();
       workoutNote = '';  // ← مسح نص الملاحظة بعد الحفظ
     });
   }
@@ -298,6 +301,48 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
 
 
 
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    if (!isTimerRunning) {
+      _stopwatch.start();
+      isTimerRunning = true;
+      _timer = Timer.periodic(const Duration(milliseconds: 30), (_) {
+        setState(() {
+          int minutes = _stopwatch.elapsed.inMinutes;
+          int seconds = _stopwatch.elapsed.inSeconds % 60;
+          int milliseconds = (_stopwatch.elapsed.inMilliseconds % 1000) ~/ 10;
+
+          formattedTime =
+          "${minutes.toString().padLeft(2, '0')}.${seconds.toString().padLeft(2, '0')}.${milliseconds.toString().padLeft(2, '0')}";
+        });
+      });
+    }
+  }
+
+  void stopTimer() {
+    if (isTimerRunning) {
+      _stopwatch.stop();
+      _timer?.cancel();
+      setState(() {
+        isTimerRunning = false;
+      });
+    }
+  }
+
+  void resetTimer() {
+    _stopwatch.reset();
+    setState(() {
+      formattedTime = "00.00.00";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -398,34 +443,93 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
 
             const SizedBox(height: 25),
 //تبع الاسكرول
-            Row(
-              children: [
-                _buildScrollPickerCard(
-                  label: 'Reps',
-                  initialValue: reps,
-                  minValue: 0,
-                  maxValue: 100,
-                  onSelectedItemChanged: (val) {
-                    setState(() => reps = val);
-                  },
-                  themeColor: theme.primaryColor,
+
+            const SizedBox(height: 20),
+
+            Text(
+              'Timer',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Center(
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(110),
+                  color: theme.colorScheme.surface,
                 ),
-                const SizedBox(width: 12),
-                _buildScrollPickerCard(
-                  label: 'Weight (kg)',
-                  initialValue: (weight ~/ 2.5), // خطوات 2.5
-                  minValue: 0,
-                  maxValue: 200, // 200 * 2.5 = 500 kg
-                  onSelectedItemChanged: (val) {
-                    setState(() => weight = val * 2.5);
+                child: AnalogClock(stopwatch: _stopwatch),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Text(
+              formattedTime,
+              style: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.onSurface,
+                letterSpacing: 3,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(scale: animation, child: child);
                   },
-                  themeColor: theme.primaryColor,
-                  isWeight: true,
+                  child: _buildTimerIconButton(
+                    isTimerRunning ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                        () {
+                      if (isTimerRunning) {
+                        stopTimer();
+                      } else {
+                        startTimer();
+                      }
+                    },
+                    key: ValueKey<bool>(isTimerRunning),
+                    size: 48,
+                    padding: 16,
+                    color: theme.primaryColor,
+                  ),
+                ),
+
+                const SizedBox(width: 24),
+
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(scale: animation, child: child);
+                  },
+                  child: _buildTimerIconButton(
+                    Icons.refresh,
+                        () {
+                      setState(() {
+                        resetTimer();
+                        _resetKey = UniqueKey();
+                      });
+                    },
+                    key: _resetKey,
+                    size: 48,
+                    padding: 16,
+                    color: theme.primaryColor,
+                  ),
                 ),
               ],
             ),
-
-
 
             const SizedBox(height: 30),
 
@@ -492,89 +596,6 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   }
 // تبع الاسكرول
 // تعديل الدالة _buildCounterCard لتكون الأزرار بإطار فقط بدون تعبئة
-  Widget _buildScrollPickerCard({
-    required String label,
-    required int initialValue,
-    required int minValue,
-    required int maxValue,
-    required ValueChanged<int> onSelectedItemChanged,
-    required Color themeColor,
-    bool isWeight = false,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final controller = FixedExtentScrollController(initialItem: initialValue - minValue);
-
-    return Expanded(
-      child: Card(
-        elevation: 6,
-        shadowColor: themeColor.withAlpha((0.3 * 255).round()),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: SizedBox(
-          height: 250,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Column(
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: ListWheelScrollView.useDelegate(
-                    itemExtent: 50,
-                    diameterRatio: 1.2,
-                    perspective: 0.002,
-                    controller: controller,
-                    physics: const FixedExtentScrollPhysics(),
-                    onSelectedItemChanged: onSelectedItemChanged,
-                    childDelegate: ListWheelChildBuilderDelegate(
-                      builder: (context, index) {
-                        final value = minValue + index;
-                        final displayValue = isWeight
-                            ? (value * 2.5).toStringAsFixed(1)
-                            : value.toString();
-
-                        final isSelected = (controller.selectedItem == index);
-
-                        return Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (isSelected)
-                                Icon(Icons.arrow_left, color: themeColor, size: 24),
-                              Text(
-                                displayValue,
-                                style: TextStyle(
-                                  fontSize: 28, //حجم الارقام
-                                  fontWeight: FontWeight.bold,
-                                  color: themeColor,
-                                ),
-                              ),
-                              if (isSelected)
-                                Icon(Icons.arrow_right, color: themeColor, size: 24),
-                            ],
-                          ),
-                        );
-                      },
-                      childCount: maxValue - minValue + 1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-
 
 
   Widget _buildTimerIconButton(
@@ -602,3 +623,158 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
 
 }
 
+class AnalogClock extends StatelessWidget {
+  final Stopwatch stopwatch;
+
+  const AnalogClock({super.key, required this.stopwatch});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return CustomPaint(
+      painter: _ClockPainter(stopwatch.elapsed, theme.brightness, theme.primaryColor),
+      size: const Size(220, 220),
+    );
+  }
+}
+
+
+class _ClockPainter extends CustomPainter {
+  final Duration elapsed;
+  final Brightness brightness;
+  final Color themeColor;
+
+  _ClockPainter(this.elapsed, this.brightness, this.themeColor);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // لون عكس الخلفية
+    final oppositeColor = brightness == Brightness.dark ? Colors.white : Colors.black87;
+
+    // رسم وجه الساعة (خلفية)
+    final facePaint = Paint()
+      ..color = brightness == Brightness.dark ? Colors.black : Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius, facePaint);
+
+    // رسم الفريم الخارجي بخط رفيع وواضح
+    final framePaint = Paint()
+      ..color = oppositeColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawCircle(center, radius - 1.5, framePaint);
+
+    // رسم شرطات الدقائق (كل دقيقة، خط صغير جداً)
+    final tickPaint = Paint()
+      ..color = oppositeColor.withAlpha((0.5 * 255).round())
+      ..strokeWidth = 1;
+
+
+    for (int i = 0; i < 60; i++) {
+      final angle = i * 6 * pi / 180;
+      final tickLength = (i % 5 == 0) ? 8.0 : 4.0;
+      final start = Offset(
+        center.dx + (radius - tickLength - 10) * sin(angle),
+        center.dy - (radius - tickLength - 10) * cos(angle),
+      );
+      final end = Offset(
+        center.dx + (radius - 10) * sin(angle),
+        center.dy - (radius - 10) * cos(angle),
+      );
+      canvas.drawLine(start, end, tickPaint);
+    }
+
+    // رسم أرقام الساعة من 5 إلى 60 كل 5 دقائق
+    final textPainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    final textStyle = TextStyle(
+      color: oppositeColor,
+      fontSize: radius * 0.12,
+      fontWeight: FontWeight.w600,
+    );
+
+    for (int i = 1; i <= 12; i++) {
+      final number = (i * 5).toString();
+      final angle = i * 30 * pi / 180;
+      final position = Offset(
+        center.dx + (radius - 30) * sin(angle),
+        center.dy - (radius - 30) * cos(angle),
+      );
+
+      textPainter.text = TextSpan(text: number, style: textStyle);
+      textPainter.layout();
+
+      final offset = Offset(
+        position.dx - textPainter.width / 2,
+        position.dy - textPainter.height / 2,
+      );
+      textPainter.paint(canvas, offset);
+    }
+
+    // حساب الزوايا للعقارب
+    final seconds = elapsed.inSeconds % 60;
+    final milliseconds = (elapsed.inMilliseconds % 1000) / 1000;
+    final secondsAngle = (seconds + milliseconds) * 6 * pi / 180;
+
+    final minutes = elapsed.inMinutes % 60;
+    final minutesAngle = minutes * 6 * pi / 180;
+
+    final hours = (elapsed.inHours % 12).toDouble();
+    final hoursAngle = (hours * 30 + minutes * 0.5) * pi / 180;
+
+    // رسم عقرب الساعة (عكس لون الخلفية)
+    final hourHandLength = radius * 0.5;
+    final hourHandPaint = Paint()
+      ..color = oppositeColor
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+    final hourHandEnd = Offset(
+      center.dx + hourHandLength * sin(hoursAngle),
+      center.dy - hourHandLength * cos(hoursAngle),
+    );
+    canvas.drawLine(center, hourHandEnd, hourHandPaint);
+
+    // رسم عقرب الدقائق (عكس لون الخلفية)
+    final minuteHandLength = radius * 0.7;
+    final minuteHandPaint = Paint()
+      ..color = oppositeColor
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    final minuteHandEnd = Offset(
+      center.dx + minuteHandLength * sin(minutesAngle),
+      center.dy - minuteHandLength * cos(minutesAngle),
+    );
+    canvas.drawLine(center, minuteHandEnd, minuteHandPaint);
+
+    // رسم عقرب الثواني (لون الثيم)
+    final secondHandLength = radius * 0.85;
+    final secondHandPaint = Paint()
+      ..color = themeColor
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+    final secondHandEnd = Offset(
+      center.dx + secondHandLength * sin(secondsAngle),
+      center.dy - secondHandLength * cos(secondsAngle),
+    );
+    canvas.drawLine(center, secondHandEnd, secondHandPaint);
+
+    // نقطة مركز الساعة
+    final centerDotPaint = Paint()
+      ..color = themeColor
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, 6, centerDotPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ClockPainter oldDelegate) {
+    return oldDelegate.elapsed != elapsed ||
+        oldDelegate.brightness != brightness ||
+        oldDelegate.themeColor != themeColor;
+  }
+}

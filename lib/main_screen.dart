@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
-import 'workout_categories_screen.dart';
-import 'meals_screen.dart';
+import 'exercises_screen.dart';
+import 'weight_tracker_page.dart';
 import 'chatbotscreen.dart';
 import 'calories_screen.dart';
 import 'fun_bot_screen.dart';
@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Placeholder(), // سيتم استبدالهم عند الضغط، عشان نحملهم عند الحاجة فقط
+    const Placeholder(), // سيتم استبدالهم عند الضغط، لتحميلهم عند الحاجة فقط
     const Placeholder(),
     const Placeholder(),
     const Placeholder(),
@@ -34,99 +34,148 @@ class _MainScreenState extends State<MainScreen> {
       return;
     }
 
-    // حدد الصفحة بناءً على الاختيار
     Widget page;
+    PageRouteBuilder pageRoute;
+
     switch (index) {
       case 1:
-        page = const WorkoutCategoriesScreen();
+        page = const ExercisesScreen();
         break;
       case 2:
-        page = const MealsScreen();
+        page = const WeightTrackerPage();
         break;
       case 3:
-        page =  ChatBotScreen();
+        page = ChatBotScreen();
         break;
       case 4:
         page = const CalorieCalculatorScreen();
         break;
       case 5:
-        page =  FunBotScreen();
+        page = FunBotScreen();
         break;
       case 6:
-        page =  GemawyBotScreen();
+        page = GemawyBotScreen();
         break;
       default:
         return;
     }
 
-    // الانتقال مع انيميشن
-    await Navigator.of(context).push(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => page,
-        transitionsBuilder: (_, animation, __, child) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          );
-        },
-      ),
+    pageRoute = PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1.0, 0.0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        );
+      },
     );
+
+    await Navigator.of(context).push(pageRoute);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _screens[_selectedIndex],
       bottomNavigationBar: Container(
-        color: Theme.of(context).colorScheme.surface,
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-
-          children: [
-
-            IconButton(
-              icon: const Icon(Icons.restaurant_menu),
-              color: Colors.green,
-              onPressed: () => _navigateTo(context, 2), // إضافة وجبات
-              tooltip: 'Add Meals',
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.background,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, -2),
             ),
-            IconButton(
-              icon: const Icon(Icons.smart_toy),
-              color: Colors.lightBlue,
-              iconSize: 25.0,
-              onPressed: () => _navigateTo(context, 3), // مساعد ذكي
-              tooltip: 'AI Assistant',
-            ),
-            IconButton(
-              icon: const Icon(Icons.fitness_center),
-              color: Colors.purple,
-              onPressed: () => _navigateTo(context, 1), // تمارين
-              tooltip: 'Workouts',
-            ),
-            IconButton(
-              icon: const Icon(Icons.local_fire_department),
-              color: Colors.orangeAccent,
-              iconSize: 28.0,  // حجم الأيقونة بالبيكسل
-              onPressed: () => _navigateTo(context, 4),
-              tooltip: 'Calories',
-            ),
-
-            IconButton(
-              icon: const Icon(Icons.search),
-              color: Colors.grey,
-              iconSize: 27.0,// يمكن تجربة Colors.cyan أو Colors.indigo إذا كنت تفضل ذلك
-              onPressed: () => _navigateTo(context, 6),
-              tooltip: 'Food Search Bot',
-            ),
-
-
-
           ],
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildNavItem(
+              context,
+              icon: Icons.trending_up_outlined,
+              label: 'Weight',
+              index: 2,
+            ),
+            _buildNavItem(
+              context,
+              icon: Icons.smart_toy_outlined,
+              label: 'Assistant',
+              index: 3,
+            ),
+            _buildNavItem(
+              context,
+              icon: Icons.fitness_center_outlined,
+              label: 'Workouts',
+              index: 1,
+            ),
+            _buildNavItem(
+              context,
+              icon: Icons.local_fire_department_outlined,
+              label: 'Calories',
+              index: 4,
+            ),
+            _buildNavItem(
+              context,
+              icon: Icons.restaurant_menu_outlined,
+              label: 'Food',
+              index: 6,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+      BuildContext context, {
+        required IconData icon,
+        required String label,
+        required int index,
+      }) {
+    final bool isSelected = _selectedIndex == index;
+    final Color activeColor = Colors.deepPurple; // أو اختر blue
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final Color iconColor = isSelected
+        ? activeColor
+        : (isDark ? Colors.grey[400]! : Colors.grey[700]!);
+
+    return Expanded(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(32),
+        onTap: () => _navigateTo(context, index),
+        child: Container(
+          height: 64,
+          alignment: Alignment.center,
+          decoration: isSelected
+              ? BoxDecoration(
+            color: activeColor.withOpacity(0.1),
+            shape: BoxShape.circle,
+          )
+              : null,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: iconColor, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  color: iconColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

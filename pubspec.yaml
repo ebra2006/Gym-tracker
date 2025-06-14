@@ -42,6 +42,7 @@ flutter:
     - assets/exercises.json
     - assets/exercises/
     - assets/images/
+    - assets/female/
 
 flutter_launcher_icons:
   android: true

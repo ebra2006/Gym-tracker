@@ -7,7 +7,8 @@ import 'workout_summary_screen.dart';
 import 'dart:ui';
 import 'dart:async';
 import 'package:flutter/material.dart';
-
+import 'workout_categories_screen.dart';
+import 'meals_screen.dart';
 // أضف استيراد streak.dart (عدل المسار لو ضروري)
 import 'streak.dart';
 
@@ -27,7 +28,7 @@ Timer? _sliderTimer;     // المؤقت الرئيسي للتمرير التل�
 Timer? _resumeTimer;     // مؤقت استئناف التمرير بعد توقف المستخدم
 
 final List<String> imagePaths = [
-  'assets/exercises/image1.jpg',
+  'assets/exercises/image99.jpg',
   'assets/exercises/image2.jpg',
   'assets/exercises/image3.jpg',
   'assets/exercises/image4.jpg',
@@ -47,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late DateTime selectedDay;
   Map<DateTime, List<Map<String, dynamic>>> workoutData = {};
   bool isDarkMode = false;
+
+  bool isExpanded = false; // هنا حالة توسيع التقويم
 
   final StreakManager streakManager = StreakManager();
   int currentStreak = 0;
@@ -211,112 +214,112 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return Scaffold(
 
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),  // الطول الافتراضي
+        preferredSize: const Size.fromHeight(56),
         child: Builder(
           builder: (context) {
             final theme = Theme.of(context);
+            final isDark = theme.brightness == Brightness.dark;
             final titleText = 'Gym Tracker';
 
             return Container(
-              color: Colors.transparent,
-              child: Stack(
-                children: [
-                  SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.menu),
-                            color: theme.iconTheme.color,
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  pageBuilder: (context, animation, secondaryAnimation) =>
-                                      SettingsScreen(),
-                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                    final offsetAnimation = Tween<Offset>(
-                                      begin: const Offset(1.0, 0.0),
-                                      end: Offset.zero,
-                                    ).animate(animation);
-                                    return SlideTransition(
-                                      position: offsetAnimation,
-                                      child: child,
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-
-                          const Spacer(),
-
-                          Text(
-                            titleText,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: theme.primaryColor,
-                            ),
-                          ),
-
-                          const Spacer(),
-
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: InkWell(
-                              onTap: () {
-                                showAnimatedStreakDialog(context, currentStreak);
-                              },
-                              borderRadius: BorderRadius.circular(50),
-                              splashColor: Colors.deepOrangeAccent.withOpacity(0.3),
-                              child: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade600,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.orange.withOpacity(0.3),
-                                      blurRadius: 1,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.local_fire_department,
-                                          color: Colors.white, size: 20),
-                                      const SizedBox(width: 2),
-                                      Text(
-                                        '$currentStreak',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Divider(height: 1, thickness: 1),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
                 ],
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      // أيقونة القائمة (menu)
+                      IconButton(
+                        icon: Icon(
+                          Icons.menu_rounded,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) =>
+                                  SettingsScreen(),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                final offsetAnimation = Tween<Offset>(
+                                  begin: const Offset(1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(animation);
+                                return SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+
+                      // Spacer لتوسيط العنوان
+                      const SizedBox(width: 8),
+
+                      // عنوان التطبيق في المنتصف
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            titleText,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // كبسولة الستريك 🔥
+                      InkWell(
+                        onTap: () {
+                          showAnimatedStreakDialog(context, currentStreak);
+                        },
+                        borderRadius: BorderRadius.circular(20),
+                        splashColor: Colors.orange.withOpacity(0.2),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: currentStreak > 0
+                                ? Colors.orange.withOpacity(0.15)
+                                : Colors.grey.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.local_fire_department_outlined,
+                                size: 20,
+                                color: currentStreak > 0 ? Colors.orange : Colors.grey,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '$currentStreak',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: currentStreak > 0 ? Colors.orange : Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             );
           },
@@ -326,157 +329,472 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
 
       body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: Theme.of(context).brightness == Brightness.dark
+                      ? const LinearGradient(
+                    colors: [Color(0xFF2D2D3A), Color(0xFF3B3B4D)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                      : const LinearGradient(
+                    colors: [Color(0xFFF1F9FF), Color(0xFFE3F2FD)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black.withOpacity(0.25)
+                          : Colors.grey.withOpacity(0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Card(
-                      color: Theme.of(context).cardColor,
-
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
-
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          '👋',
+                          style: TextStyle(fontSize: 28),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Welcome back, $userName',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Inter',
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Age: $age | Weight: ${weight.toStringAsFixed(1)} kg | Height: ${height.toStringAsFixed(1)} cm | Gender: $gender',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Inter',
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey[300]
+                            : Colors.grey[700],
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
+                    ),
+                  ],
+                ),
+              ),
+
+
+
+
+
+              const SizedBox(height: 20),
+                    // ✅ مربعين للتمارين والوجبات
+
+                    Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Welcome back, $userName 👋',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).brightness == Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
+                            // زر إضافة وجبات
+                            Expanded(
+                              child: Card(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                clipBehavior: Clip.antiAlias,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        pageBuilder: (_, __, ___) => const MealsScreen(),
+                                        transitionsBuilder: (_, animation, __, child) {
+                                          return SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: const Offset(1.0, 0.0),
+                                              end: Offset.zero,
+                                            ).animate(animation),
+                                            child: child,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height * 0.3,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage('assets/images/meals.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        // رفع النص قليلاً ليكون على نفس ارتفاع زر التمارين
+                                        Positioned(
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 80, // رفع النص بدل 60
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                            color: Colors.black.withOpacity(0.5),
+                                            child: Text(
+                                              'Add Meals',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 15,
+                                          right: 15,
+                                          child: Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 6,
+                                                  offset: Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '+',
+                                                style: TextStyle(
+                                                  color: Colors.black87,
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                              textAlign: TextAlign.center,
                             ),
 
-                            const SizedBox(height: 8),
-                            Text(
-                              'Age: $age | Weight: ${weight.toStringAsFixed(1)} kg | Height: ${height.toStringAsFixed(1)} cm | Gender: $gender',
-                              style: const TextStyle(fontSize: 14, color: Colors.grey),
-                              textAlign: TextAlign.center,
+                            SizedBox(width: 20),
+
+                            // زر إضافة تمارين
+                            Expanded(
+                              child: Card(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                clipBehavior: Clip.antiAlias,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        pageBuilder: (_, __, ___) => const WorkoutCategoriesScreen(),
+                                        transitionsBuilder: (_, animation, __, child) {
+                                          return SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: const Offset(1.0, 0.0),
+                                              end: Offset.zero,
+                                            ).animate(animation),
+                                            child: child,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height * 0.3,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage('assets/images/cardio.png'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 60,
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                            color: Colors.black.withOpacity(0.5),
+                                            child: Text(
+                                              'Add Workouts',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 15,
+                                          right: 15,
+                                          child: Container(
+                                            width: 50,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black26,
+                                                  blurRadius: 6,
+                                                  offset: Offset(0, 3),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '+',
+                                                style: TextStyle(
+                                                  color: Colors.black87,
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+
+
+
+                    const SizedBox(height: 20), // ← إضافة مسافة قبل السلايدر
 
                     // ⬇️ Image Slider
-                    SizedBox(
-                      height: 350,
+                    // ⬇️ Workout Log و TableCalendar بدون كارد
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       child: Column(
                         children: [
-                          Expanded(
-                            child: PageView.builder(
-                              controller: _pageController,
-                              itemCount: imagePaths.length,
-                              onPageChanged: (index) {
-                                setState(() {
-                                  _currentPage = index;
-                                });
-                                pauseAutoScroll(); // ← وقف التمرير التلقائي مؤقتًا
-                              },
-                              itemBuilder: (context, index) {
-                                return ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: Image.asset(
-                                    imagePaths[index],
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    fit: BoxFit.fill,
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isExpanded = !isExpanded;
+                              });
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24),
+                                gradient: LinearGradient(
+                                  colors: Theme.of(context).brightness == Brightness.dark
+                                      ? [Colors.grey.shade800, Colors.grey.shade900]
+                                      : [Colors.white, Colors.grey.shade100],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                border: Border.all(
+                                  color: Theme.of(context).primaryColor.withOpacity(0.85),
+                                  width: 1.3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.12),
+                                    blurRadius: 14,
+                                    spreadRadius: 2,
+                                    offset: const Offset(0, 8),
                                   ),
-                                );
-                              },
+                                  BoxShadow(
+                                    color: Colors.white.withOpacity(
+                                      Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.6,
+                                    ),
+                                    blurRadius: 8,
+                                    offset: const Offset(-4, -4),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Workout Calendar',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Theme.of(context).textTheme.bodyLarge!.color,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  AnimatedRotation(
+                                    turns: isExpanded ? 0.5 : 0,
+                                    duration: const Duration(milliseconds: 300),
+                                    child: Icon(
+                                      Icons.keyboard_arrow_down,
+                                      size: 28,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(imagePaths.length, (index) {
-                              return AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                margin: const EdgeInsets.symmetric(horizontal: 4),
-                                width: _currentPage == index ? 12 : 8,
-                                height: _currentPage == index ? 12 : 8,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _currentPage == index
-                                      ? Theme.of(context).primaryColor
+                          AnimatedSize(
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOut,
+                            child: ClipRect(
+                              child: Align(
+                                heightFactor: isExpanded ? 1.0 : 0.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 12, bottom: 8),
+                                  child: TableCalendar(
+                                    focusedDay: selectedDay,
+                                    firstDay: DateTime.utc(2025, 1, 1),
+                                    lastDay: DateTime.utc(2035, 12, 31),
+                                    selectedDayPredicate: (day) => isSameDay(selectedDay, day),
+                                    onDaySelected: (day, focusedDay) {
+                                      setState(() {
+                                        selectedDay = day;
+                                      });
+                                      handleDaySelected(day);
+                                    },
+                                    daysOfWeekHeight: 36,
+                                    rowHeight: 56,
+                                    headerStyle: HeaderStyle(
+                                      formatButtonVisible: false,
+                                      titleCentered: true,
+                                      headerPadding: const EdgeInsets.only(top: 0, bottom: 6),
+                                      titleTextStyle: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context).textTheme.bodyLarge!.color,
+                                      ),
+                                    ),
+                                    calendarStyle: CalendarStyle(
+                                      todayDecoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      selectedDecoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      selectedTextStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      defaultTextStyle: TextStyle(
+                                        color: Theme.of(context).textTheme.bodyLarge!.color,
+                                      ),
+                                      weekendTextStyle: TextStyle(
+                                        color: Theme.of(context).colorScheme.secondary,
+                                      ),
+                                    ),
+                                    calendarBuilders: CalendarBuilders(
+                                      defaultBuilder: (context, day, _) {
+                                        final normalizedDay = normalizeDate(day);
+                                        final hasWorkout = workoutData.containsKey(normalizedDay) &&
+                                            workoutData[normalizedDay]!.isNotEmpty;
 
-                                      : Colors.grey.shade400,
+                                        final fireColor = hasWorkout ? Colors.orange : Colors.grey.shade400;
+
+                                        return Center(
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.local_fire_department,
+                                                size: 38,
+                                                color: fireColor,
+                                              ),
+                                              Positioned(
+                                                top: 15,
+                                                child: Transform.translate(
+                                                  offset: const Offset(0, 0),
+                                                  child: Container(
+                                                    width: 19,
+                                                    height: 19,
+                                                    decoration: BoxDecoration(
+                                                      color: fireColor,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      '${day.day}',
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              );
-                            }),
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 30),
 
-                    Card(
-                      color: Theme.of(context).cardColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        side: BorderSide(color: Theme.of(context).primaryColor, width: 2),
 
-                      ),
-                      child: TableCalendar(
-                        focusedDay: selectedDay,
-                        firstDay: DateTime.utc(2025, 1, 1),
-                        lastDay: DateTime.utc(2035, 12, 31),
-                        selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-                        onDaySelected: (day, focusedDay) {
-                          setState(() {
-                            selectedDay = day;
-                          });
-                          handleDaySelected(day);
-                        },
-                        calendarBuilders: CalendarBuilders(
-                          defaultBuilder: (context, day, _) {
-                            final normalizedDay = normalizeDate(day);
-                            final hasWorkout = workoutData.containsKey(normalizedDay) &&
-                                workoutData[normalizedDay]!.isNotEmpty;
-
-                            if (hasWorkout) {
-                              return Center(
-                                child: Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.green,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '${day.day}',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-
-                            return null;
-                          },
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
             ),
+
+
+
 
     );
   }
@@ -540,7 +858,7 @@ class _FireDialogState extends State<_FireDialog> with TickerProviderStateMixin 
     return GestureDetector(
       onTap: () {
         if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(); // ✅ تأكد إن النافذة لسه مفتوحة قبل ما تغلقها
+          Navigator.of(context).pop();
         }
       },
       child: Center(
@@ -550,62 +868,107 @@ class _FireDialogState extends State<_FireDialog> with TickerProviderStateMixin 
             onTap: () {}, // منع الغلق عند الضغط داخل النافذة
             child: Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+              backgroundColor: isDark ? const Color(0xFF1E1E2E) : Colors.white,
+              elevation: 8,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ScaleTransition(
-                      scale: Tween<double>(begin: 1, end: 1.3).animate(
-                        CurvedAnimation(parent: _fireController, curve: Curves.easeInOut),
+                    // كبسولة الشعلة والرقم
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.orange.withOpacity(0.1)
+                            : Colors.orange.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Icon(Icons.local_fire_department, color: Colors.orange.shade600, size: 60),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ScaleTransition(
+                            scale: Tween<double>(begin: 1, end: 1.3).animate(
+                              CurvedAnimation(parent: _fireController, curve: Curves.easeInOut),
+                            ),
+                            child: Icon(
+                              Icons.local_fire_department_outlined,
+                              color: Colors.orange,
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${widget.currentStreak}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 12),
+
+                    const SizedBox(height: 20),
+
+                    // داخل دالة showAnimatedStreakDialog أو داخل الويجت اللي بيعرض الديالوج
+
                     Text(
-                      '🔥 أداء منتظم! ',
+                      widget.currentStreak > 0
+                          ? '🔥 أداء منتظم!'
+                          : 'هل أنت مستعد؟ 🌟 لنبدأ الرحلة معًا! ابدأ التمرين من "Add Workouts" وزد استريكك يومًا بعد يوم 💪🔥',
+                      // نص بديل لما يكون الاستريك صفر أو أقل
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
+
+                    const SizedBox(height: 12),
+
                     Text(
-
-                      '${widget.currentStreak} يوم وانت منتظم ، دي مش بس عادة، ده أسلوب حياة جديد. 💪\n'
-                          'كل يوم بتحافظ عليه بيقربك أكتر لهدفك، خلّيها عادة ما تتخلاش عنها، خليك قدها! 🚀',
-
-
-
+                      widget.currentStreak > 0
+                          ? '🔥 سلسلة نجاح مستمرة!\nتمرين اليوم رقم ${widget.currentStreak} على التوالي!\nأنت بطل بحق 💪 استمر في التألق!'
+                          : 'لا يوجد سجل حتى الآن.\nيمكنك البدء في التمرن الآن! 💪',
                       style: TextStyle(
                         fontSize: 16,
                         color: isDark ? Colors.white70 : Colors.black87,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange.shade700,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+
+                    const SizedBox(height: 24),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: isDark
+                            ? Colors.orange.withOpacity(0.1)
+                            : Colors.orange.withOpacity(0.15),
+                        foregroundColor: Colors.orange.shade400, // لون واضح في الداكن
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(20),
                         ),
+                        elevation: 1,
                       ),
                       onPressed: () {
                         if (Navigator.of(context).canPop()) {
-                          Navigator.of(context).pop(); // ✅ نفس الحماية عند الضغط على الزر
+                          Navigator.of(context).pop();
                         }
                       },
                       child: const Text(
                         'استمرار 🚀',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.orange, // لون واضح حتى في الدارك مود
+                        ),
                       ),
                     ),
+
+
                   ],
                 ),
               ),
@@ -615,7 +978,4 @@ class _FireDialogState extends State<_FireDialog> with TickerProviderStateMixin 
       ),
     );
   }
-
 }
-
-

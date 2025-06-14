@@ -49,6 +49,34 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
   Widget animatedWorkoutItem(Map<String, dynamic> workout, int index) {
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
+    final isCardio = workout['group']?.toString().toLowerCase() == 'cardio';
+
+    bool hasValue(dynamic val) {
+      if (val == null) return false;
+      if (val is String && val.trim().isEmpty) return false;
+      return true;
+    }
+
+    // اجمع الحقول المراد عرضها حسب النوع:
+    List<Widget> infoFields = [];
+
+    if (isCardio) {
+      if (hasValue(workout['duration'])) {
+        infoFields.add(_buildInfoField('Time', workout['duration'].toString()));
+      }
+    } else {
+      if (hasValue(workout['reps'])) {
+        infoFields.add(_buildInfoField('Reps', workout['reps'].toString()));
+      }
+      if (hasValue(workout['weight'])) {
+        if (infoFields.isNotEmpty) infoFields.add(_verticalDivider());
+        infoFields.add(_buildInfoField('Weight', '${workout['weight']} kg'));
+      }
+      if (hasValue(workout['duration'])) {
+        if (infoFields.isNotEmpty) infoFields.add(_verticalDivider());
+        infoFields.add(_buildInfoField('Time', workout['duration'].toString()));
+      }
+    }
 
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 300 + index * 70),
@@ -82,16 +110,9 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  _buildInfoField('Reps', workout['reps'].toString()),
-                  _verticalDivider(),
-                  _buildInfoField('Weight', '${workout['weight']} kg'),
-                  _verticalDivider(),
-                  _buildInfoField('Time', workout['duration'].toString()),
-                ],
-              ),
-              if (workout.containsKey('note') &&
+              Row(children: infoFields),
+              if (!isCardio &&
+                  workout.containsKey('note') &&
                   workout['note'] != null &&
                   workout['note'].toString().trim().isNotEmpty)
                 Padding(
@@ -111,6 +132,7 @@ class _WorkoutSummaryScreenState extends State<WorkoutSummaryScreen> {
       ),
     );
   }
+
 
 
   Widget _buildInfoField(String label, String value) {
