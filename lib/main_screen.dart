@@ -6,6 +6,11 @@ import 'chatbotscreen.dart';
 import 'calories_screen.dart';
 import 'fun_bot_screen.dart';
 import 'gemawybotscreen.dart';
+import 'contacts_page.dart'; // ← صفحة الدردشة الجديدة
+import 'UsernameSetupPage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'home_page.dart';
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -19,7 +24,8 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Placeholder(), // سيتم استبدالهم عند الضغط، لتحميلهم عند الحاجة فقط
+    const Placeholder(),
+    const Placeholder(),
     const Placeholder(),
     const Placeholder(),
     const Placeholder(),
@@ -56,6 +62,20 @@ class _MainScreenState extends State<MainScreen> {
       case 6:
         page = GemawyBotScreen();
         break;
+      case 7:
+        final prefs = await SharedPreferences.getInstance();
+        final username = prefs.getString('username');
+        final password = prefs.getString('password');
+
+        // لو أحدهم ناقص، نرجع للتسجيل
+        page = (username == null || password == null)
+            ? const UsernameSetupPage()
+            : const HomePage();
+
+        break;
+
+
+
       default:
         return;
     }
@@ -128,6 +148,12 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Food',
               index: 6,
             ),
+            _buildNavItem(
+              context,
+              icon: Icons.message_outlined, // ← أيقونة الرسائل
+              label: 'Chat', // ← الاسم الجديد
+              index: 7,
+            ),
           ],
         ),
       ),
@@ -141,7 +167,7 @@ class _MainScreenState extends State<MainScreen> {
         required int index,
       }) {
     final bool isSelected = _selectedIndex == index;
-    final Color activeColor = Colors.deepPurple; // أو اختر blue
+    final Color activeColor = Colors.deepPurple;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final Color iconColor = isSelected

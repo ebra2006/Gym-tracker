@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _loadInitialData() async {
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
-    final expiryDate = DateTime(2025, 6, 25); // 📆 تاريخ انتهاء النسخة
+    final expiryDate = DateTime(2025, 10, 1); // 📆 تاريخ انتهاء النسخة
 
     setState(() {
       isTrialExpired = now.isAfter(expiryDate); // ✅ تحقق من صلاحية النسخة
