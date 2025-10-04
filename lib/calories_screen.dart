@@ -16,8 +16,8 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
   int? age;
   double? weight;
   double? height;
-  String activityLevel = 'متوسط';
-  String goal = 'الحفاظ';
+  String activityLevel = 'Moderate';
+  String goal = 'Maintain';
   String result = '';
   String suggestion = '';
 
@@ -33,15 +33,28 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
   final FocusNode _weightFocusNode = FocusNode();
   final FocusNode _heightFocusNode = FocusNode();
 
-  final List<String> activityLevels = ['خامل', 'خفيف', 'متوسط', 'عالي', 'مكثف', 'نشاط رياضي يومي'];
-  final List<String> goals = ['خسارة الوزن', 'الحفاظ', 'زيادة العضلات', 'خسارة الدهون', 'تحسين اللياقة'];
+  final List<String> activityLevels = [
+    'Sedentary',
+    'Light',
+    'Moderate',
+    'High',
+    'Intense',
+    'Daily Exercise'
+  ];
+  final List<String> goals = [
+    'Weight Loss',
+    'Maintain',
+    'Muscle Gain',
+    'Fat Loss',
+    'Fitness Improvement'
+  ];
 
   List<Map<String, dynamic>> savedResults = [];
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, textDirection: TextDirection.rtl),
+        content: Text(message, textDirection: TextDirection.ltr),
         duration: const Duration(seconds: 3),
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
@@ -51,15 +64,15 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
 
   bool validateInputs() {
     if (age == null || age! < 10 || age! > 100) {
-      _showSnackBar('⚠️ العمر يجب أن يكون بين 10 و 100 سنة');
+      _showSnackBar('⚠️ Age must be between 10 and 100 years');
       return false;
     }
     if (weight == null || weight! < 30 || weight! > 200) {
-      _showSnackBar('⚠️ الوزن يجب أن يكون بين 30 و 200 كجم');
+      _showSnackBar('⚠️ Weight must be between 30 and 200 kg');
       return false;
     }
     if (height == null || height! < 100 || height! > 250) {
-      _showSnackBar('⚠️ الطول يجب أن يكون بين 100 و 250 سم');
+      _showSnackBar('⚠️ Height must be between 100 and 250 cm');
       return false;
     }
     return true;
@@ -128,6 +141,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
   double? calculateCalories() {
     if (age == null || weight == null || height == null) return null;
 
+    // 1. Calculate BMR
     double bmr = 0;
     if (gender == 'Male') {
       bmr = 10 * weight! + 6.25 * height! - 5 * age! + 5;
@@ -135,45 +149,79 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
       bmr = 10 * weight! + 6.25 * height! - 5 * age! - 161;
     }
 
+    // 2. Activity Factor
     double activityFactor = {
-      'خامل': 1.2,
-      'خفيف': 1.375,
-      'متوسط': 1.55,
-      'عالي': 1.725,
-      'مكثف': 1.9,
-      'نشاط رياضي يومي': 2.0,
+      'Sedentary': 1.2,
+      'Light': 1.375,
+      'Moderate': 1.55,
+      'High': 1.725,
+      'Intense': 1.9,
+      'Daily Exercise': 1.9,
     }[activityLevel] ?? 1.55;
 
+    // 3. Maintenance Calories
     double maintenanceCalories = bmr * activityFactor;
 
+    // 4. Adjust based on Goal
     switch (goal) {
-      case 'خسارة الوزن':
-        suggestion = '📉 اعتمد على نمط حياة نشط ونظام غذائي غني بالبروتين والخضروات للحفاظ على الشبع والتحكم بالوزن.';
+      case 'Weight Loss':
+        maintenanceCalories -= 500;
+        suggestion =
+        '📉 Focus on an active lifestyle and a protein-rich diet with vegetables to stay full and manage weight.';
         break;
-      case 'زيادة العضلات':
-        suggestion = '💪 ركّز على تمارين المقاومة المنتظمة ونوم كافٍ لدعم بناء العضلات وتحسين الأداء.';
+      case 'Muscle Gain':
+        maintenanceCalories += 400;
+        suggestion =
+        '💪 Focus on regular resistance training and sufficient sleep to support muscle growth and performance.';
         break;
-      case 'خسارة الدهون':
-        suggestion = '🔥 اجمع بين التمارين القلبية والقوة، وتناول وجبات متوازنة لدعم صحة الجسم وتقليل الدهون بشكل طبيعي.';
+      case 'Fat Loss':
+        maintenanceCalories -= 250;
+        suggestion =
+        '🔥 Combine cardio and strength training, and eat balanced meals to naturally support fat loss.';
         break;
-      case 'تحسين اللياقة':
-        suggestion = '🏃‍♂️ دمج تمارين متنوعة، كالتمارين الهوائية والمقاومة، يعزز القدرة البدنية ويقوّي عضلة القلب.';
+      case 'Fitness Improvement':
+        maintenanceCalories += 100;
+        suggestion =
+        '🏃‍♂️ Combine aerobic and resistance training to enhance physical fitness and strengthen your heart.';
         break;
-      default:
-        suggestion = '✅ حافظ على نمط حياة متوازن يجمع بين التغذية السليمة والنشاط البدني الدوري لدعم صحتك العامة.';
+      default: // Maintain
+        suggestion =
+        '✅ Maintain a balanced lifestyle combining healthy nutrition and regular physical activity to support overall health.';
         break;
     }
 
+    if (gender == 'Male' && maintenanceCalories < 1500) maintenanceCalories = 1500;
+    if (gender == 'Female' && maintenanceCalories < 1200) maintenanceCalories = 1200;
 
     return maintenanceCalories;
   }
 
   Map<String, List<String>> dietTips = {
-    'خسارة الوزن': ['تناول البروتينات بكثرة.', 'قلل من السكريات والدهون المشبعة.', 'اشرب الماء بكثرة.'],
-    'زيادة العضلات': ['زيادة البروتينات والكربوهيدرات.', 'كرر التمرين مع زيادة الأحمال تدريجياً.', 'تناول وجبات خفيفة بين الوجبات الرئيسية.'],
-    'خسارة الدهون': ['مارس تمارين القلب بانتظام.', 'قلل السعرات الحرارية بشكل تدريجي.', 'اشرب شاي الأعشاب لتحفيز الحرق.'],
-    'تحسين اللياقة': ['مارس التمارين الهوائية.', 'تناول أطعمة متوازنة غنية بالفيتامينات.', 'احصل على قسط كافٍ من النوم.'],
-    'الحفاظ': ['حافظ على نمط حياة صحي ومتوازن.', 'مارس الرياضة بانتظام.', 'راقب وزنك بشكل دوري.'],
+    'Weight Loss': [
+      'Eat plenty of protein.',
+      'Reduce sugars and saturated fats.',
+      'Drink plenty of water.'
+    ],
+    'Muscle Gain': [
+      'Increase protein and carbohydrates.',
+      'Progressively increase workout loads.',
+      'Have snacks between main meals.'
+    ],
+    'Fat Loss': [
+      'Do cardio regularly.',
+      'Reduce calories gradually.',
+      'Drink herbal tea to boost fat burning.'
+    ],
+    'Fitness Improvement': [
+      'Do aerobic exercises.',
+      'Eat balanced, vitamin-rich foods.',
+      'Get enough sleep.'
+    ],
+    'Maintain': [
+      'Maintain a healthy, balanced lifestyle.',
+      'Exercise regularly.',
+      'Monitor your weight regularly.'
+    ],
   };
 
   Widget _buildCard(Widget child) {
@@ -215,11 +263,11 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                       ),
                       const Spacer(),
                       Text(
-                        'Calories calcolator',
+                        'Calories Calculator',
                         style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).primaryColor
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).primaryColor
                         ),
                       ),
                       const Spacer(flex: 2),
@@ -249,12 +297,12 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("الجنس", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text("Gender", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   _buildCard(Row(
                     children: [
                       Expanded(
                         child: RadioListTile<String>(
-                          title: const Text('ذكر'),
+                          title: const Text('Male'),
                           value: 'Male',
                           groupValue: gender,
                           onChanged: (val) => setState(() => gender = val!),
@@ -263,7 +311,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                       ),
                       Expanded(
                         child: RadioListTile<String>(
-                          title: const Text('أنثى'),
+                          title: const Text('Female'),
                           value: 'Female',
                           groupValue: gender,
                           onChanged: (val) => setState(() => gender = val!),
@@ -276,7 +324,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                     controller: ageController,
                     focusNode: _ageFocusNode,
                     decoration: const InputDecoration(
-                      labelText: 'العمر',
+                      labelText: 'Age',
                       border: InputBorder.none,
                     ),
                     keyboardType: TextInputType.number,
@@ -286,7 +334,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                     controller: weightController,
                     focusNode: _weightFocusNode,
                     decoration: const InputDecoration(
-                      labelText: 'الوزن (كجم)',
+                      labelText: 'Weight (kg)',
                       border: InputBorder.none,
                     ),
                     keyboardType: TextInputType.number,
@@ -296,14 +344,14 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                     controller: heightController,
                     focusNode: _heightFocusNode,
                     decoration: const InputDecoration(
-                      labelText: 'الطول (سم)',
+                      labelText: 'Height (cm)',
                       border: InputBorder.none,
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (val) => setState(() => height = double.tryParse(val)),
                   )),
                   const SizedBox(height: 10),
-                  const Text("مستوى النشاط البدني", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text("Activity Level", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   _buildCard(DropdownButton<String>(
                     value: activityLevel,
                     isExpanded: true,
@@ -317,7 +365,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
 
                   )),
                   const SizedBox(height: 10),
-                  const Text("الهدف", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text("Goal", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   _buildCard(DropdownButton<String>(
                     value: goal,
                     isExpanded: true,
@@ -346,13 +394,13 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                         if (calories != null) {
                           saveResult(calories);
                           setState(() {
-                            result = '🍽️ السعرات اليومية اللازمة: ${calories.toStringAsFixed(0)} سعرة حرارية في اليوم';
+                            result = '🍽️ Daily required calories: ${calories.toStringAsFixed(0)} kcal/day';
                           });
                         }
                       },
                       icon: Icon(Icons.calculate, color: Theme.of(context).primaryColor),
                       label: Text(
-                        "احسب السعرات",
+                        "Calculate Calories",
                         style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
                       ),
                     ),
@@ -365,7 +413,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                     if (suggestion.isNotEmpty)
                       Text(suggestion, style: TextStyle(fontSize: 16, color: textColor.withOpacity(0.7))),
                     const SizedBox(height: 10),
-                    const Text("نصائح غذائية:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const Text("Diet Tips:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     ...?dietTips[goal]?.map((tip) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text("• $tip", style: TextStyle(fontSize: 16, color: textColor.withOpacity(0.8))),
@@ -380,8 +428,8 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                           age = null;
                           weight = null;
                           height = null;
-                          activityLevel = 'متوسط';
-                          goal = 'الحفاظ';
+                          activityLevel = 'Moderate';
+                          goal = 'Maintain';
                           result = '';
                           suggestion = '';
                           ageController.clear();
@@ -393,7 +441,7 @@ class _CalorieCalculatorScreenState extends State<CalorieCalculatorScreen> with 
                           _heightFocusNode.unfocus();
                         });
                       },
-                      child: const Text("🔄 إعادة تعيين", style: TextStyle(fontSize: 16)),
+                      child: const Text("🔄 Reset", style: TextStyle(fontSize: 16)),
                     ),
                   ),
                 ],

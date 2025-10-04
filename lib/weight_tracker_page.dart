@@ -23,7 +23,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('عندك أكثر من 1000 إدخال، يُنصح بحذف أو تصدير بعض البيانات.'),
+              content: Text('You have more than 1000 entries, it’s recommended to delete or export some data.'),
               backgroundColor: Colors.orange,
               duration: Duration(seconds: 5),
             ),
@@ -66,7 +66,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
     if (weight == null || weight < 30 || weight > 300) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('الرجاء إدخال وزن صحيح بين 30 و 300 كجم'),
+          content: Text('Please enter a valid weight between 30 and 300 kg'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -85,7 +85,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
     if (alreadyAdded) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('غير مسموح إلا بقيمة واحدة فقط يوميًا'),
+          content: Text('Only one entry per day is allowed'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -190,7 +190,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                         ),
                         const Spacer(),
                         Text(
-                          'متتبع الوزن',
+                          'Weight Tracker',
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
@@ -200,7 +200,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                         const Spacer(flex: 2),
                         if (!isEmpty)
                           IconButton(
-                            tooltip: 'مسح السجل',
+                            tooltip: 'Clear History',
                             icon: Icon(Icons.delete_outline, color: Theme.of(context).iconTheme.color),
                             onPressed: () {
                               showDialog(
@@ -208,24 +208,24 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                                 builder: (ctx) => AlertDialog(
                                   backgroundColor: isDark ? Colors.grey[900] : Colors.white,
                                   title: Text(
-                                    'تأكيد الحذف',
+                                    'Confirm Deletion',
                                     style: TextStyle(color: isDark ? Colors.white : Colors.black),
                                   ),
                                   content: Text(
-                                    'هل أنت متأكد من مسح كل بيانات الوزن؟',
+                                    'Are you sure you want to delete all weight data?',
                                     style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
                                   ),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.of(ctx).pop(),
-                                      child: Text('إلغاء', style: TextStyle(color: isDark ? Colors.grey : Colors.grey)),
+                                      child: Text('Cancel', style: TextStyle(color: isDark ? Colors.grey : Colors.grey)),
                                     ),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(ctx).pop();
                                         _clearAllEntries();
                                       },
-                                      child: const Text('مسح', style: TextStyle(color: Colors.red)),
+                                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
                                     ),
                                   ],
                                 ),
@@ -272,7 +272,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                     color: isDark ? Colors.white : Colors.black,
                   ),
                   decoration: InputDecoration(
-                    labelText: 'أدخل وزنك الحالي (كجم)',
+                    labelText: 'Enter your current weight (kg)',
                     labelStyle: TextStyle(color: isDark ? Colors.white : colorScheme.primary),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     focusedBorder: OutlineInputBorder(
@@ -300,7 +300,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               ),
               child: Text(
-                'حفظ الوزن',
+                'Save Weight',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -325,7 +325,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'لا توجد بيانات متاحة',
+                      'No data available',
                       style: TextStyle(
                         color: isDark ? Colors.grey[400] : Colors.grey,
                         fontSize: 16,
@@ -361,7 +361,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                             final entry = _results[index];
                             final dateStr = formatDate(entry['date']);
                             return LineTooltipItem(
-                              'الوزن: ${spot.y.toStringAsFixed(1)} كجم\nالتاريخ: $dateStr',
+                              'Weight: ${spot.y.toStringAsFixed(1)} kg\nDate: $dateStr',
                               const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -369,6 +369,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                             );
                           }).toList();
                         },
+
 
                       ),
                       handleBuiltInTouches: true,
@@ -463,10 +464,10 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       title: Text(
-                        "الوزن: $weight كجم",
+                        "Weight: $weight kg",
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      subtitle: Text("التاريخ: $formattedDate"),
+                      subtitle: Text("Date: $formattedDate"),
                       trailing: IconButton(
                         icon: Icon(
                           Icons.delete_outline,
@@ -474,7 +475,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                               ? Colors.white
                               : Colors.red,
                         ),
-                        tooltip: 'مسح هذا الإدخال',
+                        tooltip: 'Delete this entry',
                         onPressed: () {
                           final isDark = Theme.of(context).brightness == Brightness.dark;
                           showDialog(
@@ -482,18 +483,18 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                             builder: (ctx) => AlertDialog(
                               backgroundColor: isDark ? Colors.grey[900] : Colors.white,
                               title: Text(
-                                'تأكيد الحذف',
+                                'Confirm Deletion',
                                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
                               ),
                               content: Text(
-                                'هل أنت متأكد من حذف هذا الإدخال؟',
+                                'Are you sure you want to delete this entry?',
                                 style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.of(ctx).pop(),
                                   child: Text(
-                                    'إلغاء',
+                                    'Cancel',
                                     style: TextStyle(color: isDark ? Colors.grey : Colors.grey),
                                   ),
                                 ),
@@ -505,7 +506,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                                     _saveData();
                                     Navigator.of(ctx).pop();
                                   },
-                                  child: const Text('مسح', style: TextStyle(color: Colors.red)),
+                                  child: const Text('Delete', style: TextStyle(color: Colors.red)),
                                 ),
                               ],
                             ),
@@ -514,6 +515,7 @@ class _WeightTrackerPageState extends State<WeightTrackerPage> {
                       ),
                     ),
                   );
+
 
 
                 },

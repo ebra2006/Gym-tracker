@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'workout_summary_screen.dart';
 import 'streak.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WorkoutDetailsScreen extends StatefulWidget {
   final String categoryName;
@@ -301,103 +302,76 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      //الاب باااااااااار
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: Builder(
-          builder: (context) {
-            final theme = Theme.of(context);
-            final titleText = '${widget.categoryName} Workout';
-
-            return Container(
-              color: Colors.transparent,
-              child: Stack(
+        preferredSize: Size.fromHeight(80.h),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.2),
+                blurRadius: 6.r,
+                offset: Offset(0, 2.h),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Row(
                 children: [
-                  SafeArea(
+                  InkWell(
+                    borderRadius: BorderRadius.circular(100.r),
+                    onTap: () => Navigator.of(context).pop(),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: () => Navigator.of(context).pop(),
-                            color: theme.iconTheme.color,
-                          ),
-                          const Spacer(),
-
-                          // هنا نستخدم شرط بسيط
-                          if (widget.categoryName.length <= 13)
-                            Text(
-                              '${widget.categoryName} Workout',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: theme.primaryColor,
-                              ),
-                            )
-                          else
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${widget.categoryName.substring(0, 13)}…',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    color: theme.primaryColor,
-                                  ),
-                                ),
-
-                                Text(
-                                  'Workout',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    color: theme.primaryColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                          const Spacer(flex: 2),
-                        ],
+                      padding: EdgeInsets.all(8.w),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: isDark ? Colors.white : Colors.black87,
+                        size: 24.sp,
                       ),
-
                     ),
                   ),
-                  const Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Divider(height: 1, thickness: 1),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      '${widget.categoryName} Workout',
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
+                  SizedBox(width: 48.w), // للتوازن
                 ],
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
-
-
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               'Enter the details for ${widget.categoryName}',
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 30.sp,
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
+            SizedBox(height: 25.h),
 
-            const SizedBox(height: 25),
-//تبع الاسكرول
             Row(
               children: [
                 _buildScrollPickerCard(
@@ -410,12 +384,12 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                   },
                   themeColor: theme.primaryColor,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w),
                 _buildScrollPickerCard(
                   label: 'Weight (kg)',
-                  initialValue: (weight ~/ 2.5), // خطوات 2.5
+                  initialValue: (weight ~/ 2.5),
                   minValue: 0,
-                  maxValue: 200, // 200 * 2.5 = 500 kg
+                  maxValue: 200,
                   onSelectedItemChanged: (val) {
                     setState(() => weight = val * 2.5);
                   },
@@ -425,71 +399,79 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               ],
             ),
 
-
-
-            const SizedBox(height: 30),
+            SizedBox(height: 30.h),
 
             Text(
               'Tasbeeh counter',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
               ),
             ),
-
-            const SizedBox(height: 30),
+            SizedBox(height: 30.h),
 
             OutlinedButton(
               onPressed: () => setState(() => tasbihCount++),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: theme.primaryColor, width: 2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70)),
-                minimumSize: const Size(70, 70),
+                side: BorderSide(color: theme.primaryColor, width: 2.w),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70.r)),
+                minimumSize: Size(70.w, 70.w),
                 padding: EdgeInsets.zero,
               ),
               child: Text(
                 '$tasbihCount',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: theme.primaryColor),
+                style: TextStyle(
+                  fontSize: 40.sp,
+                  fontWeight: FontWeight.bold,
+                  color: theme.primaryColor,
+                ),
               ),
             ),
+            SizedBox(height: 25.h),
 
-            const SizedBox(height: 25),
-//زر النوتات 846456456456
             OutlinedButton(
               onPressed: () => _showNoteBottomSheet(context),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: theme.primaryColor, width: 2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                side: BorderSide(color: theme.primaryColor, width: 2.w),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
               ),
               child: Text(
                 'Add Note',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primaryColor),
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: theme.primaryColor,
+                ),
               ),
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: 15.h),
 
             OutlinedButton(
               onPressed: () {
-                _saveWorkout(); // دالتك الأصلية لحفظ التمرين
+                _saveWorkout();
               },
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: theme.primaryColor, width: 2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                side: BorderSide(color: theme.primaryColor, width: 2.w),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
               ),
               child: Text(
                 'Save Workout',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primaryColor),
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: theme.primaryColor,
+                ),
               ),
             ),
-
           ],
         ),
       ),
     );
   }
+
 // تبع الاسكرول
 // تعديل الدالة _buildCounterCard لتكون الأزرار بإطار فقط بدون تعبئة
   Widget _buildScrollPickerCard({

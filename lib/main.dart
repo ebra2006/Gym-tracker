@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // ✅ ScreenUtil Import
 import 'start_screen.dart';
 import 'main_screen.dart';
 import 'screens/feedback_page.dart';
@@ -17,7 +18,14 @@ void main() async {
   themeModeNotifier.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
   isPurpleThemeNotifier.value = isPurpleTheme;
 
-  runApp(const MyApp());
+  runApp(
+    ScreenUtilInit( // ✅ ScreenUtilInit هنا
+      designSize: Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) => const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -40,10 +48,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> _loadInitialData() async {
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
-    final expiryDate = DateTime(2025, 10, 1); // 📆 تاريخ انتهاء النسخة
+    final expiryDate = DateTime(2028, 10, 1);
 
     setState(() {
-      isTrialExpired = now.isAfter(expiryDate); // ✅ تحقق من صلاحية النسخة
+      isTrialExpired = now.isAfter(expiryDate);
       isFirstTime = prefs.getBool('isFirstTime') ?? true;
     });
   }
@@ -108,6 +116,13 @@ class _MyAppState extends State<MyApp> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
+          builder: (context, widget) {
+            final mediaQuery = MediaQuery.of(context);
+            return MediaQuery(
+              data: mediaQuery.copyWith(textScaleFactor: 1.0), // ✅ هنا تثبيت تأثير إعدادات تكبير الخط
+              child: widget!,
+            );
+          },
           home: homeScreen,
         );
       },

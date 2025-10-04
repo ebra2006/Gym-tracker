@@ -375,55 +375,69 @@ class StartScreenState extends State<StartScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
-        child: Container(
-          color: Colors.transparent,
-          child: Stack(
-            children: [
-              SafeArea(
+        child: Builder(
+          builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+
+            return Container(
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       if (currentStep > 0)
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          color: theme.iconTheme.color,
-                          onPressed: () {
+                        InkWell(
+                          borderRadius: BorderRadius.circular(100),
+                          onTap: () {
                             setState(() {
                               currentStep--;
                             });
                           },
-                          padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black87),
+                          ),
                         ),
                       if (currentStep == 0)
-                        const SizedBox(width: 48), // عشان يحل مكان زر الرجوع
-                      const Spacer(),
-                      Text(
-                        'Welcome to Gym Tracker',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: primaryColor,
+                        const SizedBox(width: 48), // يحجز مكان زر الرجوع لما مش ظاهر
+
+                      const SizedBox(width: 8),
+
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'Welcome to Gym Tracker',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
                       ),
-                      const Spacer(flex: 2),
+
+                      const SizedBox(width: 48), // يحافظ على التوازن
                     ],
                   ),
                 ),
               ),
-              const Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Divider(height: 1, thickness: 1),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
-      body: Padding(
+    body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
