@@ -15,8 +15,7 @@ class WorkoutCategoriesScreen extends StatefulWidget {
   const WorkoutCategoriesScreen({super.key});
 
   @override
-  _WorkoutCategoriesScreenState createState() =>
-      _WorkoutCategoriesScreenState();
+  _WorkoutCategoriesScreenState createState() => _WorkoutCategoriesScreenState();
 }
 
 class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
@@ -31,7 +30,7 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
 
   Future<void> _loadGenderAndSetCategories() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    gender = prefs.getString('gender') ?? 'Male'; // افتراضيًا ذكر
+    gender = prefs.getString('gender') ?? 'Male';
 
     if (gender == 'Male') {
       categories = [
@@ -45,7 +44,6 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
         {'name': 'Back', 'image': 'assets/images/back.png'},
       ];
     } else {
-      // مثال: عضلات مختلفة أو ترتيب مختلف للإناث
       categories = [
         {'name': 'Back', 'image': 'assets/female/back.png'},
         {'name': 'Chest', 'image': 'assets/female/chest.png'},
@@ -75,10 +73,8 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
             children: [
               SafeArea(
                 child: Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.arrow_back),
@@ -117,8 +113,7 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
             ? const Center(child: CircularProgressIndicator())
             : GridView.builder(
           itemCount: categories.length,
-          gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 8,
             mainAxisSpacing: 16,
@@ -126,6 +121,7 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
           ),
           itemBuilder: (context, index) {
             final category = categories[index];
+
             return Material(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(16),
@@ -162,29 +158,39 @@ class _WorkoutCategoriesScreenState extends State<WorkoutCategoriesScreen> {
                       targetPage = const BackExercisesScreen();
                       break;
                     default:
-                      targetPage =
-                          WorkoutDetailsScreen(categoryName: category['name']);
+                      targetPage = WorkoutDetailsScreen(
+                        categoryName: category['name'],
+                      );
                   }
 
                   Navigator.of(context).push(
                     PageRouteBuilder(
-                      pageBuilder:
-                          (context, animation, secondaryAnimation) =>
-                      targetPage,
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(1.0, 0.0),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
+                      transitionDuration: const Duration(milliseconds: 220),
+                      reverseTransitionDuration: const Duration(milliseconds: 180),
+                      pageBuilder: (_, __, ___) => targetPage,
+                      transitionsBuilder: (_, animation, __, child) {
+                        final curved = CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeOutQuart,
+                          reverseCurve: Curves.easeInQuart,
+                        );
+
+                        final slide = Tween<Offset>(
+                          begin: const Offset(0.08, 0.0),
+                          end: Offset.zero,
+                        ).animate(curved);
+
+                        return FadeTransition(
+                          opacity: curved,
+                          child: SlideTransition(
+                            position: slide,
+                            child: child,
+                          ),
                         );
                       },
                     ),
                   );
                 },
-                onLongPress: () {}, // لتفعيل تأثير الضغط
                 child: Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(

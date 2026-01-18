@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _loadInitialData() async {
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
-    final expiryDate = DateTime(2028, 10, 1);
+    final expiryDate = DateTime(2027, 11, 15);
 
     setState(() {
       isTrialExpired = now.isAfter(expiryDate);

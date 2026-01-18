@@ -25,6 +25,7 @@ dependencies:
   syncfusion_flutter_gauges: ^24.1.41
   google_nav_bar: ^5.0.6
   fl_chart: ^0.68.0
+
   http: ^1.1.0   # تم التحديث هنا
   flutter_tts: ^3.5.2
   string_similarity: ^2.0.0

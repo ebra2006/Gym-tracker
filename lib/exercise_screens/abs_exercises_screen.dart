@@ -269,16 +269,34 @@ class _AbsExercisesScreenState extends State<AbsExercisesScreen> {
                         pageBuilder: (context, animation, secondaryAnimation) {
                           return WorkoutDetailsScreen(categoryName: name);
                         },
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
+
+
+
+//الترانزيشنز
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          final curved = CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutQuart,
+                            reverseCurve: Curves.easeInQuart,
+                          );
+
+                          final slide = Tween<Offset>(
+                            begin: const Offset(0.08, 0.0),
+                            end: Offset.zero,
+                          ).animate(curved);
+
+                          return FadeTransition(
+                            opacity: curved,
+                            child: SlideTransition(
+                              position: slide,
+                              child: child,
+                            ),
                           );
                         },
+
+
+
+
                       ),
                     );
                   },//زر اضافة تمارين مخصصة

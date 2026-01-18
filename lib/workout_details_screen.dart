@@ -26,6 +26,39 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   // <-- هنا بالضبط، بعد تعريف كل المتغيرات فوق، ضيف:
   final StreakManager streakManager = StreakManager();
 
+// هنا الفاليديشن بتاع الوزن والعدات
+  bool _validateInputs() {
+    if (reps <= 0) {
+      _showError("Please select reps");
+      return false;
+    }
+    if (weight <= 0) {
+      _showError("Please select weight");
+      return false;
+    }
+    return true;
+  }
+
+  void _showError(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          msg,
+          style: const TextStyle(
+            color: Colors.black, //  أسود دايمًا
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: Colors.yellow,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+
+
+
+
   Future<void> _saveWorkout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('workout_saved_today', true);
@@ -63,11 +96,8 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     });
 
     _showSnackBar(currentDate);
-
+//مسح قيم العدات والوزن بعد المستخدم ما يخلص
     setState(() {
-      reps = 0;
-      weight = 0.0;
-      tasbihCount = 0;
       workoutNote = '';  // ← مسح نص الملاحظة بعد الحفظ
     });
   }
@@ -357,7 +387,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 50.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -399,36 +429,8 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               ],
             ),
 
-            SizedBox(height: 30.h),
 
-            Text(
-              'Tasbeeh counter',
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
             SizedBox(height: 30.h),
-
-            OutlinedButton(
-              onPressed: () => setState(() => tasbihCount++),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: theme.primaryColor, width: 2.w),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70.r)),
-                minimumSize: Size(70.w, 70.w),
-                padding: EdgeInsets.zero,
-              ),
-              child: Text(
-                '$tasbihCount',
-                style: TextStyle(
-                  fontSize: 40.sp,
-                  fontWeight: FontWeight.bold,
-                  color: theme.primaryColor,
-                ),
-              ),
-            ),
-            SizedBox(height: 25.h),
 
             OutlinedButton(
               onPressed: () => _showNoteBottomSheet(context),
@@ -446,12 +448,16 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 15.h),
+            SizedBox(height: 20.h),
 
+// هنا الفاليديشن الل بيتاكد من الوزن والعدات
             OutlinedButton(
               onPressed: () {
-                _saveWorkout();
+                if (_validateInputs()) {
+                  _saveWorkout();
+                }
               },
+
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: theme.primaryColor, width: 2.w),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
@@ -486,14 +492,14 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black87;
     final controller = FixedExtentScrollController(initialItem: initialValue - minValue);
-
+//طول العمودين
     return Expanded(
       child: Card(
         elevation: 6,
         shadowColor: themeColor.withAlpha((0.3 * 255).round()),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: SizedBox(
-          height: 250,
+          height: 300,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
@@ -555,8 +561,6 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
       ),
     );
   }
-
-
 
 
   Widget _buildTimerIconButton(

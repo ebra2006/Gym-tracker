@@ -29,6 +29,32 @@ class _CardioWorkoutDetailsScreenState extends State<CardioWorkoutDetailsScreen>
   final StreakManager streakManager = StreakManager();
 
   Future<void> _saveWorkout() async {
+
+
+
+// ✅ فاليديشن: الوقت لازم يكون أكبر من صفر
+    if (_stopwatch.elapsedMilliseconds == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            '⚠️ Please start the timer before saving',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          backgroundColor: Colors.yellow,
+          duration: const Duration(seconds: 2),
+        ),
+
+
+      );
+      return; // ⛔ وقف الحفظ
+    }
+
+
+
+
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('workout_saved_today', true);
 
@@ -531,32 +557,7 @@ class _CardioWorkoutDetailsScreenState extends State<CardioWorkoutDetailsScreen>
               ],
             ),
 
-            const SizedBox(height: 30),
 
-            Text(
-              'Tasbeeh counter',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            OutlinedButton(
-              onPressed: () => setState(() => tasbihCount++),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: theme.primaryColor, width: 2),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70)),
-                minimumSize: const Size(70, 70),
-                padding: EdgeInsets.zero,
-              ),
-              child: Text(
-                '$tasbihCount',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: theme.primaryColor),
-              ),
-            ),
 
             const SizedBox(height: 25),
 //زر النوتات 846456456456

@@ -271,15 +271,30 @@ class _CardioExercisesScreenState extends State<CardioExercisesScreen> {
                         pageBuilder: (context, animation, secondaryAnimation) {
                           return CardioWorkoutDetailsScreen(categoryName: name);// تم التعديل هنا
                         },
+
+                        //الترانزيشنز
                         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1.0, 0.0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
+                          final curved = CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutQuart,
+                            reverseCurve: Curves.easeInQuart,
+                          );
+
+                          final slide = Tween<Offset>(
+                            begin: const Offset(0.08, 0.0),
+                            end: Offset.zero,
+                          ).animate(curved);
+
+                          return FadeTransition(
+                            opacity: curved,
+                            child: SlideTransition(
+                              position: slide,
+                              child: child,
+                            ),
                           );
                         },
+
+
                       ),
                     );
                   },

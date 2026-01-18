@@ -5,9 +5,12 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'home_screen.dart';
 import 'exercises_screen.dart';
 import 'weight_tracker_page.dart';
-import 'chatbotscreen.dart';
-import 'calories_screen.dart';
-import 'gemawybotscreen.dart';
+// 🔒 Disabled in v1 – will be enabled in next update
+
+// import 'chatbotscreen.dart';
+// import 'calories_screen.dart';
+// import 'gemawybotscreen.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MainScreen extends StatefulWidget {
@@ -24,10 +27,10 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   List<TargetFocus> targets = [];
 
   final GlobalKey _weightKey = GlobalKey();
-  final GlobalKey _assistantKey = GlobalKey();
+  //final GlobalKey _assistantKey = GlobalKey();
   final GlobalKey _workoutsKey = GlobalKey();
-  final GlobalKey _caloriesKey = GlobalKey();
-  final GlobalKey _foodKey = GlobalKey();
+  // final GlobalKey _caloriesKey = GlobalKey();
+// final GlobalKey _foodKey = GlobalKey();
 
   late AnimationController _pulseController;
 
@@ -74,9 +77,9 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     targets = [
       _buildTarget(_workoutsKey, "اهلا بيك في برنامج Gym tracker ! دي صفحة التمارين هتلاقي فيها صور للتمرين وشرح لكل تمرينة بيعلمك تلعب التمرين صح "),
       _buildTarget(_weightKey, "دي صفحة متابعة الوزن برسم بياني عشان تتابع تقدمك في خسارة الوزن او زيادته ."),
-      _buildTarget(_assistantKey, "دي صفحة المساعد الذكي بيقدملك نصايح وخطط تمرينية ."),
-      _buildTarget(_caloriesKey, "دي صفحة حساب السعرات اللازمة ليك ."),
-      _buildTarget(_foodKey, "ده بوت بحث عن الاكلات تنويه بسيط البوت مش مخصص للشات وطريقة استعماله هو كتابة اسم الاكلة فقط ثم سيظهرلك بياناتها ."),
+      //_buildTarget(_assistantKey, "دي صفحة المساعد الذكي بيقدملك نصايح وخطط تمرينية ."),
+      //_buildTarget(_caloriesKey, "دي صفحة حساب السعرات اللازمة ليك ."),
+      //_buildTarget(_foodKey, "ده بوت بحث عن الاكلات تنويه بسيط البوت مش مخصص للشات وطريقة استعماله هو كتابة اسم الاكلة فقط ثم سيظهرلك بياناتها ."),
     ];
   }
 
@@ -166,11 +169,11 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         return 1;
       case 1:
         return 2;
-      case 2:
+      //case 2:
         return 3;
-      case 3:
+      //case 3:
         return 4;
-      case 4:
+      //case 4:
         return 6;
       default:
         return 0;
@@ -187,14 +190,14 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       case 2:
         page = const WeightTrackerPage();
         break;
-      case 3:
-        page = ChatBotScreen();
+     // case 3:
+       // page = ChatBotScreen();
         break;
-      case 4:
-        page = const CalorieCalculatorScreen();
+     // case 4:
+       // page = const CalorieCalculatorScreen();
         break;
-      case 6:
-        page = GemawyBotScreen();
+     // case 6:
+       // page = GemawyBotScreen();
         break;
       default:
         return;
@@ -228,10 +231,10 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildNavItem(context, icon: Icons.trending_up_outlined, label: 'Weight', index: 2, key: _weightKey),
-            _buildNavItem(context, icon: Icons.smart_toy_outlined, label: 'Assistant', index: 3, key: _assistantKey),
+          //  _buildNavItem(context, icon: Icons.smart_toy_outlined, label: 'Assistant', index: 3, key: _assistantKey),
             _buildNavItem(context, icon: Icons.fitness_center_outlined, label: 'Workouts', index: 1, key: _workoutsKey),
-            _buildNavItem(context, icon: Icons.local_fire_department_outlined, label: 'Calories', index: 4, key: _caloriesKey),
-            _buildNavItem(context, icon: Icons.restaurant_menu_outlined, label: 'Food', index: 6, key: _foodKey),
+           // _buildNavItem(context, icon: Icons.local_fire_department_outlined, label: 'Calories', index: 4, key: _caloriesKey),
+          //  _buildNavItem(context, icon: Icons.restaurant_menu_outlined, label: 'Food', index: 6, key: _foodKey),
           ],
         ),
       ),

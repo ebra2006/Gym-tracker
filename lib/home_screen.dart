@@ -249,21 +249,36 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           color: isDark ? Colors.white : Colors.black87,
                         ),
                         onPressed: () {
+//افيكت اانتقال
                           Navigator.of(context).push(
                             PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => SettingsScreen(),
+                              transitionDuration: const Duration(milliseconds: 220),
+                              reverseTransitionDuration: const Duration(milliseconds: 180),
+                              pageBuilder: (_, __, ___) => SettingsScreen(),
                               transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                final offsetAnimation = Tween<Offset>(
-                                  begin: const Offset(1.0, 0.0),
+                                final curved = CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeOutQuart, // أنعم من cubic
+                                  reverseCurve: Curves.easeInQuart,
+                                );
+
+                                final slide = Tween<Offset>(
+                                  begin: const Offset(0.08, 0.0), // 👈 مسافة صغيرة = نعومة
                                   end: Offset.zero,
-                                ).animate(animation);
-                                return SlideTransition(
-                                  position: offsetAnimation,
-                                  child: child,
+                                ).animate(curved);
+
+                                return FadeTransition(
+                                  opacity: curved,
+                                  child: SlideTransition(
+                                    position: slide,
+                                    child: child,
+                                  ),
                                 );
                               },
                             ),
                           );
+
+
                         },
                       ),
 
@@ -397,9 +412,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
               ),
                SizedBox(height: 20.h),
+
+
+
+              //هنا الكونتينرز
               Center(
                 child: Container(
-                  width: 0.9.sw, // بدل MediaQuery.of(context).size.width * 0.9
+                  width: 0.9.sw,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -415,22 +434,35 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             onTap: () async {
                               await Navigator.of(context).push(
                                 PageRouteBuilder(
+                                  transitionDuration: const Duration(milliseconds: 220),
+                                  reverseTransitionDuration: const Duration(milliseconds: 180),
                                   pageBuilder: (_, __, ___) => const MealsScreen(),
                                   transitionsBuilder: (_, animation, __, child) {
-                                    return SlideTransition(
-                                      position: Tween<Offset>(
-                                        begin: const Offset(1.0, 0.0),
-                                        end: Offset.zero,
-                                      ).animate(animation),
-                                      child: child,
+                                    final curved = CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeOutQuart,
+                                      reverseCurve: Curves.easeInQuart,
+                                    );
+
+                                    final slide = Tween<Offset>(
+                                      begin: const Offset(0.08, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(curved);
+
+                                    return FadeTransition(
+                                      opacity: curved,
+                                      child: SlideTransition(
+                                        position: slide,
+                                        child: child,
+                                      ),
                                     );
                                   },
                                 ),
                               );
                             },
                             child: Container(
-                              height: 0.3.sh, // بدل MediaQuery.of(context).size.height * 0.3
-                              decoration: BoxDecoration(
+                              height: 0.3.sh,
+                              decoration: const BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage('assets/images/meals.png'),
                                   fit: BoxFit.cover,
@@ -492,6 +524,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         ),
                       ),
                       SizedBox(width: 20.w),
+
                       // Workouts Button
                       Expanded(
                         child: Card(
@@ -504,14 +537,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             onTap: () async {
                               await Navigator.of(context).push(
                                 PageRouteBuilder(
+                                  transitionDuration: const Duration(milliseconds: 220),
+                                  reverseTransitionDuration: const Duration(milliseconds: 180),
                                   pageBuilder: (_, __, ___) => const WorkoutCategoriesScreen(),
                                   transitionsBuilder: (_, animation, __, child) {
-                                    return SlideTransition(
-                                      position: Tween<Offset>(
-                                        begin: const Offset(1.0, 0.0),
-                                        end: Offset.zero,
-                                      ).animate(animation),
-                                      child: child,
+                                    final curved = CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeOutQuart,
+                                      reverseCurve: Curves.easeInQuart,
+                                    );
+
+                                    final slide = Tween<Offset>(
+                                      begin: const Offset(0.08, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(curved);
+
+                                    return FadeTransition(
+                                      opacity: curved,
+                                      child: SlideTransition(
+                                        position: slide,
+                                        child: child,
+                                      ),
                                     );
                                   },
                                 ),
@@ -519,7 +565,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             },
                             child: Container(
                               height: MediaQuery.of(context).size.height * 0.3,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage('assets/images/cardio.png'),
                                   fit: BoxFit.cover,
@@ -532,7 +578,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                     right: 0,
                                     bottom: 60.h,
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                                       color: Colors.black.withOpacity(0.5),
                                       child: Text(
                                         'Add Workouts',
@@ -584,8 +630,67 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                 ),
               ),
-               SizedBox(height: 20.h),
-                    // ⬇️ Image Slider
+              SizedBox(height: 20.h),
+
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h), // أصغر
+                child: Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.r), // أصغر
+                    side: BorderSide(
+                      color: Theme.of(context).primaryColor.withOpacity(0.85),
+                      width: 1.1.w,
+                    ),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(18.r),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("New features coming soon 🚀")),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h), // أصغر
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18.r),
+                        gradient: LinearGradient(
+                          colors: Theme.of(context).brightness == Brightness.dark
+                              ? [Colors.grey.shade800, Colors.grey.shade900] // نفس الكاليندر
+                              : [Colors.white, Colors.grey.shade100],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.auto_awesome,
+                            color: Theme.of(context).primaryColor,
+                            size: 20.sp, // أصغر
+                          ),
+                          SizedBox(width: 6.w),
+                          Text(
+                            'New features coming soon',
+                            style: TextStyle(
+                              fontSize: 15.sp, // أصغر
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).textTheme.bodyLarge!.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+
+
+
+              // ⬇️ Image Slider
                     // ⬇️ Workout Log و TableCalendar بدون كارد
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
