@@ -160,19 +160,22 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                         showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
-                            title: const Text('تحذير'),
-                            content: const Text('يرجى إدخال حروف أو أرقام فقط بدون رموز غريبة.'),
+                            title: const Text('Warning'),
+                            content: const Text(
+                              'Please enter only letters and numbers without special characters.',
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(ctx).pop(); // إغلاق التنبيه
+                                  Navigator.of(ctx).pop();
                                 },
-                                child: const Text('حسناً'),
+                                child: const Text('OK'),
                               ),
                             ],
                           ),
                         );
-                      } else {
+                      }
+                      else {
                         Navigator.pop(context, noteText); // ترجع الملاحظة فقط لو صحيحة
                       }
                     },
@@ -279,7 +282,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                       const SizedBox(height: 16),
 
                       Text(
-                        '🚀 ممتاز!',
+                        '🚀 Awesome!',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -290,7 +293,9 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                       const SizedBox(height: 12),
 
                       Text(
-                        '🔥 سلسلة نجاح مستمرة!\nتمرين اليوم رقم ${streakManager.currentStreak} على التوالي!\nأنت بطل بحق 💪 استمر في التألق!',
+                        '🔥 Keep the streak going!\n'
+                            'Workout day ${streakManager.currentStreak} in a row!\n'
+                            'You’re doing great 💪 Stay strong!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
@@ -302,12 +307,13 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                       ),
 
 
+
                       const SizedBox(height: 24),
 
                       ElevatedButton.icon(
                         onPressed: () => Navigator.of(context).pop(),
                         icon: const Icon(Icons.check_circle),
-                        label: const Text('استمر'),
+                        label: const Text('Keep going'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,

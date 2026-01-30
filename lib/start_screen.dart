@@ -136,33 +136,35 @@ class StartScreenState extends State<StartScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "مرحبًا بك في Gym Tracker!",
+                  "Welcome to Gym Tracker!",
                   style: theme.textTheme.headlineSmall
                       ?.copyWith(color: primaryColor, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
                 Text(
-      "تطبيق Gym Tracker هو رفيقك المثالي لمتابعة التمارين وتحسين أدائك الرياضي. "
-      "يُمكّنك من تسجيل عدد العدات، الأوزان المستخدمة، وإدارة الوقت باستخدام مؤقت متكامل. "
-      "يحتوي التطبيق على سبحة إلكترونية تساعدك خلال فترات الراحة، كما يتيح لك إضافة تمارين مخصصة تناسب احتياجاتك. "
-      "يمكنك تتبع تقدمك اليومي على مدار السنة بسهولة من خلال عرض أداء كل يوم. "
-      "بالإضافة إلى ذلك، يوفر التطبيق إمكانية تسجيل وجباتك ومعلوماتها الغذائية، مع حاسبة سعرات حرارية مدمجة تساعدك على تنظيم نظامك الغذائي بشكل احترافي. "
-      "يتميز التطبيق أيضاً بشخصية ذكية افتراضية اسمها 'Gymee' تقدم لك نصائح غذائية وتمرينات مخصصة، مع خطط جاهزة لتعزيز تجربتك. "
-      "كما يمكن لـ Gymee مساعدتك في معرفة معلومات غذائية عن الأطعمة، وهذه الميزة تحت التطوير وسيتم إضافة المزيد من الأطعمة باستمرار. "
-      "يوفر التطبيق خاصية متتبع الوزن، حيث يمكنك إدخال وزنك يومياً ورؤية تطورك عبر رسم بياني مخصص، مع الحفاظ على إدخال وزن واحد فقط يومياً. "
-      "تحتوي المكتبة الرياضية على تمارين متنوعة تحت التطوير وسيتم تحديثها دورياً لإضافة المزيد من التمارين. "
-      "يدعم التطبيق الوضعين الداكن والفاتح، مع إمكانية تغيير الثيم بين اللون الأزرق والبنفسجي لتعزيز تجربة المستخدم والتخصيص. "
-      "كما يحتوي على معرض صور لشخصية Gymee التي تشرح ميزات التطبيق بطريقة تفاعلية، بالإضافة إلى ميزة الاستريك التي تحافظ على حماسك وتشجعك على الالتزام بالتمرين يومياً. "
-      "\n\n"
-      "يُشار إلى أن التطبيق لا يزال في مرحلة التطوير، وسيتم إضافة تحسينات وتحديثات مستمرة بناءً على آرائكم واقتراحاتكم. "
-      "هدفنا هو تقديم أفضل تجربة لمساعدتك على تحقيق أهدافك الصحية والرياضية.\n\n"
-      "التطبيق يعمل بالكامل بدون اتصال بالإنترنت، لذا لا يتم إرسال أو تخزين أي بيانات شخصية على خوادم خارجية. "
-      "المعلومات التي تطلبها مثل الاسم، العمر، الطول، والوزن تُستخدم فقط بشكل محلي داخل التطبيق لتحسين تجربتك وتقديم نصائح مخصصة لك، مع ضمان احترام كامل لخصوصيتك.",
+                  "Gym Tracker is your ultimate companion for tracking workouts and improving your fitness performance.\n\n"
+                      "You can log your reps and used weights easily to keep track of your progress.\n\n"
+                      "Track your daily progress throughout the year with a detailed day-by-day performance view. "
+                      "You can also log your meals and nutritional information using the built-in calorie calculator to organize your diet professionally.\n\n"
+                      "The app includes a weight tracker that lets you log your weight daily and view your progress on a dedicated chart, "
+                      "with a limit of one entry per day to keep your data accurate. "
+                      "The workout library is continuously expanding and will be updated regularly with more exercises.\n\n"
+                      "Gym Tracker supports both dark and light modes to provide a comfortable experience in any environment. "
+                      "A streak system is also included to keep you motivated and encourage daily consistency.\n\n"
+                      "Please note that the app is still under development. Continuous improvements and new features will be added based on your feedback and suggestions. "
+                      "Our goal is to provide the best possible experience to help you achieve your health and fitness goals.\n\n"
+                      "The app works completely offline, and no personal data is sent to or stored on external servers. "
+                      "All information such as your name, age, height, and weight is used only locally on your device to improve your experience and provide personalized recommendations, "
+                      "with full respect for your privacy.",
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontSize: 18,
+                    height: 1.6, // مسافة مريحة بين السطور
+                  ),
+                  textAlign: TextAlign.start, // مهم جداً لتفادي المسافات الغريبة
+                )
 
-      style: theme.textTheme.bodyLarge?.copyWith(fontSize: 18),
-                  textAlign: TextAlign.justify,
-                ),
+
               ],
             ),
           );
@@ -214,7 +216,7 @@ class StartScreenState extends State<StartScreen> {
                     return 'Please enter your name';
                   }
                   if (hasRepeatedChar(value, 5)) {
-                    return 'الرجاء كتابة اسم صحيح لتجربة مستخدم افضل';
+                    return 'Please enter a valid name for a better user experience';
                   }
                   return null;
                 },
@@ -230,11 +232,11 @@ class StartScreenState extends State<StartScreen> {
                       text: clean,
                       selection: TextSelection.collapsed(offset: clean.length),
                     );
-                    showSnackBarWithDelay('الرجاء كتابة اسم صحيح بدون رموز او ارقام لتجربة مستخدم افضل');
+                    showSnackBarWithDelay('Please enter a valid name without symbols or numbers for a better experience');
                   }
 
                   if (hasRepeatedChar(clean, 5)) {
-                    showSnackBarWithDelay('الرجاء كتابة الاسم صحيح لتجربة مستخدم افضل و عدم تكرار نفس الحرف 5 مرات أو أكثر');
+                    showSnackBarWithDelay('Please enter a valid name and avoid repeating the same character 5 times or more');
                   }
                 },
                 onSaved: (value) => name = value,
@@ -310,7 +312,7 @@ class StartScreenState extends State<StartScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                    "تنويه التطبيق غير مدعوم حاليا لاجهزة التابلت انتظره في تحديث قادم",
+                "Note: The app is currently not optimized for tablets. Tablet support will be available in a future update.",
                 style: TextStyle(
                   fontSize: 12,
                   color: textColor.withOpacity(0.7),

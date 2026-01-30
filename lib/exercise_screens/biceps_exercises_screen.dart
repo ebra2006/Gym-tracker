@@ -390,7 +390,7 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
                                 ),
                               ),
                               Tooltip(
-                                message: 'المفضلة',
+                                message: 'Favorite',
                                 waitDuration: const Duration(milliseconds: 200),
                                 showDuration: const Duration(milliseconds: 400),
 

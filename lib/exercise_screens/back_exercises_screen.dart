@@ -401,7 +401,7 @@ class _BackExercisesScreenState extends State<BackExercisesScreen> {
                                 ),
                               ),
                               Tooltip(
-                                message: 'المفضلة',
+                                message: 'Favorite',
                                 waitDuration: const Duration(milliseconds: 200),
                                 showDuration: const Duration(milliseconds: 400),
 

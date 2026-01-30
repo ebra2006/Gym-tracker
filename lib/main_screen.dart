@@ -8,7 +8,7 @@ import 'weight_tracker_page.dart';
 // 🔒 Disabled in v1 – will be enabled in next update
 
 // import 'chatbotscreen.dart';
-// import 'calories_screen.dart';
+ import 'calories_screen.dart';
 // import 'gemawybotscreen.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,7 +29,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   final GlobalKey _weightKey = GlobalKey();
   //final GlobalKey _assistantKey = GlobalKey();
   final GlobalKey _workoutsKey = GlobalKey();
-  // final GlobalKey _caloriesKey = GlobalKey();
+   final GlobalKey _caloriesKey = GlobalKey();
 // final GlobalKey _foodKey = GlobalKey();
 
   late AnimationController _pulseController;
@@ -75,10 +75,10 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   void _initTargets() {
     targets = [
-      _buildTarget(_workoutsKey, "اهلا بيك في برنامج Gym tracker ! دي صفحة التمارين هتلاقي فيها صور للتمرين وشرح لكل تمرينة بيعلمك تلعب التمرين صح "),
-      _buildTarget(_weightKey, "دي صفحة متابعة الوزن برسم بياني عشان تتابع تقدمك في خسارة الوزن او زيادته ."),
+      _buildTarget(_workoutsKey, "Welcome to Gym Tracker! This is the workouts page where you’ll find exercise images and detailed instructions to help you perform each exercise correctly. The workout library is still being expanded, and more exercises will be added in the next update. "),
+      _buildTarget(_weightKey, "This is the weight tracking page, where you can follow your progress with a chart to monitor weight loss or gain."),
       //_buildTarget(_assistantKey, "دي صفحة المساعد الذكي بيقدملك نصايح وخطط تمرينية ."),
-      //_buildTarget(_caloriesKey, "دي صفحة حساب السعرات اللازمة ليك ."),
+      _buildTarget(_caloriesKey, "This is the calorie calculator page, where you can calculate your daily calorie needs."),
       //_buildTarget(_foodKey, "ده بوت بحث عن الاكلات تنويه بسيط البوت مش مخصص للشات وطريقة استعماله هو كتابة اسم الاكلة فقط ثم سيظهرلك بياناتها ."),
     ];
   }
@@ -98,7 +98,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
               children: [
                  SizedBox(height: 50.h),
                  Text(
-                  "أهلا بك في برنامج Gym Tracker",
+                   "Welcome to Gym Tracker",
                   style: TextStyle(color: Colors.white, fontSize: 20.sp, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -173,7 +173,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         return 3;
       //case 3:
         return 4;
-      //case 4:
+      case 4:
         return 6;
       default:
         return 0;
@@ -193,8 +193,8 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
      // case 3:
        // page = ChatBotScreen();
         break;
-     // case 4:
-       // page = const CalorieCalculatorScreen();
+      case 4:
+        page = const CalorieCalculatorScreen();
         break;
      // case 6:
        // page = GemawyBotScreen();
@@ -233,7 +233,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
             _buildNavItem(context, icon: Icons.trending_up_outlined, label: 'Weight', index: 2, key: _weightKey),
           //  _buildNavItem(context, icon: Icons.smart_toy_outlined, label: 'Assistant', index: 3, key: _assistantKey),
             _buildNavItem(context, icon: Icons.fitness_center_outlined, label: 'Workouts', index: 1, key: _workoutsKey),
-           // _buildNavItem(context, icon: Icons.local_fire_department_outlined, label: 'Calories', index: 4, key: _caloriesKey),
+            _buildNavItem(context, icon: Icons.local_fire_department_outlined, label: 'Calories', index: 4, key: _caloriesKey),
           //  _buildNavItem(context, icon: Icons.restaurant_menu_outlined, label: 'Food', index: 6, key: _foodKey),
           ],
         ),

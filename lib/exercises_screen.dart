@@ -92,11 +92,13 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       Share.share(
-                        'جرب برنامج Gym Tracker مع هذا التمرين: ${exercise['name']}\n${exercise['description']}\n\nحمل التطبيق الآن وابدأ رحلتك في اللياقة!',
+                        'I’m training with Gym Tracker 💪\n'
+                            'Exercise: ${exercise['name']}\n\n'
+                            'Download the app and start your fitness journey today!',
                       );
                     },
                     icon: const Icon(Icons.share),
-                    label: const Text('مشاركة التمرين'),
+                    label: const Text('Share Exercise'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.secondary,
                       foregroundColor: Colors.white,
@@ -219,7 +221,7 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () => _showExerciseDetails(context, exercise),
                       icon: const Icon(Icons.info_outline),
-                      label: const Text('عرض التفاصيل'),
+                      label: const Text('View Details'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.primaryColor,
                         foregroundColor: Colors.white,

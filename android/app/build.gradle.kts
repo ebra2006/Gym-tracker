@@ -1,19 +1,21 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
-    namespace = "com.example.untitled"
+    namespace = "com.ibrahim.gt1_2006"   // نفس القيمة زي الـ Manifest
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973" // ← تم تحديد إصدار NDK المطلوب
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-        isCoreLibraryDesugaringEnabled = true // ← تم تفعيل desugaring
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -21,16 +23,32 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.untitled"
+        applicationId = "com.ibrahim.gt1_2006"   // نفس القيمة زي الـ Manifest
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // تحميل بيانات التوقيع من ملف key.properties
+    val keystoreProperties = Properties().apply {
+        load(FileInputStream(rootProject.file("key.properties")))
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
@@ -40,6 +58,5 @@ flutter {
 }
 
 dependencies {
-    // ✅ النسخة المحدثة لحل مشكلة desugar_jdk_libs مع flutter_local_notifications
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }

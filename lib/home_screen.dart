@@ -996,8 +996,8 @@ class _FireDialogState extends State<_FireDialog> with TickerProviderStateMixin 
                     // داخل دالة showAnimatedStreakDialog أو داخل الويجت اللي بيعرض الديالوج
                     Text(
                       widget.currentStreak > 0
-                          ? '🔥 أداء منتظم!'
-                          : 'هل أنت مستعد؟ 🌟 لنبدأ الرحلة معًا! ابدأ التمرين من "Add Workouts" وزد استريكك يومًا بعد يوم 💪🔥',
+                          ? '🔥 Consistent performance!'
+                          : 'Are you ready? 🌟 Let’s start the journey together! Start your workout from "Add Workouts" and increase your streak day by day 💪🔥',
                       // نص بديل لما يكون الاستريك صفر أو أقل
                       style: TextStyle(
                         fontSize: 22.sp,
@@ -1009,8 +1009,10 @@ class _FireDialogState extends State<_FireDialog> with TickerProviderStateMixin 
                      SizedBox(height: 12.h),
                     Text(
                       widget.currentStreak > 0
-                          ? '🔥 سلسلة نجاح مستمرة!\nتمرين اليوم رقم ${widget.currentStreak} على التوالي!\nأنت بطل بحق 💪 استمر في التألق!'
-                          : 'لا يوجد سجل حتى الآن.\nيمكنك البدء في التمرن الآن! 💪',
+                          ? '🔥 Keep the streak going!\n'
+                          'Workout day ${widget.currentStreak} in a row!\n'
+                          'You’re a true champion 💪 Keep shining!'
+                          : 'No streak yet.\nYou can start training now! 💪',
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: isDark ? Colors.white70 : Colors.black87,
@@ -1037,7 +1039,7 @@ class _FireDialogState extends State<_FireDialog> with TickerProviderStateMixin 
                         }
                       },
                       child:  Text(
-                        'استمرار 🚀',
+                        'Continue 🚀',
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,

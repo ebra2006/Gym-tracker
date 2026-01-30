@@ -398,7 +398,7 @@ class _ChestExercisesScreenState extends State<ChestExercisesScreen> {
                                 ),
                               ),
                               Tooltip(
-                                message: 'المفضلة',
+                                message: 'Favorite',
                                 waitDuration: const Duration(milliseconds: 200),
                                 showDuration: const Duration(milliseconds: 400),
 

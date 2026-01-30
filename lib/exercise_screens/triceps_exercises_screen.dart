@@ -387,7 +387,7 @@ class _TricepsExercisesScreenState extends State<TricepsExercisesScreen> {
                                 ),
                               ),
                               Tooltip(
-                                message: 'المفضلة',
+                                message: 'Favorite',
                                 waitDuration: const Duration(milliseconds: 200),
                                 showDuration: const Duration(milliseconds: 400),
 

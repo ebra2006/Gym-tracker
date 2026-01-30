@@ -109,19 +109,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               activeColor: primaryColor,
               onChanged: toggleDarkMode,
             ),
-            SwitchListTile(
-              title: Text(
-                'Use Purple Theme',
-                style: TextStyle(fontSize: 16.sp),
-              ),
-              subtitle: Text(
-                'Turn off to switch to Blue Theme',
-                style: TextStyle(fontSize: 12.sp),
-              ),
-              value: isPurpleTheme,
-              activeColor: primaryColor,
-              onChanged: toggleColorTheme,
-            ),
+           // SwitchListTile(
+             // title: Text(
+              //  'Use Purple Theme',
+              //  style: TextStyle(fontSize: 16.sp),
+            //  ),
+             // subtitle: Text(
+               // 'Turn off to switch to Blue Theme',
+               // style: TextStyle(fontSize: 12.sp),
+             // ),
+             // value: isPurpleTheme,
+             // activeColor: primaryColor,
+             // onChanged: toggleColorTheme,
+            // ),
             SizedBox(height: 24.h),
             _buildCustomTile(
               icon: Icons.feedback_outlined,

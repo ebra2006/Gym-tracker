@@ -75,7 +75,7 @@ class _MealsScreenState extends State<MealsScreen> {
         return AlertDialog(
           backgroundColor: theme.dialogBackgroundColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('إضافة وجبة',
+          title: Text('Add Meal',
               style: TextStyle(
                 color: primaryColor,
                 fontWeight: FontWeight.bold,
@@ -93,7 +93,7 @@ class _MealsScreenState extends State<MealsScreen> {
                   color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'اسم الوجبة',
+                  labelText: 'Meal name',
                   labelStyle: TextStyle(
                     color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
                   ),
@@ -115,7 +115,7 @@ class _MealsScreenState extends State<MealsScreen> {
                   color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'عدد السعرات (اختياري)',
+                  labelText: 'Calories (optional)',
                   labelStyle: TextStyle(
                     color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
                   ),
@@ -136,7 +136,7 @@ class _MealsScreenState extends State<MealsScreen> {
                   color: Theme.of(context).brightness == Brightness.dark ? Colors.white : textColor,
                 ),
                 decoration: InputDecoration(
-                  labelText: 'ملاحظة (اختياري)',
+                  labelText: 'Note (optional)',
                   labelStyle: TextStyle(
                     color: Theme.of(context).brightness == Brightness.dark ? Colors.white : primaryColor,
                   ),
@@ -152,7 +152,7 @@ class _MealsScreenState extends State<MealsScreen> {
           ),
           actions: [
             TextButton(
-              child: Text('إلغاء', style: TextStyle(color: primaryColor)),
+              child: Text('Cancel', style: TextStyle(color: primaryColor)),
               onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
@@ -163,7 +163,7 @@ class _MealsScreenState extends State<MealsScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('إضافة'),
+              child: const Text('Add'),
               //المدخلات5455665
               onPressed: () {
                 if (nameController.text.trim().isEmpty) {
@@ -202,21 +202,21 @@ class _MealsScreenState extends State<MealsScreen> {
         backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'تأكيد الحذف',
+          'Confirm deletion',
           style: TextStyle(
               color: primaryColor, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         content: Text(
-          'هل أنت متأكد من حذف هذه الوجبة؟',
+          'Are you sure you want to delete this meal?',
           style: TextStyle(color: textColor),
         ),
         actions: [
           TextButton(
-            child: Text('إلغاء', style: TextStyle(color: colorSecondary)),
+            child: Text('Cancel', style: TextStyle(color: colorSecondary)),
             onPressed: () => Navigator.pop(context),
           ),
           ElevatedButton(
-            child: const Text('حذف'),
+            child: const Text('Delete'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red.shade600,
               foregroundColor: Colors.white,
@@ -251,7 +251,7 @@ class _MealsScreenState extends State<MealsScreen> {
       final theme = Theme.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('أحسنت! تم إنجاز هذه الوجبة 🎉'),
+          content: const Text('Great job! Meal completed 🎉'),
           backgroundColor: Colors.green.shade600,
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
@@ -327,7 +327,7 @@ class _MealsScreenState extends State<MealsScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
-                    'السعرات: ${meal['calories']}',
+                    'Calories: ${meal['calories']}',
                     style: TextStyle(
                       color: textColor.withOpacity(0.7),
                       fontSize: 14,
@@ -338,7 +338,7 @@ class _MealsScreenState extends State<MealsScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
-                    'ملاحظة: ${meal['note']}',
+                    'Note: ${meal['note']}',
                     style: TextStyle(
                       color: textColor.withOpacity(0.5),
                       fontSize: 13,
@@ -424,7 +424,7 @@ class _MealsScreenState extends State<MealsScreen> {
       body: meals.isEmpty
           ? Center(
         child: Text(
-          'لم تضف أي وجبة بعد',
+          'You haven’t added any meals yet',
           style: TextStyle(fontSize: 18, color: textColor.withOpacity(0.6)),
         ),
       )

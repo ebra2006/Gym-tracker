@@ -388,7 +388,7 @@ class _AbsExercisesScreenState extends State<AbsExercisesScreen> {
                                 ),
                               ),
                               Tooltip(
-                                message: 'المفضلة',
+                                message: 'Favorite',
                                 waitDuration: const Duration(milliseconds: 200),
                                 showDuration: const Duration(milliseconds: 400),
 

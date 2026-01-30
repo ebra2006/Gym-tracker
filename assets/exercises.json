@@ -1,57 +1,56 @@
 [
-
   {
     "id": 2,
-    "name": "بنش عالي دمبل - Incline Dumbbell Press",
-    "description": "اجلس على بنش مائل وادفع الدامبلز لأعلى من على جانبي الصدر، ثم انزل بتحكم. يستهدف الجزء العلوي من عضلات الصدر.",
+    "name": "Incline Dumbbell Press",
+    "description": "Sit on an incline bench and press the dumbbells upward from the sides of your chest, then lower them slowly with control. Targets the upper chest muscles.",
     "image": "assets/exercises/incline_dumbbell_press.jpg"
   },
   {
     "id": 3,
-    "name": " Overhead Shoulder Press",
-    "description": "قف أو اجلس وادفع البار لأعلى من مستوى الكتف حتى استقامة الذراع. تمرين رئيسي للكتف الأمامي والجانبي والترايسبس.",
+    "name": "Overhead Shoulder Press",
+    "description": "Stand or sit and press the bar upward from shoulder level until your arms are fully extended. A main exercise for the front and side deltoids and triceps.",
     "image": "assets/exercises/shoulder_press.jpg"
   },
   {
     "id": 4,
-    "name": "رفرفة جانبي - Lateral Raise",
-    "description": "امسك دامبل في كل يد وارفع الذراعين جانبًا حتى مستوى الكتف، ثم انزل ببطء. يعمل على تضخيم الكتف الجانبي.",
+    "name": "Lateral Raise",
+    "description": "Hold a dumbbell in each hand and raise your arms to the sides until shoulder level, then lower them slowly. Builds and strengthens the side deltoids.",
     "image": "assets/exercises/lateral_raise.jpg"
   },
   {
     "id": 5,
-    "name": "سحب عالي - Lat Pulldown",
-    "description": "اجلس على الجهاز وامسك البار بقبضة واسعة، اسحب البار لأسفل أمام الوجه حتى الذقن ثم ارجع ببطء. تمرين أساسي للظهر العلوي.",
+    "name": "Lat Pulldown",
+    "description": "Sit at the machine, grip the bar with a wide grip, pull it down in front of your face to chin level, then return slowly. A fundamental exercise for the upper back.",
     "image": "assets/exercises/lat_pulldown.jpg"
   },
   {
     "id": 6,
-    "name": " Barbell Bent-Over Row",
-    "description": "قم بالانحناء للأمام واثنِ الركب قليلاً، اسحب البار إلى البطن مع إبقاء الظهر مستقيمًا. يقوي عضلات الظهر الأوسط والسفلي.",
+    "name": "Barbell Bent-Over Row",
+    "description": "Bend forward slightly with knees bent and pull the bar toward your abdomen while keeping your back straight. Strengthens the middle and lower back muscles.",
     "image": "assets/exercises/barbell_row.jpg"
   },
   {
     "id": 7,
-    "name": "باي بالبار - Barbell Curl",
-    "description": "امسك البار بقبضة على عرض الكتف وارفعه لأعلى بتحكم دون تحريك المرفقين. تمرين رئيسي لتضخيم عضلة البايسبس.",
+    "name": "Barbell Curl",
+    "description": "Hold the bar with a shoulder-width grip and curl it upward with control without moving your elbows. A primary exercise for building biceps size.",
     "image": "assets/exercises/barbell_curl.jpg"
   },
   {
     "id": 8,
-    "name": "هامر - Hammer Curl",
-    "description": "امسك دامبلز بوضع قبضة رأسية وارفعهم حتى الكتف، ثم انزل ببطء. يستهدف البايسبس والعضلة العضدية.",
+    "name": "Hammer Curl",
+    "description": "Hold the dumbbells with a neutral grip and curl them up to shoulder level, then lower slowly. Targets the biceps and brachialis muscles.",
     "image": "assets/exercises/hammer_curl.jpg"
   },
   {
     "id": 9,
-    "name": "تراي حبل - Triceps Pushdown",
-    "description": "امسك الحبل أو المقبض على جهاز الكابل وادفعه لأسفل حتى استقامة الذراع، ثم ارفع ببطء. تمرين ممتاز لتقوية الترايسبس.",
+    "name": "Triceps Pushdown",
+    "description": "Hold the rope or handle on the cable machine and push it downward until your arms are fully extended, then return slowly. Excellent for strengthening the triceps.",
     "image": "assets/exercises/triceps_pushdown.jpg"
   },
   {
     "id": 10,
-    "name": " Overhead Dumbbell Extension",
-    "description": "احمل دامبل واحد بكلتا اليدين فوق الرأس وانزله خلف الرأس، ثم ارفعه لأعلى. يستهدف الرأس الطويل للترايسبس.",
+    "name": "Overhead Dumbbell Extension",
+    "description": "Hold one dumbbell with both hands overhead, lower it behind your head, then extend your arms upward. Targets the long head of the triceps.",
     "image": "assets/exercises/overhead_triceps_extension.jpg"
   }
 ]
