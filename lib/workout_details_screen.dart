@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'workout_summary_screen.dart';
 import 'streak.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter/services.dart';
 
 class WorkoutDetailsScreen extends StatefulWidget {
   final String categoryName;
@@ -14,19 +15,35 @@ class WorkoutDetailsScreen extends StatefulWidget {
   @override
   _WorkoutDetailsScreenState createState() => _WorkoutDetailsScreenState();
 }
-// ال streal
+
 class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
   int reps = 0;
   double weight = 0.0;
   int _groupNumber = 1;
   int tasbihCount = 0;
-  String workoutNote = ''; // النوتات
+  String workoutNote = '';
 
-   // 🔹 أضفه هنا
-  // <-- هنا بالضبط، بعد تعريف كل المتغيرات فوق، ضيف:
   final StreakManager streakManager = StreakManager();
 
-// هنا الفاليديشن بتاع الوزن والعدات
+  // ✅ Controllers ثابتين
+  final TextEditingController repsController = TextEditingController();
+  final TextEditingController weightController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    repsController.text = reps == 0 ? "" : reps.toString();
+    weightController.text = weight == 0 ? "" : weight.toStringAsFixed(1);
+  }
+
+  // ✅ dispose عشان منحصلش memory leak
+  @override
+  void dispose() {
+    repsController.dispose();
+    weightController.dispose();
+    super.dispose();
+  }
+
   bool _validateInputs() {
     if (reps <= 0) {
       _showError("Please select reps");
@@ -45,7 +62,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
         content: Text(
           msg,
           style: const TextStyle(
-            color: Colors.black, //  أسود دايمًا
+            color: Colors.black,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -55,24 +72,17 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     );
   }
 
-
-
-
-
   Future<void> _saveWorkout() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('workout_saved_today', true);
 
     String currentDate = DateTime.now().toString().split(' ')[0];
 
-    // استدعاء تحميل بيانات الاستريك وتحديثها
     await streakManager.loadStreakData();
     await streakManager.updateStreak();
 
-    // جلب عدد التمارين المحفوظة لنفس اليوم
     List<Map<String, dynamic>> savedWorkouts = _loadSavedWorkouts(prefs, currentDate);
 
-    // لو أول مرة تحفظ تمرين اليوم، عرض رسالة تهنئة
     if (savedWorkouts.isEmpty) {
       _showCongratulationDialog();
     }
@@ -85,7 +95,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
       'group': groupName,
       'date': currentDate,
       'tasbih': tasbihCount,
-      'note': workoutNote,  // ← أضف السطر ده الموتاتتتتتت65564545
+      'note': workoutNote,
     };
 
     savedWorkouts.add(workout);
@@ -96,13 +106,11 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     });
 
     _showSnackBar(currentDate);
-//مسح قيم العدات والوزن بعد المستخدم ما يخلص
+
     setState(() {
-      workoutNote = '';  // ← مسح نص الملاحظة بعد الحفظ
+      workoutNote = '';
     });
   }
-
-
 
   List<Map<String, dynamic>> _loadSavedWorkouts(SharedPreferences prefs, String date) {
     String? workoutsJson = prefs.getString('workouts_$date');
@@ -112,10 +120,10 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     }
     return [];
   }
-//النوتات 5456456456456
+
   Future<void> _showNoteBottomSheet(BuildContext context) async {
     final TextEditingController _noteController = TextEditingController(text: workoutNote);
-    final RegExp validChars = RegExp(r'^[a-zA-Z0-9\u0600-\u06FF\s]*$'); // حروف عربي، إنجليزي، أرقام ومسافات
+    final RegExp validChars = RegExp(r'^[a-zA-Z0-9\u0600-\u06FF\s]*$');
 
     final result = await showModalBottomSheet<String>(
       context: context,
@@ -147,7 +155,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                       counterText: '${_noteController.text.length}/100',
                     ),
                     onChanged: (value) {
-                      setModalState(() {}); // فقط لتحديث العداد
+                      setModalState(() {});
                     },
                   ),
                   const SizedBox(height: 10),
@@ -156,7 +164,6 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                       String noteText = _noteController.text.trim();
 
                       if (!validChars.hasMatch(noteText)) {
-                        // لو فيه رموز غير مسموحة، نعرض تحذير
                         showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
@@ -174,9 +181,8 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                             ],
                           ),
                         );
-                      }
-                      else {
-                        Navigator.pop(context, noteText); // ترجع الملاحظة فقط لو صحيحة
+                      } else {
+                        Navigator.pop(context, noteText);
                       }
                     },
                     child: const Text('Save Note'),
@@ -189,16 +195,12 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
       },
     );
 
-    // حفظ النتيجة
     if (result != null) {
       setState(() {
         workoutNote = result;
       });
     }
   }
-
-
-
 
   void _showSnackBar(String date) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -210,7 +212,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
             final prefs = await SharedPreferences.getInstance();
             List<Map<String, dynamic>> workoutData = _loadSavedWorkouts(prefs, date);
 
-            if (!mounted) return;  // متأكد أن الـ widget موجودة
+            if (!mounted) return;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -220,14 +222,12 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                 ),
               ),
             );
-
           },
         ),
       ),
     );
   }
-  // دالة التهنءة
-// هنا تحط دالة التهنئة
+
   void _showCongratulationDialog() {
     showGeneralDialog(
       context: context,
@@ -247,7 +247,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                   padding: const EdgeInsets.all(24),
                   margin: const EdgeInsets.symmetric(horizontal: 30),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.grey[900] : Colors.white,  // خلفية تناسب الوضع
+                    color: isDarkMode ? Colors.grey[900] : Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
@@ -286,7 +286,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green.shade600, // لون ممتاز وجذاب
+                          color: Colors.green.shade600,
                         ),
                       ),
 
@@ -295,7 +295,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                       Text(
                         '🔥 Keep the streak going!\n'
                             'Workout day ${streakManager.currentStreak} in a row!\n'
-                            'You’re doing great 💪 Stay strong!',
+                            'You are doing great 💪 Stay strong!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
@@ -305,8 +305,6 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                               : Colors.black,
                         ),
                       ),
-
-
 
                       const SizedBox(height: 24),
 
@@ -330,10 +328,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
         );
       },
     );
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -385,7 +380,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(width: 48.w), // للتوازن
+                  SizedBox(width: 48.w),
                 ],
               ),
             ),
@@ -415,8 +410,12 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                   initialValue: reps,
                   minValue: 0,
                   maxValue: 100,
+                  // ✅ Scroll الـ Reps يحدّث repsController
                   onSelectedItemChanged: (val) {
-                    setState(() => reps = val);
+                    setState(() {
+                      reps = val;
+                      repsController.text = reps.toString();
+                    });
                   },
                   themeColor: theme.primaryColor,
                 ),
@@ -426,8 +425,12 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                   initialValue: (weight ~/ 2.5),
                   minValue: 0,
                   maxValue: 200,
+                  // ✅ Scroll الـ Weight يحدّث weightController
                   onSelectedItemChanged: (val) {
-                    setState(() => weight = val * 2.5);
+                    setState(() {
+                      weight = val * 2.5;
+                      weightController.text = weight.toStringAsFixed(1);
+                    });
                   },
                   themeColor: theme.primaryColor,
                   isWeight: true,
@@ -435,8 +438,136 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
               ],
             ),
 
+            SizedBox(height: 20.h),
+           // التيكسسسستتتتتت فيلددددددد
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 58.h,
+                    child: TextField(
+                      controller: repsController,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      decoration: InputDecoration(
+                        hintText: "Reps",
+                        isDense: true,
+                        filled: true,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF111111)
+                            : Colors.white,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 16.h,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white12
+                                : Colors.black26,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        final newValue = int.tryParse(value);
 
-            SizedBox(height: 30.h),
+                        if (newValue == null) return;
+
+                        if (newValue > 100) {
+                          repsController.text = "100";
+                          repsController.selection =
+                          const TextSelection.collapsed(offset: 3);
+                          reps = 100;
+                          return;
+                        }
+
+                        reps = newValue;
+                      },
+                    ),
+                  ),
+                ),
+
+                SizedBox(width: 10.w),
+
+                Expanded(
+                  child: SizedBox(
+                    height: 58.h,
+                    child: TextField(
+                      controller: weightController,
+                      keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                      textAlign: TextAlign.center,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d*$'),
+                        ),
+                      ],
+                      decoration: InputDecoration(
+                        hintText: "Weight",
+                        isDense: true,
+                        filled: true,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF111111)
+                            : Colors.white,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 16.h,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white12
+                                : Colors.black26,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        final newValue = double.tryParse(value);
+
+                        if (newValue == null) return;
+
+                        if (newValue > 500) {
+                          weightController.text = "500";
+                          weightController.selection =
+                          const TextSelection.collapsed(offset: 3);
+                          weight = 500;
+                          return;
+                        }
+
+                        weight = newValue;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+
+
+            SizedBox(height: 20.h),
 
             OutlinedButton(
               onPressed: () => _showNoteBottomSheet(context),
@@ -456,14 +587,13 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
             ),
             SizedBox(height: 20.h),
 
-// هنا الفاليديشن الل بيتاكد من الوزن والعدات
             OutlinedButton(
               onPressed: () {
+                FocusScope.of(context).unfocus();
                 if (_validateInputs()) {
                   _saveWorkout();
                 }
               },
-
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: theme.primaryColor, width: 2.w),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.r)),
@@ -484,8 +614,6 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     );
   }
 
-// تبع الاسكرول
-// تعديل الدالة _buildCounterCard لتكون الأزرار بإطار فقط بدون تعبئة
   Widget _buildScrollPickerCard({
     required String label,
     required int initialValue,
@@ -498,14 +626,14 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black87;
     final controller = FixedExtentScrollController(initialItem: initialValue - minValue);
-//طول العمودين
+
     return Expanded(
       child: Card(
         elevation: 6,
         shadowColor: themeColor.withAlpha((0.3 * 255).round()),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: SizedBox(
-          height: 300,
+          height: 260,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Column(
@@ -545,7 +673,7 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                               Text(
                                 displayValue,
                                 style: TextStyle(
-                                  fontSize: 28, //حجم الارقام
+                                  fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   color: themeColor,
                                 ),
@@ -568,7 +696,6 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     );
   }
 
-
   Widget _buildTimerIconButton(
       IconData icon,
       VoidCallback onPressed, {
@@ -589,8 +716,4 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
       child: Icon(icon, size: size, color: color),
     );
   }
-
-
-
 }
-
