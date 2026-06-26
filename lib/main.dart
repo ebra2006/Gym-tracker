@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart'; // ✅ ScreenUtil I
 import 'start_screen.dart';
 import 'main_screen.dart';
 import 'screens/feedback_page.dart';
+import 'notification/notification_service.dart';
+import 'dart:async';
 
 final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.light);
 final ValueNotifier<bool> isPurpleThemeNotifier = ValueNotifier(true);
@@ -19,13 +21,16 @@ void main() async {
   isPurpleThemeNotifier.value = isPurpleTheme;
 
   runApp(
-    ScreenUtilInit( // ✅ ScreenUtilInit هنا
-      designSize: Size(375, 812),
+    ScreenUtilInit(
+      designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) => const MyApp(),
     ),
   );
+
+  // تشغيل خدمة الإشعارات بعد ظهور التطبيق
+  unawaited(NotificationService.init());
 }
 
 class MyApp extends StatefulWidget {

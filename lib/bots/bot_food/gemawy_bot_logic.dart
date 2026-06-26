@@ -33,7 +33,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 11,
     "Carbs": 1.1,
   },
-  "صدور رومي مدخنة": {
+  "صدور رومي مدخن": {
     "Calories": 135,
     "Protein": 29,
     "Fat": 1,
@@ -165,31 +165,21 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 3,
     "Carbs": 27,
   },
-  "لبنة": {
-    "Calories": 150,
-    "Protein": 10,
-    "Fat": 12,
-    "Carbs": 3,
-  },
+
   "عصير برتقال": {
     "Calories": 45,
     "Protein": 0.7,
     "Fat": 0.2,
     "Carbs": 10,
   },
-  "قهوة عربية": {
-    "Calories": 2,
-    "Protein": 0,
-    "Fat": 0,
-    "Carbs": 0,
-  },
+
   "شاي أخضر": {
     "Calories": 0,
     "Protein": 0,
     "Fat": 0,
     "Carbs": 0,
   },
-  "لبن رائب": {
+  "لبن رايب": {
     "Calories": 59,
     "Protein": 3.3,
     "Fat": 3.3,
@@ -197,12 +187,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
   },
 
   // المزيد من الأكلات (تقدر تضيف بنفس التنسيق)
-  "كوسا محشي": {
-    "Calories": 150,
-    "Protein": 6,
-    "Fat": 5,
-    "Carbs": 20,
-  },
+
   "مسقعة": {
     "Calories": 120,
     "Protein": 4,
@@ -221,30 +206,15 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 20,
     "Carbs": 30,
   },
-  "برياني دجاج": {
-    "Calories": 400,
-    "Protein": 35,
-    "Fat": 15,
-    "Carbs": 50,
-  },
+
   "بيتزا مارجريتا": {
     "Calories": 270,
     "Protein": 12,
     "Fat": 10,
     "Carbs": 33,
   },
-  "سلطة فتوش": {
-    "Calories": 100,
-    "Protein": 2,
-    "Fat": 7,
-    "Carbs": 8,
-  },
-  "سلطة تبولة": {
-    "Calories": 120,
-    "Protein": 3,
-    "Fat": 4,
-    "Carbs": 15,
-  },
+
+
   "سمك مشوي": {
     "Calories": 200,
     "Protein": 22,
@@ -276,18 +246,8 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 15,
     "Carbs": 8,
   },
-  "مقلوبة": {
-    "Calories": 350,
-    "Protein": 25,
-    "Fat": 12,
-    "Carbs": 40,
-  },
-  "حمص بالطحينة": {
-    "Calories": 250,
-    "Protein": 10,
-    "Fat": 18,
-    "Carbs": 15,
-  },
+
+
 
   "ورق عنب محشي": {
     "Calories": 120,
@@ -295,24 +255,14 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 5,
     "Carbs": 12,
   },
-  "كبسة دجاج": {
-    "Calories": 400,
-    "Protein": 35,
-    "Fat": 18,
-    "Carbs": 50,
-  },
+
   "شوربة دجاج": {
     "Calories": 150,
     "Protein": 10,
     "Fat": 7,
     "Carbs": 12,
   },
-  "عجة بيض": {
-    "Calories": 250,
-    "Protein": 20,
-    "Fat": 20,
-    "Carbs": 2,
-  },
+
   "شاورما لحم": {
     "Calories": 320,
     "Protein": 30,
@@ -343,18 +293,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 0.2,
     "Carbs": 8,
   },
-  "لبنة مع زيت الزيتون": {
-    "Calories": 180,
-    "Protein": 12,
-    "Fat": 15,
-    "Carbs": 4,
-  },
-  "فواكه مشكلة": {
-    "Calories": 70,
-    "Protein": 1,
-    "Fat": 0.3,
-    "Carbs": 18,
-  },
+
   "عصير رمان": {
     "Calories": 54,
     "Protein": 1,
@@ -410,12 +349,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 0.1,
     "Carbs": 12,
   },
-  "جبنة فيتا": {
-    "Calories": 264,
-    "Protein": 14,
-    "Fat": 21,
-    "Carbs": 4,
-  },
+
   "زيت الزيتون": {
     "Calories": 119,
     "Protein": 0,
@@ -518,12 +452,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 12,
     "Carbs": 30,
   },
-  "ساندويتش لحم": {
-    "Calories": 350,
-    "Protein": 25,
-    "Fat": 15,
-    "Carbs": 30,
-  },
+
   "بيض مقلي": {
     "Calories": 190,
     "Protein": 13,
@@ -537,12 +466,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Carbs": 60,
   },
 
-  "شاي كرك": {
-    "Calories": 120,
-    "Protein": 1,
-    "Fat": 5,
-    "Carbs": 15,
-  },
+
   "أرز بالشعيرية": {
     "Calories": 250,
     "Protein": 5,
@@ -574,18 +498,8 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 15,
     "Carbs": 18,
   },
-  "فتة حمص": {
-    "Calories": 350,
-    "Protein": 18,
-    "Fat": 22,
-    "Carbs": 30,
-  },
-  "مشروب لبن بالعسل": {
-    "Calories": 180,
-    "Protein": 7,
-    "Fat": 5,
-    "Carbs": 25,
-  },
+
+
   "محشي كوسا": {
     "Calories": 210,
     "Protein": 10,
@@ -604,12 +518,6 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 18,
     "Carbs": 10,
   },
-  "شوربة كريمة الدجاج": {
-    "Calories": 250,
-    "Protein": 18,
-    "Fat": 18,
-    "Carbs": 8,
-  },
 
   "حمص بطحينة": {
     "Calories": 270,
@@ -617,12 +525,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 20,
     "Carbs": 25,
   },
-  "لبنة مع نعناع": {
-    "Calories": 150,
-    "Protein": 11,
-    "Fat": 9,
-    "Carbs": 2,
-  },
+
   "رز بالخلطة": {
     "Calories": 390,
     "Protein": 12,
@@ -661,12 +564,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 0,
     "Carbs": 0,
   },
-  "قهوة سوداء": {
-    "Calories": 2,
-    "Protein": 0.3,
-    "Fat": 0,
-    "Carbs": 0,
-  },
+
   "كابتشينو": {
     "Calories": 120,
     "Protein": 6,
@@ -715,18 +613,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 20,
     "Carbs": 65,
   },
-  "شوربة الفطر": {
-    "Calories": 110,
-    "Protein": 4,
-    "Fat": 6,
-    "Carbs": 12,
-  },
-  "سلطة جرجير": {
-    "Calories": 25,
-    "Protein": 2,
-    "Fat": 0.5,
-    "Carbs": 4,
-  },
+
   "باذنجان مقلي": {
     "Calories": 220,
     "Protein": 2,
@@ -769,24 +656,14 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 0,
     "Carbs": 8,
   },
-  "فطر مشوي": {
-    "Calories": 22,
-    "Protein": 3,
-    "Fat": 0.3,
-    "Carbs": 3,
-  },
+
   "ماء جوز الهند": {
     "Calories": 19,
     "Protein": 0.7,
     "Fat": 0.2,
     "Carbs": 4,
   },
-  "توست أسمر": {
-    "Calories": 250,
-    "Protein": 9,
-    "Fat": 3,
-    "Carbs": 42,
-  },
+
   "أفوكادو": {
     "Calories": 160,
     "Protein": 2,
@@ -799,13 +676,6 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Protein": 6,
     "Fat": 4,
     "Carbs": 12,
-  },
-
-  "طعمية (فلافل)": {
-    "Calories": 330,
-    "Protein": 13,
-    "Fat": 15,
-    "Carbs": 40,
   },
 
 
@@ -823,12 +693,7 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Carbs": 10,
   },
 
-  "بامية بالزيت": {
-    "Calories": 180,
-    "Protein": 5,
-    "Fat": 12,
-    "Carbs": 15,
-  },
+
   "صينية بطاطس": {
     "Calories": 350,
     "Protein": 6,
@@ -840,13 +705,6 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Protein": 26,
     "Fat": 18,
     "Carbs": 5,
-  },
-
-  "مقبلات مشكل": {
-    "Calories": 150,
-    "Protein": 5,
-    "Fat": 8,
-    "Carbs": 12,
   },
 
   "شربة كوارع": {
@@ -879,24 +737,14 @@ final Map<String, Map<String, dynamic>> foodItems = {
     "Fat": 28,
     "Carbs": 2,
   },
-  "كريمة كنافة": {
-    "Calories": 370,
-    "Protein": 7,
-    "Fat": 25,
-    "Carbs": 30,
-  },
+
   "أرز باللبن": {
     "Calories": 180,
     "Protein": 6,
     "Fat": 5,
     "Carbs": 30,
   },
-  "قطايف": {
-    "Calories": 280,
-    "Protein": 5,
-    "Fat": 12,
-    "Carbs": 40,
-  },
+
   "بسبوسة": {
     "Calories": 350,
     "Protein": 5,

@@ -6,6 +6,7 @@ import 'weight_tracker_page.dart';
 import 'start_screen.dart'; // استيراد صفحة StartScreen
 import '../screens/feedback_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'notification/notification_settings_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -109,22 +110,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
               activeColor: primaryColor,
               onChanged: toggleDarkMode,
             ),
-           // SwitchListTile(
-             // title: Text(
-              //  'Use Purple Theme',
-              //  style: TextStyle(fontSize: 16.sp),
-            //  ),
-             // subtitle: Text(
-               // 'Turn off to switch to Blue Theme',
-               // style: TextStyle(fontSize: 12.sp),
-             // ),
-             // value: isPurpleTheme,
-             // activeColor: primaryColor,
-             // onChanged: toggleColorTheme,
-            // ),
+            SwitchListTile(
+              title: Text(
+                'Use Purple Theme',
+               style: TextStyle(fontSize: 16.sp),
+             ),
+              subtitle: Text(
+               'Turn off to switch to Blue Theme',
+                style: TextStyle(fontSize: 12.sp),
+              ),
+              value: isPurpleTheme,
+              activeColor: primaryColor,
+              onChanged: toggleColorTheme,
+             ),
             SizedBox(height: 24.h),
+
+            _buildCustomTile(
+              icon: Icons.notifications_active_outlined,
+              label: 'Notification Settings',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                    const NotificationSettingsScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                  ),
+                );
+              },
+              primaryColor: primaryColor,
+              textColor: textColor,
+              isDarkMode: theme.brightness == Brightness.dark,
+            ),
+
             _buildCustomTile(
               icon: Icons.feedback_outlined,
+
+
               label: 'Send Feedback',
               onTap: () async {
                 final result = await Navigator.push(

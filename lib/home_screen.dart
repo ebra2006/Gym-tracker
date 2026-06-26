@@ -86,15 +86,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addObserver(this);
-    loadUserInfo();
+
     selectedDay = DateTime.now();
-    loadWorkoutData();
+
+    loadUserInfo();
     loadTheme();
-    _loadStreak();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadWorkoutData();
+      _loadStreak();
+    });
 
     _pageController = PageController(initialPage: 0);
-    startAutoScroll(); // ← بدأ التمرير التلقائي عند التشغيل
+    startAutoScroll();
   }
 
   @override
