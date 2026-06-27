@@ -6,7 +6,6 @@ import 'settings_screen.dart'; // استيراد صفحة الإعدادات
 import 'workout_summary_screen.dart';
 import 'dart:ui';
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'workout_categories_screen.dart';
 import 'meals_screen.dart';
 // أضف استيراد streak.dart (عدل المسار لو ضروري)

@@ -482,6 +482,11 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                         ),
                       ),
                       onChanged: (value) {
+                        if (value.trim().isEmpty) {
+                          reps = 0;
+                          return;
+                        }
+
                         final newValue = int.tryParse(value);
 
                         if (newValue == null) return;
@@ -545,6 +550,11 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                         ),
                       ),
                       onChanged: (value) {
+                        if (value.trim().isEmpty) {
+                          weight = 0;
+                          return;
+                        }
+
                         final newValue = double.tryParse(value);
 
                         if (newValue == null) return;

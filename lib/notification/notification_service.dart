@@ -50,6 +50,17 @@ class NotificationService {
     }
   }
 
+  static Future<bool> requestPermission() async {
+    final android = _notifications
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+
+    final granted =
+    await android?.requestNotificationsPermission();
+
+    return granted ?? false;
+  }
+
   static Future<void> scheduleWaterReminders(int intervalMinutes) async {
     await _notifications.cancelAll();
 
@@ -81,8 +92,11 @@ class NotificationService {
       );
     }
 
-    // لا ننتظر انتهاء الجدولة لتحسين سرعة فتح التطبيق
-    Future.wait(futures);
+    // انتظر انتهاء جدولة كل الإشعارات
+    await Future.wait(futures);
+
+    final pending = await _notifications.pendingNotificationRequests();
+    debugPrint("Pending notifications: ${pending.length}");
   }
 
   static Future<void> cancelAll() async {

@@ -73,8 +73,10 @@ class _NotificationSettingsScreenState
       const SnackBar(
         content: Text("Settings saved successfully ✅"),
         duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
       ),
     );
+
   }
 
   String intervalText(int value) {
@@ -284,7 +286,34 @@ class _NotificationSettingsScreenState
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
-                onPressed: saveSettings,
+
+
+                onPressed: () async {
+                  if (notificationsEnabled) {
+                    final granted =
+                    await NotificationService.requestPermission();
+
+                    if (!granted) {
+                      if (!mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Notifications are disabled. Go to Settings > Apps > Gym Tracker > Notifications and enable them.",
+                          ),
+                          duration: Duration(seconds: 5),
+                        ),
+                      );
+
+                      return;
+                    }
+                  }
+
+                  await saveSettings();
+                },
+
+
+
               ),
             ),
           ],
