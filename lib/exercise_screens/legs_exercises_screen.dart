@@ -13,7 +13,24 @@ class LegsExercisesScreen extends StatefulWidget {
 class _LegsExercisesScreenState extends State<LegsExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Legs',
+    'Barbell Squat',
+    'Front Squat',
+    'Hack Squat',
+    'Leg Press',
+    'Leg Extension',
+    'Walking Lunges',
+    'Bulgarian Split Squat',
+    'Romanian Deadlift',
+    'Stiff Leg Deadlift',
+    'Lying Leg Curl',
+    'Seated Leg Curl',
+    'Standing Leg Curl',
+    'Hip Thrust',
+    'Glute Bridge',
+    'Cable Kickback',
+    'Standing Calf Raise',
+    'Seated Calf Raise',
+    'Donkey Calf Raise',
   ];
 
 // بيانات التمارين

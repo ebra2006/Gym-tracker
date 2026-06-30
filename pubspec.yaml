@@ -35,6 +35,8 @@ dependencies:
   timeago: ^3.2.2
   tutorial_coach_mark: ^1.2.5
   flutter_screenutil: ^5.9.0
+  flutter_svg: ^2.2.0
+  path_drawing: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +52,7 @@ flutter:
     - assets/exercises/
     - assets/images/
     - assets/female/
+    - lib/modules/muscle_heatmap/assets/svg/
 
 flutter_launcher_icons:
   android: true

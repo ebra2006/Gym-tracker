@@ -14,9 +14,9 @@ class _BackExercisesScreenState extends State<BackExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
     'lat pulldown',
-    'Seated Caple Row',
+    'Seated Cable Row',
     'Barbell Row',
-    'Dumbell Row',
+    'Dumbbell Row',
     'pull-ups',
     'Deadlift',
   ];

@@ -13,7 +13,21 @@ class TricepsExercisesScreen extends StatefulWidget {
 class _TricepsExercisesScreenState extends State<TricepsExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Triceps',
+    'Close Grip Bench Press',
+    'Triceps Pushdown',
+    'Rope Pushdown',
+    'Overhead Triceps Extension',
+    'Skull Crushers',
+    'Dips',
+    'Cable Overhead Extension',
+    'Single Arm Pushdown',
+    'Reverse Grip Pushdown',
+    'EZ Bar Skull Crusher',
+    'Bench Dips',
+    'Kickbacks',
+    'Machine Triceps Extension',
+    'Diamond Push-Ups',
+    'JM Press',
   ];
 
 // بيانات التمارين

@@ -13,7 +13,24 @@ class ShouldersExercisesScreen extends StatefulWidget {
 class _ShouldersExercisesScreenState extends State<ShouldersExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Shoulders',
+    'Overhead Press',
+    'Seated Dumbbell Press',
+    'Arnold Press',
+    'Machine Shoulder Press',
+    'Military Press',
+    'Lateral Raise',
+    'Cable Lateral Raise',
+    'Front Raise',
+    'Cable Front Raise',
+    'Rear Delt Fly',
+    'Reverse Pec Deck',
+    'Face Pull',
+    'Upright Row',
+    'Dumbbell Shrugs',
+    'Barbell Shrugs',
+    'Smith Machine Shoulder Press',
+    'Single Arm Cable Lateral Raise',
+    'Bent Over Lateral Raise',
   ];
 
 // بيانات التمارين

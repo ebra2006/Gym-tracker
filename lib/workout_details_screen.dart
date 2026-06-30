@@ -6,6 +6,8 @@ import 'workout_summary_screen.dart';
 import 'streak.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
+//جديد
+import 'package:gym_tracker/modules/muscle_heatmap/services/workout_sync_service.dart';
 
 class WorkoutDetailsScreen extends StatefulWidget {
   final String categoryName;
@@ -100,6 +102,30 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
 
     savedWorkouts.add(workout);
     prefs.setString('workouts_$currentDate', json.encode(savedWorkouts));
+
+
+
+
+
+
+
+
+
+
+
+    await WorkoutSyncService().syncWorkout(
+      widget.categoryName,
+    );
+
+
+
+
+
+
+
+
+
+
 
     setState(() {
       _groupNumber++;

@@ -13,7 +13,16 @@ class BicepsExercisesScreen extends StatefulWidget {
 class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Biceps',
+    'Barbell Curl',
+    'Dumbbell Curl',
+    'Hammer Curl',
+    'Preacher Curl',
+    'Cable Curl',
+    'Concentration Curl',
+    'EZ Bar Curl',
+    'Incline Dumbbell Curl',
+    'Reverse Curl',
+    'Spider Curl',
   ];
 
 // بيانات التمارين

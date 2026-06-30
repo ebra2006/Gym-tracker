@@ -12,6 +12,15 @@ import 'meals_screen.dart';
 import 'streak.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
+//جديد
+import 'package:gym_tracker/modules/muscle_heatmap/screens/muscle_heatmap_screen.dart';
+
+
+
+
+
+
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 
 class HomeScreen extends StatefulWidget {
@@ -301,6 +310,46 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           ),
                         ),
                       ),
+
+
+
+
+
+
+
+
+
+
+
+
+                      IconButton(
+                        icon: const Icon(Icons.bug_report),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const MuscleHeatMapScreen(),
+                            ),
+                          );
+                        },
+                      ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                       InkWell(
                         onTap: () {
                           showAnimatedStreakDialog(context, currentStreak);

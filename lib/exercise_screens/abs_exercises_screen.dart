@@ -13,7 +13,24 @@ class AbsExercisesScreen extends StatefulWidget {
 class _AbsExercisesScreenState extends State<AbsExercisesScreen> {
   // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Abs',
+    'Crunch',
+    'Cable Crunch',
+    'Decline Crunch',
+    'Sit-Up',
+    'Hanging Leg Raise',
+    'Lying Leg Raise',
+    'Reverse Crunch',
+    'V-Ups',
+    'Toe Touches',
+    'Russian Twist',
+    'Bicycle Crunch',
+    'Mountain Climbers',
+    'Ab Wheel Rollout',
+    'Plank',
+    'Side Plank',
+    'Woodchopper',
+    'Dragon Flag',
+    'Flutter Kicks',
   ];
 
 // بيانات التمارين
