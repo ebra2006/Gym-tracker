@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../workout_details_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../workout_details_screen.dart';
 
 class BicepsExercisesScreen extends StatefulWidget {
   const BicepsExercisesScreen({super.key});
@@ -11,26 +12,32 @@ class BicepsExercisesScreen extends StatefulWidget {
 }
 
 class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
-  // التمارين الأساسية (يمكن تعديلها)
   final List<String> baseWorkouts = const [
-    'Barbell Curl',
-    'Dumbbell Curl',
-    'Hammer Curl',
-    'Preacher Curl',
-    'Cable Curl',
-    'Concentration Curl',
-    'EZ Bar Curl',
-    'Incline Dumbbell Curl',
-    'Reverse Curl',
-    'Spider Curl',
+    'barbell curl',
+    'dumbbell curl',
+    'hammer curl',
+    'preacher curl',
+    'cable curl',
+    'concentration curl',
+    'ez bar curl',
+    'incline dumbbell curl',
+    'reverse curl',
+    'spider curl',
+    'drag curl',
+    'machine curl',
+    'standing cable curl',
+    'bayesian cable curl',
+    'zottman curl',
   ];
 
-// بيانات التمارين
   List<String> customWorkouts = [];
   List<String> favoriteWorkouts = [];
   List<String> recentWorkouts = [];
 
-  String gender = 'Male'; // افتراضيًا ذكر
+  final TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
+
+  String gender = 'Male';
   List<Map<String, String>> categories = [];
 
   @override
@@ -40,6 +47,12 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
     _loadFavorites();
     _loadRecent();
     _loadGenderAndSetCategories();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   void _loadCustomWorkouts() async {
@@ -69,11 +82,15 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
 
     if (gender == 'Male') {
       categories = [
-        {'name': 'Biceps', 'image': 'assets/images/biceps.png'},
+        {'name': 'barbell curl', 'image': 'assets/images/biceps.png'},
+        {'name': 'dumbbell curl', 'image': 'assets/images/biceps.png'},
+        {'name': 'hammer curl', 'image': 'assets/images/biceps.png'},
       ];
     } else {
       categories = [
-        {'name': 'Biceps', 'image': 'assets/female/biceps.png'},
+        {'name': 'barbell curl', 'image': 'assets/female/biceps.png'},
+        {'name': 'dumbbell curl', 'image': 'assets/female/biceps.png'},
+        {'name': 'hammer curl', 'image': 'assets/female/biceps.png'},
       ];
     }
 
@@ -82,34 +99,41 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
 
   void _toggleFavorite(String name) async {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
       if (favoriteWorkouts.contains(name)) {
         favoriteWorkouts.remove(name);
       } else {
         favoriteWorkouts.add(name);
       }
-      prefs.setStringList('favoriteBicepsWorkouts', favoriteWorkouts);
     });
+
+    await prefs.setStringList('favoriteBicepsWorkouts', favoriteWorkouts);
   }
 
   void _addToRecent(String name) async {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
       recentWorkouts.remove(name);
       recentWorkouts.insert(0, name);
+
       if (recentWorkouts.length > 10) {
         recentWorkouts = recentWorkouts.sublist(0, 10);
       }
-      prefs.setStringList('recentBicepsWorkouts', recentWorkouts);
     });
+
+    await prefs.setStringList('recentBicepsWorkouts', recentWorkouts);
   }
 
   void _addCustomWorkout(String workout) async {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
       customWorkouts.add(workout);
     });
-    prefs.setStringList('customBicepsWorkouts', customWorkouts);
+
+    await prefs.setStringList('customBicepsWorkouts', customWorkouts);
   }
 
   void _removeCustomWorkout(String workout) async {
@@ -135,11 +159,15 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
                   customWorkouts.remove(workout);
                 });
 
-                await prefs.setStringList('customBicepsWorkouts', customWorkouts);
+                await prefs.setStringList(
+                  'customBicepsWorkouts',
+                  customWorkouts,
+                );
 
                 if (!context.mounted) return;
 
                 Navigator.of(context).pop();
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('"$workout" deleted')),
                 );
@@ -151,41 +179,36 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
     );
   }
 
-// صورة التمرين الأساسي حسب اسمه (للعرض فقط) من قائمة categories
   String getWorkoutImage(String name) {
     final category = categories.firstWhere(
-          (cat) => cat['name'] == name,
+          (cat) => cat['name']?.toLowerCase() == name.toLowerCase(),
       orElse: () => {'name': '', 'image': ''},
     );
+
     return category['image'] ?? '';
   }
-//هنا اخرها
 
-
-
-
-
-  // جمع كل التمارين الأساسية + المخصصة بدون تكرار
   List<String> get allWorkouts {
-    // نضم التمارين الأساسية والمخصصة، ونتأكد من عدم تكرار اسم
     final Set<String> all = {...baseWorkouts, ...customWorkouts};
     return all.toList();
   }
 
-  // ترتيب التمارين حسب: مفضلة > حديثة > باقي التمارين
   List<Map<String, dynamic>> get orderedWorkouts {
     final favs = favoriteWorkouts.where((w) => allWorkouts.contains(w)).toList();
+
     final recents = recentWorkouts
         .where((w) => allWorkouts.contains(w) && !favs.contains(w))
         .toList();
+
     final others = allWorkouts
         .where((w) => !favs.contains(w) && !recents.contains(w))
         .toList();
 
     List<Map<String, dynamic>> mapFromNames(List<String> names) {
       return names.map((name) {
-        bool isCustom = customWorkouts.contains(name);
-        String image = isCustom ? '' : getWorkoutImage(name);
+        final isCustom = customWorkouts.contains(name);
+        final image = isCustom ? '' : getWorkoutImage(name);
+
         return {
           'name': name,
           'isCustom': isCustom,
@@ -199,6 +222,97 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
       ...mapFromNames(recents),
       ...mapFromNames(others),
     ];
+  }
+
+  List<Map<String, dynamic>> get filteredWorkouts {
+    final query = searchQuery.trim().toLowerCase();
+
+    if (query.isEmpty) {
+      return orderedWorkouts;
+    }
+
+    return orderedWorkouts.where((item) {
+      final name = item['name'].toString().toLowerCase();
+      return name.contains(query);
+    }).toList();
+  }
+
+  void _openWorkoutDetails(String name) {
+    _addToRecent(name);
+
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return WorkoutDetailsScreen(categoryName: name);
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutQuart,
+            reverseCurve: Curves.easeInQuart,
+          );
+
+          final slide = Tween<Offset>(
+            begin: const Offset(0.08, 0.0),
+            end: Offset.zero,
+          ).animate(curved);
+
+          return FadeTransition(
+            opacity: curved,
+            child: SlideTransition(
+              position: slide,
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showAddCustomWorkoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String newWorkout = '';
+
+        return AlertDialog(
+          title: const Text("Add Custom Workout"),
+          content: TextField(
+            autofocus: true,
+            maxLength: 40,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-Z0-9\s\u0600-\u06FF]'),
+              ),
+            ],
+            decoration: const InputDecoration(
+              hintText: "Workout name",
+              counterText: '',
+            ),
+            onChanged: (value) {
+              newWorkout = value;
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                if (newWorkout.trim().isNotEmpty) {
+                  _addCustomWorkout(newWorkout.trim());
+                  Navigator.of(context).pop();
+                }
+              },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -215,8 +329,10 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
             children: [
               SafeArea(
                 child: Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -253,268 +369,266 @@ class _BicepsExercisesScreenState extends State<BicepsExercisesScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: GridView.builder(
-          // عدد الكروت = عدد التمارين المرتبة + كارد الإضافة
-          itemCount: orderedWorkouts.length + 1,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.85,
-          ),
-          itemBuilder: (context, index) {
-            if (index < orderedWorkouts.length) {
-              final item = orderedWorkouts[index];
-              final name = item['name'];
-              final isCustom = item['isCustom'] ?? false;
+        child: Column(
+          children: [
+            TextField(
+              controller: searchController,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                hintText: "Search exercise",
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: searchQuery.isEmpty
+                    ? null
+                    : IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      searchQuery = '';
+                      searchController.clear();
+                    });
+                  },
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: GridView.builder(
+                itemCount: filteredWorkouts.length + 1,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.85,
+                ),
+                itemBuilder: (context, index) {
+                  if (index < filteredWorkouts.length) {
+                    final item = filteredWorkouts[index];
+                    final name = item['name'].toString();
+                    final isCustom = item['isCustom'] ?? false;
 
-              return Material(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  splashColor: Colors.white.withAlpha((0.3 * 255).round()),
-                  highlightColor: Colors.white.withAlpha((0.1 * 255).round()),
-
-                  onTap: () {
-                    _addToRecent(name);
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) {
-                          return WorkoutDetailsScreen(categoryName: name);
-                        },
-
-                        //الترانزيشنز
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          final curved = CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeOutQuart,
-                            reverseCurve: Curves.easeInQuart,
-                          );
-
-                          final slide = Tween<Offset>(
-                            begin: const Offset(0.08, 0.0),
-                            end: Offset.zero,
-                          ).animate(curved);
-
-                          return FadeTransition(
-                            opacity: curved,
-                            child: SlideTransition(
-                              position: slide,
-                              child: child,
-                            ),
-                          );
-                        },
-
-
-
-                      ),
+                    return _WorkoutCard(
+                      name: name,
+                      image: item['image']?.toString() ?? '',
+                      isCustom: isCustom,
+                      isFavorite: favoriteWorkouts.contains(name),
+                      onTap: () => _openWorkoutDetails(name),
+                      onFavoriteTap: () => _toggleFavorite(name),
+                      onDeleteTap:
+                      isCustom ? () => _removeCustomWorkout(name) : null,
                     );
-                  },//زر اضافة تمارين مخصصة
-                  child: Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Stack(
-                      children: [
-                        if (!isCustom && item['image'] != '')
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.asset(
-                              item['image'],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            ),
-                          )
-                        else
-                          Builder(
-                            builder: (context) {
-                              final isDark = Theme.of(context).brightness == Brightness.dark;
-                              final bgColor = Theme.of(context).scaffoldBackgroundColor;
-                              final iconColor = isDark ? Colors.white : Colors.black87;
-                              final haloColor = isDark ? Colors.white.withAlpha(26) : Colors.black.withAlpha(26);
+                  }
 
+                  return _AddWorkoutCard(
+                    onTap: _showAddCustomWorkoutDialog,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-                              return Container(
-                                decoration: BoxDecoration(
-                                  color: bgColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Center(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: haloColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    padding: const EdgeInsets.all(16),
-                                    child: Icon(
-                                      Icons.fitness_center,
-                                      size: 48,
-                                      color: iconColor,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        Container(
-                          alignment: Alignment.bottomCenter,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+class _WorkoutCard extends StatelessWidget {
+  final String name;
+  final String image;
+  final bool isCustom;
+  final bool isFavorite;
+  final VoidCallback onTap;
+  final VoidCallback onFavoriteTap;
+  final VoidCallback? onDeleteTap;
+
+  const _WorkoutCard({
+    required this.name,
+    required this.image,
+    required this.isCustom,
+    required this.isFavorite,
+    required this.onTap,
+    required this.onFavoriteTap,
+    required this.onDeleteTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        splashColor: Colors.white.withAlpha((0.3 * 255).round()),
+        highlightColor: Colors.white.withAlpha((0.1 * 255).round()),
+        onTap: onTap,
+        child: Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              if (!isCustom && image.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    image,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                )
+              else
+                Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    final bgColor = Theme.of(context).scaffoldBackgroundColor;
+                    final iconColor = isDark ? Colors.white : Colors.black87;
+                    final haloColor = isDark
+                        ? Colors.white.withAlpha(26)
+                        : Colors.black.withAlpha(26);
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                            ),
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: Theme.of(context).brightness == Brightness.dark
-                                  ? [
-                                Colors.transparent,
-                                Colors.black.withAlpha(153),
-                              ]
-                                  : [
-                                Colors.transparent,
-                                Colors.grey.withAlpha(64),
-                              ],
-
-                            ),
+                            color: haloColor,
+                            shape: BoxShape.circle,
                           ),
-
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              Tooltip(
-                                message: 'Favorite',
-                                waitDuration: const Duration(milliseconds: 200),
-                                showDuration: const Duration(milliseconds: 400),
-
-
-                                preferBelow: false,  // خليها تظهر فوق الأيقونة
-                                child: IconButton(
-                                  icon: Icon(
-                                    favoriteWorkouts.contains(name) ? Icons.star : Icons.star_border,
-                                    color: favoriteWorkouts.contains(name) ? Colors.amber : Colors.white,
-                                  ),
-                                  onPressed: () => _toggleFavorite(name),
-                                  padding: EdgeInsets.zero,
-                                  constraints: const BoxConstraints(),
-                                ),
-                              ),
-
-
-                            ],
+                          padding: const EdgeInsets.all(16),
+                          child: Icon(
+                            Icons.fitness_center,
+                            size: 48,
+                            color: iconColor,
                           ),
                         ),
-                        if (isCustom)
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.redAccent,
-                              ),
-                              onPressed: () => _removeCustomWorkout(name),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-
-
-                ),
-              );
-            } else {
-              // كارد إضافة تمرين جديد (آخر كارد)
-              return Material(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  splashColor: Colors.white.withAlpha(77),        // 0.3 * 255 ≈ 77
-                  highlightColor: Colors.white.withAlpha(26),     // 0.1 * 255 ≈ 26
-
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        String newWorkout = '';
-                        return AlertDialog(
-                          title: const Text("Add Custom Workout"),
-                          content: TextField(
-                            autofocus: true,
-                            maxLength: 40, // أقصى طول اسم التمرينة هو 20 حرف أو رقم
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s\u0600-\u06FF]')),
-                            ],
-                            decoration: const InputDecoration(
-                              hintText: "Workout name",
-                              counterText: '', // يخفي عداد الحروف أسفل الحقل
-                            ),
-                            onChanged: (value) {
-                              newWorkout = value;
-                            },
-                          ),
-
-
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("Cancel"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                if (newWorkout.trim().isNotEmpty) {
-                                  _addCustomWorkout(newWorkout.trim());
-                                  Navigator.of(context).pop();
-                                }
-                              },
-                              child: const Text("Add"),
-                            ),
-                          ],
-                        );
-                      },
+                      ),
                     );
                   },
-                  child: Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.add,
-                        size: 48,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
+                ),
+              Container(
+                alignment: Alignment.bottomCenter,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: Theme.of(context).brightness == Brightness.dark
+                        ? [
+                      Colors.transparent,
+                      Colors.black.withAlpha(153),
+                    ]
+                        : [
+                      Colors.transparent,
+                      Colors.grey.withAlpha(64),
+                    ],
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-
+                    Tooltip(
+                      message: 'Favorite',
+                      waitDuration: const Duration(milliseconds: 200),
+                      showDuration: const Duration(milliseconds: 400),
+                      preferBelow: false,
+                      child: IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.star : Icons.star_border,
+                          color: isFavorite ? Colors.amber : Colors.white,
+                        ),
+                        onPressed: onFavoriteTap,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            }
-          },
+              ),
+              if (isCustom && onDeleteTap != null)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.redAccent,
+                    ),
+                    onPressed: onDeleteTap,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AddWorkoutCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _AddWorkoutCard({
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        splashColor: Colors.white.withAlpha(77),
+        highlightColor: Colors.white.withAlpha(26),
+        onTap: onTap,
+        child: Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.add,
+              size: 48,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+          ),
         ),
       ),
     );

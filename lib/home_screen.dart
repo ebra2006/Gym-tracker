@@ -17,7 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gym_tracker/modules/muscle_heatmap/screens/muscle_heatmap_screen.dart';
 
 
-
+import 'package:gym_tracker/modules/muscle_heatmap/widgets/human_body_widget.dart';
 
 
 
@@ -223,6 +223,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ),
     );
   }
+//الجسمممممممممممممممممممممممممممممممممممممممممممممممممممممممممممممممممممممممممم
+  Widget _buildMuscleHeatmapPreview() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const MuscleHeatMapScreen(),
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(top: 12.h, bottom: 14.h),
+        width: double.infinity,
+        height: 700,
+        clipBehavior: Clip.hardEdge,
+        decoration: const BoxDecoration(),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: const SizedBox(
+            width: 1200,
+            height: 1400,
+            child: HumanBodyWidget(),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -311,44 +339,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         ),
                       ),
 
-
-
-
-
-
-
-
-
-
-
-
-                      IconButton(
-                        icon: const Icon(Icons.bug_report),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const MuscleHeatMapScreen(),
-                            ),
-                          );
-                        },
-                      ),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//
 
                       InkWell(
                         onTap: () {
@@ -423,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -465,9 +456,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ],
                 ),
               ),
-               SizedBox(height: 20.h),
+               SizedBox(height: 4.h),
 
-
+              _buildMuscleHeatmapPreview(),
 
               //هنا الكونتينرز
               Center(
@@ -685,64 +676,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
               ),
               SizedBox(height: 20.h),
-
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h), // أصغر
-                child: Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18.r), // أصغر
-                    side: BorderSide(
-                      color: Theme.of(context).primaryColor.withOpacity(0.85),
-                      width: 1.1.w,
-                    ),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(18.r),
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("New features coming soon 🚀")),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h), // أصغر
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18.r),
-                        gradient: LinearGradient(
-                          colors: Theme.of(context).brightness == Brightness.dark
-                              ? [Colors.grey.shade800, Colors.grey.shade900] // نفس الكاليندر
-                              : [Colors.white, Colors.grey.shade100],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.auto_awesome,
-                            color: Theme.of(context).primaryColor,
-                            size: 20.sp, // أصغر
-                          ),
-                          SizedBox(width: 6.w),
-                          Text(
-                            'New features coming soon',
-                            style: TextStyle(
-                              fontSize: 15.sp, // أصغر
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).textTheme.bodyLarge!.color,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-
-
 
               // ⬇️ Image Slider
                     // ⬇️ Workout Log و TableCalendar بدون كارد

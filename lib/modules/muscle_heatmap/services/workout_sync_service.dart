@@ -5,7 +5,8 @@ class WorkoutSyncService {
   final MuscleRepository _repository = MuscleRepository();
 
   Future<void> syncWorkout(String exerciseName) async {
-    final exercise = ExerciseDatabase.getExercise(exerciseName);
+    final normalizedName = exerciseName.trim().toLowerCase();
+    final exercise = ExerciseDatabase.getExercise(normalizedName);
 
     if (exercise == null) {
       return;
@@ -14,7 +15,7 @@ class WorkoutSyncService {
     await _repository.updateMuscleImpacts(
       impacts: exercise.impacts,
       date: DateTime.now(),
-      exerciseName: exerciseName,
+      exerciseName: normalizedName,
     );
   }
 }
