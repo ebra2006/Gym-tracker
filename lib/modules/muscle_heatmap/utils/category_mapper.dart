@@ -4,25 +4,26 @@ class CategoryMapper {
   static MuscleGroup? getPrimaryMuscle(String category) {
     switch (category.toLowerCase()) {
       case 'chest':
-        return MuscleGroup.chest;
+        return MuscleGroup.middleChest;
 
       case 'back':
-        return MuscleGroup.back;
+        return MuscleGroup.upperBack;
 
       case 'legs':
-        return MuscleGroup.quadriceps;
+        return MuscleGroup.vastusLateralis;
 
       case 'shoulders':
-        return MuscleGroup.shoulders;
+        return MuscleGroup.frontDeltoid;
 
       case 'biceps':
-        return MuscleGroup.biceps;
+        return MuscleGroup.longHeadBiceps;
 
       case 'triceps':
-        return MuscleGroup.triceps;
+        return MuscleGroup.tricepsLateralHead;
 
       case 'abs':
-        return MuscleGroup.abs;
+      case 'core':
+        return MuscleGroup.upperAbs;
 
       default:
         return null;

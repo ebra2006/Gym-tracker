@@ -3,558 +3,1213 @@ import '../models/muscle_group.dart';
 
 class ExerciseDatabase {
   static final Map<String, ExerciseMuscle> exercises = {
-    // =========================
-    // CHEST
-    // =========================
+  // CHEST
+  "bench press": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.middleChest: 100,
+  MuscleGroup.upperChest: 70,
+  MuscleGroup.lowerChest: 55,
+  MuscleGroup.frontDeltoid: 55,
+  MuscleGroup.tricepsLateralHead: 40,
+  MuscleGroup.tricepsMedialHead: 35,
+  MuscleGroup.tricepsLongHead: 30,
+  },
+  movementType: "horizontal_press",
+  mechanics: "compound",
+  pattern: "push",
+  level: "intermediate",
+  ),
+  "bench bress": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.middleChest: 100,
+  MuscleGroup.upperChest: 70,
+  MuscleGroup.lowerChest: 55,
+  MuscleGroup.frontDeltoid: 55,
+  MuscleGroup.tricepsLateralHead: 40,
+  MuscleGroup.tricepsMedialHead: 35,
+  MuscleGroup.tricepsLongHead: 30,
+  },
+  movementType: "horizontal_press",
+  mechanics: "compound",
+  pattern: "push",
+  level: "intermediate",
+  ),
+  "incline bench press": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.upperChest: 100,
+  MuscleGroup.middleChest: 60,
+  MuscleGroup.frontDeltoid: 70,
+  MuscleGroup.tricepsLateralHead: 40,
+  MuscleGroup.tricepsMedialHead: 35,
+  MuscleGroup.tricepsLongHead: 30,
+  },
+  movementType: "incline_press",
+  mechanics: "compound",
+  pattern: "push",
+  level: "intermediate",
+  ),
+  "fly": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.middleChest: 100,
+  MuscleGroup.upperChest: 55,
+  MuscleGroup.lowerChest: 55,
+  MuscleGroup.frontDeltoid: 20,
+  },
+  movementType: "horizontal_adduction",
+  mechanics: "isolation",
+  pattern: "push",
+  level: "beginner",
+  ),
+  "incline chest fly": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.upperChest: 100,
+  MuscleGroup.middleChest: 55,
+  MuscleGroup.frontDeltoid: 25,
+  },
+  movementType: "incline_adduction",
+  mechanics: "isolation",
+  pattern: "push",
+  level: "beginner",
+  ),
+  "push-ups": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.middleChest: 85,
+  MuscleGroup.lowerChest: 65,
+  MuscleGroup.frontDeltoid: 50,
+  MuscleGroup.tricepsLateralHead: 45,
+  MuscleGroup.tricepsMedialHead: 40,
+  MuscleGroup.upperAbs: 20,
+  },
+  movementType: "horizontal_press",
+  mechanics: "compound",
+  pattern: "push",
+  level: "beginner",
+  ),
 
-    "bench bress": const ExerciseMuscle(
-      primary: MuscleGroup.chest,
-      secondary: [
-        MuscleGroup.triceps,
-        MuscleGroup.shoulders,
-      ],
-    ),
+  // BACK
+  "lat pulldown": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.lats: 100,
+  MuscleGroup.upperBack: 45,
+  MuscleGroup.rhomboids: 35,
+  MuscleGroup.shortHeadBiceps: 45,
+  MuscleGroup.longHeadBiceps: 35,
+  MuscleGroup.brachialis: 30,
+  MuscleGroup.forearms: 25,
+  },
+  movementType: "vertical_pull",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "beginner",
+  ),
+  "seated caple row": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.upperBack: 90,
+  MuscleGroup.rhomboids: 85,
+  MuscleGroup.lats: 70,
+  MuscleGroup.rearDeltoid: 55,
+  MuscleGroup.traps: 45,
+  MuscleGroup.shortHeadBiceps: 40,
+  MuscleGroup.brachialis: 35,
+  },
+  movementType: "horizontal_pull",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "beginner",
+  ),
+  "seated cable row": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.upperBack: 90,
+  MuscleGroup.rhomboids: 85,
+  MuscleGroup.lats: 70,
+  MuscleGroup.rearDeltoid: 55,
+  MuscleGroup.traps: 45,
+  MuscleGroup.shortHeadBiceps: 40,
+  MuscleGroup.brachialis: 35,
+  },
+  movementType: "horizontal_pull",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "beginner",
+  ),
+  "barbell row": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.upperBack: 95,
+  MuscleGroup.rhomboids: 85,
+  MuscleGroup.lats: 75,
+  MuscleGroup.rearDeltoid: 55,
+  MuscleGroup.traps: 55,
+  MuscleGroup.lowerBack: 45,
+  MuscleGroup.shortHeadBiceps: 40,
+  MuscleGroup.brachialis: 35,
+  },
+  movementType: "horizontal_pull",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "intermediate",
+  ),
+  "dumbell row": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.lats: 90,
+  MuscleGroup.upperBack: 75,
+  MuscleGroup.rhomboids: 65,
+  MuscleGroup.rearDeltoid: 45,
+  MuscleGroup.shortHeadBiceps: 40,
+  MuscleGroup.brachialis: 35,
+  },
+  movementType: "horizontal_pull",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "beginner",
+  ),
+  "dumbbell row": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.lats: 90,
+  MuscleGroup.upperBack: 75,
+  MuscleGroup.rhomboids: 65,
+  MuscleGroup.rearDeltoid: 45,
+  MuscleGroup.shortHeadBiceps: 40,
+  MuscleGroup.brachialis: 35,
+  },
+  movementType: "horizontal_pull",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "beginner",
+  ),
+  "pull-ups": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.lats: 100,
+  MuscleGroup.upperBack: 55,
+  MuscleGroup.rhomboids: 40,
+  MuscleGroup.shortHeadBiceps: 50,
+  MuscleGroup.longHeadBiceps: 40,
+  MuscleGroup.brachialis: 35,
+  MuscleGroup.forearms: 35,
+  },
+  movementType: "vertical_pull",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "intermediate",
+  ),
+  "deadlift": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.lowerBack: 100,
+  MuscleGroup.gluteMax: 90,
+  MuscleGroup.bicepsFemoris: 75,
+  MuscleGroup.semitendinosus: 65,
+  MuscleGroup.semimembranosus: 65,
+  MuscleGroup.traps: 70,
+  MuscleGroup.upperBack: 55,
+  MuscleGroup.forearms: 45,
+  MuscleGroup.vastusLateralis: 35,
+  MuscleGroup.vastusMedialis: 30,
+  MuscleGroup.rectusFemoris: 25,
+  },
+  movementType: "hip_hinge",
+  mechanics: "compound",
+  pattern: "pull",
+  level: "advanced",
+  ),
 
-    "incline bench press": const ExerciseMuscle(
-      primary: MuscleGroup.chest,
-      secondary: [
-        MuscleGroup.triceps,
-        MuscleGroup.shoulders,
-      ],
-    ),
-
-    "fly": const ExerciseMuscle(
-      primary: MuscleGroup.chest,
-    ),
-
-    "incline chest fly": const ExerciseMuscle(
-      primary: MuscleGroup.chest,
-    ),
-
-    "push-ups": const ExerciseMuscle(
-      primary: MuscleGroup.chest,
-      secondary: [
-        MuscleGroup.triceps,
-        MuscleGroup.shoulders,
-      ],
-    ),
-
-    // =========================
-    // BACK
-    // =========================
-
-    "lat pulldown": const ExerciseMuscle(
-      primary: MuscleGroup.back,
-      secondary: [
-        MuscleGroup.biceps,
-      ],
-    ),
-
-    "seated caple row": const ExerciseMuscle(
-      primary: MuscleGroup.back,
-      secondary: [
-        MuscleGroup.biceps,
-        MuscleGroup.rearShoulders,
-      ],
-    ),
-
-    "barbell row": const ExerciseMuscle(
-      primary: MuscleGroup.back,
-      secondary: [
-        MuscleGroup.biceps,
-        MuscleGroup.rearShoulders,
-      ],
-    ),
-
-    "dumbell row": const ExerciseMuscle(
-      primary: MuscleGroup.back,
-      secondary: [
-        MuscleGroup.biceps,
-        MuscleGroup.rearShoulders,
-      ],
-    ),
-
-    "pull-ups": const ExerciseMuscle(
-      primary: MuscleGroup.back,
-      secondary: [
-        MuscleGroup.biceps,
-      ],
-    ),
-
-    "deadlift": const ExerciseMuscle(
-      primary: MuscleGroup.back,
-      secondary: [
-        MuscleGroup.glutes,
-        MuscleGroup.hamstrings,
-        MuscleGroup.traps,
-      ],
-    ),
-
-
-
-    // =========================
-// LEGS
-// =========================
-
-    "barbell squat": const ExerciseMuscle(
-      primary: MuscleGroup.quadriceps,
-      secondary: [
-        MuscleGroup.glutes,
-        MuscleGroup.hamstrings,
-      ],
-    ),
-
-    "front squat": const ExerciseMuscle(
-      primary: MuscleGroup.quadriceps,
-      secondary: [
-        MuscleGroup.glutes,
-      ],
-    ),
-
-    "hack squat": const ExerciseMuscle(
-      primary: MuscleGroup.quadriceps,
-      secondary: [
-        MuscleGroup.glutes,
-      ],
-    ),
-
-    "leg press": const ExerciseMuscle(
-      primary: MuscleGroup.quadriceps,
-      secondary: [
-        MuscleGroup.glutes,
-        MuscleGroup.hamstrings,
-      ],
-    ),
-
-    "leg extension": const ExerciseMuscle(
-      primary: MuscleGroup.quadriceps,
-    ),
-
-    "walking lunges": const ExerciseMuscle(
-      primary: MuscleGroup.quadriceps,
-      secondary: [
-        MuscleGroup.glutes,
-        MuscleGroup.hamstrings,
-      ],
-    ),
-
-    "bulgarian split squat": const ExerciseMuscle(
-      primary: MuscleGroup.quadriceps,
-      secondary: [
-        MuscleGroup.glutes,
-        MuscleGroup.hamstrings,
-      ],
-    ),
-
-    "romanian deadlift": const ExerciseMuscle(
-      primary: MuscleGroup.hamstrings,
-      secondary: [
-        MuscleGroup.glutes,
-        MuscleGroup.back,
-      ],
-    ),
-
-    "stiff leg deadlift": const ExerciseMuscle(
-      primary: MuscleGroup.hamstrings,
-      secondary: [
-        MuscleGroup.glutes,
-        MuscleGroup.back,
-      ],
-    ),
-
-    "lying leg curl": const ExerciseMuscle(
-      primary: MuscleGroup.hamstrings,
-    ),
-
-    "seated leg curl": const ExerciseMuscle(
-      primary: MuscleGroup.hamstrings,
-    ),
-
-    "standing leg curl": const ExerciseMuscle(
-      primary: MuscleGroup.hamstrings,
-    ),
-
-    "hip thrust": const ExerciseMuscle(
-      primary: MuscleGroup.glutes,
-      secondary: [
-        MuscleGroup.hamstrings,
-      ],
-    ),
-
-    "glute bridge": const ExerciseMuscle(
-      primary: MuscleGroup.glutes,
-      secondary: [
-        MuscleGroup.hamstrings,
-      ],
-    ),
-
-    "cable kickback": const ExerciseMuscle(
-      primary: MuscleGroup.glutes,
-    ),
-
-    "standing calf raise": const ExerciseMuscle(
-      primary: MuscleGroup.calves,
-    ),
-
-    "seated calf raise": const ExerciseMuscle(
-      primary: MuscleGroup.calves,
-    ),
-
-    "donkey calf raise": const ExerciseMuscle(
-      primary: MuscleGroup.calves,
-    ),
-
-    // =========================
-// TRICEPS
-// =========================
-
+  // LEGS
+  "barbell squat": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.vastusLateralis: 100,
+  MuscleGroup.vastusMedialis: 95,
+  MuscleGroup.rectusFemoris: 85,
+  MuscleGroup.vastusIntermedius: 90,
+  MuscleGroup.gluteMax: 80,
+  MuscleGroup.adductors: 55,
+  MuscleGroup.bicepsFemoris: 40,
+  MuscleGroup.semitendinosus: 35,
+  MuscleGroup.semimembranosus: 35,
+  MuscleGroup.lowerBack: 35,
+  MuscleGroup.gastrocnemius: 20,
+  MuscleGroup.soleus: 15,
+  },
+  movementType: "squat",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "intermediate",
+  ),
+  "front squat": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.vastusLateralis: 100,
+  MuscleGroup.vastusMedialis: 100,
+  MuscleGroup.rectusFemoris: 95,
+  MuscleGroup.vastusIntermedius: 90,
+  MuscleGroup.gluteMax: 60,
+  MuscleGroup.adductors: 45,
+  MuscleGroup.upperBack: 35,
+  MuscleGroup.lowerBack: 25,
+  },
+  movementType: "squat",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "intermediate",
+  ),
+  "hack squat": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.vastusLateralis: 100,
+  MuscleGroup.vastusMedialis: 95,
+  MuscleGroup.rectusFemoris: 85,
+  MuscleGroup.vastusIntermedius: 90,
+  MuscleGroup.gluteMax: 55,
+  MuscleGroup.adductors: 35,
+  MuscleGroup.gastrocnemius: 15,
+  },
+  movementType: "squat",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "leg press": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.vastusLateralis: 95,
+  MuscleGroup.vastusMedialis: 90,
+  MuscleGroup.rectusFemoris: 80,
+  MuscleGroup.vastusIntermedius: 85,
+  MuscleGroup.gluteMax: 70,
+  MuscleGroup.adductors: 40,
+  MuscleGroup.bicepsFemoris: 25,
+  MuscleGroup.semitendinosus: 25,
+  MuscleGroup.gastrocnemius: 15,
+  },
+  movementType: "leg_press",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "leg extension": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.rectusFemoris: 100,
+  MuscleGroup.vastusLateralis: 95,
+  MuscleGroup.vastusMedialis: 95,
+  MuscleGroup.vastusIntermedius: 100,
+  },
+  movementType: "knee_extension",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "walking lunges": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.gluteMax: 90,
+  MuscleGroup.vastusLateralis: 85,
+  MuscleGroup.vastusMedialis: 80,
+  MuscleGroup.rectusFemoris: 75,
+  MuscleGroup.adductors: 50,
+  MuscleGroup.bicepsFemoris: 45,
+  MuscleGroup.semitendinosus: 40,
+  MuscleGroup.gluteMed: 45,
+  MuscleGroup.gastrocnemius: 25,
+  },
+  movementType: "lunge",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "intermediate",
+  ),
+  "bulgarian split squat": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.gluteMax: 95,
+  MuscleGroup.gluteMed: 55,
+  MuscleGroup.vastusLateralis: 90,
+  MuscleGroup.vastusMedialis: 85,
+  MuscleGroup.rectusFemoris: 80,
+  MuscleGroup.adductors: 45,
+  MuscleGroup.bicepsFemoris: 35,
+  MuscleGroup.gastrocnemius: 20,
+  },
+  movementType: "single_leg_squat",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "intermediate",
+  ),
+  "romanian deadlift": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.bicepsFemoris: 100,
+  MuscleGroup.semitendinosus: 95,
+  MuscleGroup.semimembranosus: 95,
+  MuscleGroup.gluteMax: 80,
+  MuscleGroup.lowerBack: 55,
+  MuscleGroup.forearms: 25,
+  },
+  movementType: "hip_hinge",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "intermediate",
+  ),
+  "stiff leg deadlift": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.bicepsFemoris: 100,
+  MuscleGroup.semitendinosus: 95,
+  MuscleGroup.semimembranosus: 95,
+  MuscleGroup.gluteMax: 70,
+  MuscleGroup.lowerBack: 60,
+  MuscleGroup.forearms: 25,
+  },
+  movementType: "hip_hinge",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "intermediate",
+  ),
+  "lying leg curl": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.bicepsFemoris: 100,
+  MuscleGroup.semitendinosus: 90,
+  MuscleGroup.semimembranosus: 90,
+  },
+  movementType: "knee_flexion",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "seated leg curl": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.semitendinosus: 100,
+  MuscleGroup.semimembranosus: 100,
+  MuscleGroup.bicepsFemoris: 90,
+  },
+  movementType: "knee_flexion",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "standing leg curl": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.bicepsFemoris: 95,
+  MuscleGroup.semitendinosus: 90,
+  MuscleGroup.semimembranosus: 90,
+  },
+  movementType: "knee_flexion",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "hip thrust": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.gluteMax: 100,
+  MuscleGroup.gluteMed: 35,
+  MuscleGroup.bicepsFemoris: 40,
+  MuscleGroup.semitendinosus: 35,
+  MuscleGroup.lowerBack: 20,
+  },
+  movementType: "hip_extension",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "glute bridge": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.gluteMax: 90,
+  MuscleGroup.gluteMed: 30,
+  MuscleGroup.bicepsFemoris: 35,
+  MuscleGroup.semitendinosus: 30,
+  },
+  movementType: "hip_extension",
+  mechanics: "compound",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "cable kickback": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.gluteMax: 100,
+  MuscleGroup.gluteMed: 25,
+  MuscleGroup.bicepsFemoris: 20,
+  },
+  movementType: "hip_extension",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "standing calf raise": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.gastrocnemius: 100,
+  MuscleGroup.soleus: 55,
+  },
+  movementType: "plantar_flexion",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "seated calf raise": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.soleus: 100,
+  MuscleGroup.gastrocnemius: 45,
+  },
+  movementType: "plantar_flexion",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+  "donkey calf raise": const ExerciseMuscle(
+  impacts: {
+  MuscleGroup.gastrocnemius: 100,
+  MuscleGroup.soleus: 70,
+  },
+  movementType: "plantar_flexion",
+  mechanics: "isolation",
+  pattern: "legs",
+  level: "beginner",
+  ),
+    // TRICEPS
     "close grip bench press": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
-      secondary: [
-        MuscleGroup.chest,
-        MuscleGroup.shoulders,
-      ],
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 85,
+        MuscleGroup.tricepsMedialHead: 80,
+        MuscleGroup.tricepsLongHead: 65,
+        MuscleGroup.middleChest: 55,
+        MuscleGroup.frontDeltoid: 45,
+      },
+      movementType: "horizontal_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "triceps pushdown": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 100,
+        MuscleGroup.tricepsMedialHead: 75,
+        MuscleGroup.tricepsLongHead: 45,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "rope pushdown": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 95,
+        MuscleGroup.tricepsMedialHead: 80,
+        MuscleGroup.tricepsLongHead: 50,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "overhead triceps extension": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLongHead: 100,
+        MuscleGroup.tricepsMedialHead: 60,
+        MuscleGroup.tricepsLateralHead: 50,
+      },
+      movementType: "elbow_extension_overhead",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "skull crushers": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLongHead: 90,
+        MuscleGroup.tricepsLateralHead: 75,
+        MuscleGroup.tricepsMedialHead: 65,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "dips": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
-      secondary: [
-        MuscleGroup.chest,
-        MuscleGroup.shoulders,
-      ],
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 85,
+        MuscleGroup.tricepsMedialHead: 75,
+        MuscleGroup.lowerChest: 75,
+        MuscleGroup.frontDeltoid: 45,
+        MuscleGroup.tricepsLongHead: 50,
+      },
+      movementType: "vertical_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "cable overhead extension": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLongHead: 100,
+        MuscleGroup.tricepsMedialHead: 60,
+        MuscleGroup.tricepsLateralHead: 50,
+      },
+      movementType: "elbow_extension_overhead",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "single arm pushdown": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 95,
+        MuscleGroup.tricepsMedialHead: 80,
+        MuscleGroup.tricepsLongHead: 45,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "reverse grip pushdown": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsMedialHead: 100,
+        MuscleGroup.tricepsLateralHead: 65,
+        MuscleGroup.tricepsLongHead: 45,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "ez bar skull crusher": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLongHead: 90,
+        MuscleGroup.tricepsLateralHead: 75,
+        MuscleGroup.tricepsMedialHead: 65,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "bench dips": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
-      secondary: [
-        MuscleGroup.chest,
-      ],
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 85,
+        MuscleGroup.tricepsMedialHead: 75,
+        MuscleGroup.lowerChest: 45,
+        MuscleGroup.frontDeltoid: 35,
+      },
+      movementType: "vertical_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "kickbacks": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 90,
+        MuscleGroup.tricepsLongHead: 65,
+        MuscleGroup.tricepsMedialHead: 55,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "machine triceps extension": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 85,
+        MuscleGroup.tricepsMedialHead: 75,
+        MuscleGroup.tricepsLongHead: 60,
+      },
+      movementType: "elbow_extension",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "diamond push-ups": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
-      secondary: [
-        MuscleGroup.chest,
-        MuscleGroup.shoulders,
-      ],
+      impacts: {
+        MuscleGroup.tricepsLateralHead: 90,
+        MuscleGroup.tricepsMedialHead: 80,
+        MuscleGroup.middleChest: 60,
+        MuscleGroup.frontDeltoid: 50,
+        MuscleGroup.tricepsLongHead: 45,
+      },
+      movementType: "horizontal_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "jm press": const ExerciseMuscle(
-      primary: MuscleGroup.triceps,
-      secondary: [
-        MuscleGroup.chest,
-        MuscleGroup.shoulders,
-      ],
+      impacts: {
+        MuscleGroup.tricepsLongHead: 85,
+        MuscleGroup.tricepsLateralHead: 80,
+        MuscleGroup.tricepsMedialHead: 70,
+        MuscleGroup.middleChest: 35,
+        MuscleGroup.frontDeltoid: 35,
+      },
+      movementType: "hybrid_press_extension",
+      mechanics: "compound",
+      pattern: "push",
+      level: "advanced",
     ),
 
-    // =========================
-// ABS
-// =========================
-
+    // ABS
     "crunch": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.upperAbs: 100,
+        MuscleGroup.lowerAbs: 45,
+      },
+      movementType: "spinal_flexion",
+      mechanics: "isolation",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "cable crunch": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.upperAbs: 100,
+        MuscleGroup.lowerAbs: 55,
+      },
+      movementType: "loaded_spinal_flexion",
+      mechanics: "isolation",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "decline crunch": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.upperAbs: 95,
+        MuscleGroup.lowerAbs: 60,
+      },
+      movementType: "spinal_flexion",
+      mechanics: "isolation",
+      pattern: "core",
+      level: "intermediate",
     ),
-
     "sit-up": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.upperAbs: 75,
+        MuscleGroup.lowerAbs: 70,
+        MuscleGroup.hipFlexors: 65,
+      },
+      movementType: "trunk_flexion",
+      mechanics: "compound",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "hanging leg raise": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
-      secondary: [
-        MuscleGroup.obliques,
-      ],
+      impacts: {
+        MuscleGroup.lowerAbs: 100,
+        MuscleGroup.hipFlexors: 80,
+        MuscleGroup.upperAbs: 55,
+        MuscleGroup.obliques: 35,
+        MuscleGroup.forearms: 25,
+      },
+      movementType: "hip_flexion_posterior_pelvic_tilt",
+      mechanics: "compound",
+      pattern: "core",
+      level: "intermediate",
     ),
-
     "lying leg raise": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.lowerAbs: 90,
+        MuscleGroup.hipFlexors: 65,
+        MuscleGroup.upperAbs: 40,
+      },
+      movementType: "hip_flexion",
+      mechanics: "compound",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "reverse crunch": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.lowerAbs: 100,
+        MuscleGroup.upperAbs: 55,
+      },
+      movementType: "posterior_pelvic_tilt",
+      mechanics: "isolation",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "v-ups": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.upperAbs: 85,
+        MuscleGroup.lowerAbs: 85,
+        MuscleGroup.hipFlexors: 60,
+      },
+      movementType: "trunk_and_hip_flexion",
+      mechanics: "compound",
+      pattern: "core",
+      level: "intermediate",
     ),
-
     "toe touches": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.upperAbs: 85,
+        MuscleGroup.lowerAbs: 45,
+      },
+      movementType: "spinal_flexion",
+      mechanics: "isolation",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "russian twist": const ExerciseMuscle(
-      primary: MuscleGroup.obliques,
-      secondary: [
-        MuscleGroup.abs,
-      ],
+      impacts: {
+        MuscleGroup.obliques: 100,
+        MuscleGroup.upperAbs: 45,
+        MuscleGroup.lowerAbs: 45,
+      },
+      movementType: "trunk_rotation",
+      mechanics: "compound",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "bicycle crunch": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
-      secondary: [
-        MuscleGroup.obliques,
-      ],
+      impacts: {
+        MuscleGroup.obliques: 90,
+        MuscleGroup.upperAbs: 75,
+        MuscleGroup.lowerAbs: 75,
+        MuscleGroup.hipFlexors: 45,
+      },
+      movementType: "rotation_and_flexion",
+      mechanics: "compound",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "mountain climbers": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
-      secondary: [
-        MuscleGroup.shoulders,
-      ],
+      impacts: {
+        MuscleGroup.lowerAbs: 70,
+        MuscleGroup.hipFlexors: 65,
+        MuscleGroup.frontDeltoid: 35,
+        MuscleGroup.upperAbs: 35,
+      },
+      movementType: "dynamic_plank",
+      mechanics: "compound",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "ab wheel rollout": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
-      secondary: [
-        MuscleGroup.shoulders,
-      ],
+      impacts: {
+        MuscleGroup.upperAbs: 90,
+        MuscleGroup.lowerAbs: 90,
+        MuscleGroup.serratus: 65,
+        MuscleGroup.lats: 35,
+        MuscleGroup.frontDeltoid: 35,
+      },
+      movementType: "anti_extension",
+      mechanics: "compound",
+      pattern: "core",
+      level: "advanced",
     ),
-
     "plank": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.upperAbs: 65,
+        MuscleGroup.lowerAbs: 65,
+        MuscleGroup.obliques: 45,
+        MuscleGroup.frontDeltoid: 25,
+      },
+      movementType: "anti_extension",
+      mechanics: "isometric",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "side plank": const ExerciseMuscle(
-      primary: MuscleGroup.obliques,
-      secondary: [
-        MuscleGroup.abs,
-      ],
+      impacts: {
+        MuscleGroup.obliques: 100,
+        MuscleGroup.serratus: 40,
+        MuscleGroup.lateralDeltoid: 25,
+      },
+      movementType: "anti_lateral_flexion",
+      mechanics: "isometric",
+      pattern: "core",
+      level: "beginner",
     ),
-
     "woodchopper": const ExerciseMuscle(
-      primary: MuscleGroup.obliques,
-      secondary: [
-        MuscleGroup.abs,
-      ],
+      impacts: {
+        MuscleGroup.obliques: 100,
+        MuscleGroup.serratus: 45,
+        MuscleGroup.upperAbs: 35,
+        MuscleGroup.lowerAbs: 35,
+      },
+      movementType: "loaded_rotation",
+      mechanics: "compound",
+      pattern: "core",
+      level: "intermediate",
     ),
-
     "dragon flag": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.lowerAbs: 100,
+        MuscleGroup.upperAbs: 90,
+        MuscleGroup.hipFlexors: 65,
+        MuscleGroup.lats: 25,
+      },
+      movementType: "anti_extension",
+      mechanics: "compound",
+      pattern: "core",
+      level: "advanced",
     ),
-
     "flutter kicks": const ExerciseMuscle(
-      primary: MuscleGroup.abs,
+      impacts: {
+        MuscleGroup.lowerAbs: 85,
+        MuscleGroup.hipFlexors: 70,
+        MuscleGroup.upperAbs: 35,
+      },
+      movementType: "hip_flexion",
+      mechanics: "compound",
+      pattern: "core",
+      level: "beginner",
     ),
 
-    // =========================
-// SHOULDERS
-// =========================
-
+    // SHOULDERS
     "overhead press": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
-      secondary: [
-        MuscleGroup.triceps,
-      ],
+      impacts: {
+        MuscleGroup.frontDeltoid: 100,
+        MuscleGroup.lateralDeltoid: 85,
+        MuscleGroup.tricepsLateralHead: 55,
+        MuscleGroup.tricepsMedialHead: 45,
+        MuscleGroup.upperChest: 30,
+        MuscleGroup.traps: 30,
+      },
+      movementType: "vertical_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "seated dumbbell press": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
-      secondary: [
-        MuscleGroup.triceps,
-      ],
+      impacts: {
+        MuscleGroup.frontDeltoid: 95,
+        MuscleGroup.lateralDeltoid: 85,
+        MuscleGroup.tricepsLateralHead: 50,
+        MuscleGroup.tricepsMedialHead: 45,
+        MuscleGroup.traps: 25,
+      },
+      movementType: "vertical_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "arnold press": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
-      secondary: [
-        MuscleGroup.triceps,
-      ],
+      impacts: {
+        MuscleGroup.frontDeltoid: 100,
+        MuscleGroup.lateralDeltoid: 80,
+        MuscleGroup.tricepsLateralHead: 45,
+        MuscleGroup.tricepsMedialHead: 40,
+      },
+      movementType: "vertical_press_rotation",
+      mechanics: "compound",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "machine shoulder press": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
-      secondary: [
-        MuscleGroup.triceps,
-      ],
+      impacts: {
+        MuscleGroup.frontDeltoid: 95,
+        MuscleGroup.lateralDeltoid: 80,
+        MuscleGroup.tricepsLateralHead: 50,
+        MuscleGroup.tricepsMedialHead: 45,
+      },
+      movementType: "vertical_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "military press": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
-      secondary: [
-        MuscleGroup.triceps,
-      ],
+      impacts: {
+        MuscleGroup.frontDeltoid: 100,
+        MuscleGroup.lateralDeltoid: 80,
+        MuscleGroup.tricepsLateralHead: 55,
+        MuscleGroup.tricepsMedialHead: 45,
+        MuscleGroup.traps: 35,
+      },
+      movementType: "vertical_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "intermediate",
     ),
-
     "lateral raise": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
+      impacts: {
+        MuscleGroup.lateralDeltoid: 100,
+        MuscleGroup.frontDeltoid: 20,
+        MuscleGroup.traps: 20,
+      },
+      movementType: "shoulder_abduction",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "cable lateral raise": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
+      impacts: {
+        MuscleGroup.lateralDeltoid: 100,
+        MuscleGroup.frontDeltoid: 15,
+        MuscleGroup.traps: 15,
+      },
+      movementType: "shoulder_abduction",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "front raise": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
+      impacts: {
+        MuscleGroup.frontDeltoid: 100,
+        MuscleGroup.upperChest: 25,
+      },
+      movementType: "shoulder_flexion",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "cable front raise": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
+      impacts: {
+        MuscleGroup.frontDeltoid: 100,
+        MuscleGroup.upperChest: 20,
+      },
+      movementType: "shoulder_flexion",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "rear delt fly": const ExerciseMuscle(
-      primary: MuscleGroup.rearShoulders,
+      impacts: {
+        MuscleGroup.rearDeltoid: 100,
+        MuscleGroup.rhomboids: 35,
+        MuscleGroup.traps: 25,
+      },
+      movementType: "horizontal_abduction",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "reverse pec deck": const ExerciseMuscle(
-      primary: MuscleGroup.rearShoulders,
+      impacts: {
+        MuscleGroup.rearDeltoid: 100,
+        MuscleGroup.rhomboids: 40,
+        MuscleGroup.traps: 25,
+      },
+      movementType: "horizontal_abduction",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "face pull": const ExerciseMuscle(
-      primary: MuscleGroup.rearShoulders,
-      secondary: [
-        MuscleGroup.traps,
-      ],
+      impacts: {
+        MuscleGroup.rearDeltoid: 90,
+        MuscleGroup.traps: 65,
+        MuscleGroup.rhomboids: 55,
+        MuscleGroup.upperBack: 45,
+      },
+      movementType: "horizontal_pull_external_rotation",
+      mechanics: "compound",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "upright row": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
-      secondary: [
-        MuscleGroup.traps,
-      ],
+      impacts: {
+        MuscleGroup.lateralDeltoid: 85,
+        MuscleGroup.traps: 75,
+        MuscleGroup.frontDeltoid: 45,
+        MuscleGroup.brachialis: 25,
+      },
+      movementType: "vertical_pull",
+      mechanics: "compound",
+      pattern: "pull",
+      level: "intermediate",
     ),
-
     "dumbbell shrugs": const ExerciseMuscle(
-      primary: MuscleGroup.traps,
+      impacts: {
+        MuscleGroup.traps: 100,
+        MuscleGroup.forearms: 25,
+      },
+      movementType: "scapular_elevation",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "barbell shrugs": const ExerciseMuscle(
-      primary: MuscleGroup.traps,
+      impacts: {
+        MuscleGroup.traps: 100,
+        MuscleGroup.forearms: 30,
+      },
+      movementType: "scapular_elevation",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "smith machine shoulder press": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
-      secondary: [
-        MuscleGroup.triceps,
-      ],
+      impacts: {
+        MuscleGroup.frontDeltoid: 95,
+        MuscleGroup.lateralDeltoid: 80,
+        MuscleGroup.tricepsLateralHead: 50,
+        MuscleGroup.tricepsMedialHead: 45,
+      },
+      movementType: "vertical_press",
+      mechanics: "compound",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "single arm cable lateral raise": const ExerciseMuscle(
-      primary: MuscleGroup.shoulders,
+      impacts: {
+        MuscleGroup.lateralDeltoid: 100,
+        MuscleGroup.traps: 15,
+      },
+      movementType: "shoulder_abduction",
+      mechanics: "isolation",
+      pattern: "push",
+      level: "beginner",
     ),
-
     "bent over lateral raise": const ExerciseMuscle(
-      primary: MuscleGroup.rearShoulders,
+      impacts: {
+        MuscleGroup.rearDeltoid: 100,
+        MuscleGroup.rhomboids: 35,
+        MuscleGroup.traps: 25,
+      },
+      movementType: "horizontal_abduction",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
 
-    // =========================
     // BICEPS
-    // =========================
-
     "barbell curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 90,
+        MuscleGroup.longHeadBiceps: 90,
+        MuscleGroup.brachialis: 55,
+        MuscleGroup.forearms: 25,
+      },
+      movementType: "elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "dumbbell curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 90,
+        MuscleGroup.longHeadBiceps: 90,
+        MuscleGroup.brachialis: 50,
+        MuscleGroup.forearms: 25,
+      },
+      movementType: "elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "hammer curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
-      secondary: [
-        MuscleGroup.forearms,
-      ],
+      impacts: {
+        MuscleGroup.brachialis: 100,
+        MuscleGroup.forearms: 75,
+        MuscleGroup.longHeadBiceps: 60,
+        MuscleGroup.shortHeadBiceps: 45,
+      },
+      movementType: "neutral_grip_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "preacher curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 100,
+        MuscleGroup.longHeadBiceps: 70,
+        MuscleGroup.brachialis: 45,
+      },
+      movementType: "supported_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "cable curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 90,
+        MuscleGroup.longHeadBiceps: 85,
+        MuscleGroup.brachialis: 50,
+      },
+      movementType: "elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "concentration curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 100,
+        MuscleGroup.longHeadBiceps: 65,
+        MuscleGroup.brachialis: 35,
+      },
+      movementType: "supported_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "ez bar curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.longHeadBiceps: 85,
+        MuscleGroup.shortHeadBiceps: 80,
+        MuscleGroup.brachialis: 55,
+        MuscleGroup.forearms: 25,
+      },
+      movementType: "semi_supinated_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "incline dumbbell curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.longHeadBiceps: 100,
+        MuscleGroup.shortHeadBiceps: 75,
+        MuscleGroup.brachialis: 45,
+      },
+      movementType: "shoulder_extended_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "intermediate",
     ),
-
     "reverse curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
-      secondary: [
-        MuscleGroup.forearms,
-      ],
+      impacts: {
+        MuscleGroup.forearms: 100,
+        MuscleGroup.brachialis: 85,
+        MuscleGroup.longHeadBiceps: 35,
+        MuscleGroup.shortHeadBiceps: 25,
+      },
+      movementType: "pronated_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "spider curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 95,
+        MuscleGroup.longHeadBiceps: 75,
+        MuscleGroup.brachialis: 45,
+      },
+      movementType: "supported_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "intermediate",
     ),
-
     "drag curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.longHeadBiceps: 95,
+        MuscleGroup.shortHeadBiceps: 75,
+        MuscleGroup.brachialis: 40,
+      },
+      movementType: "shoulder_extension_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "intermediate",
     ),
-
     "machine curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 90,
+        MuscleGroup.longHeadBiceps: 80,
+        MuscleGroup.brachialis: 45,
+      },
+      movementType: "elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "standing cable curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.shortHeadBiceps: 90,
+        MuscleGroup.longHeadBiceps: 85,
+        MuscleGroup.brachialis: 50,
+      },
+      movementType: "elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "beginner",
     ),
-
     "bayesian cable curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
+      impacts: {
+        MuscleGroup.longHeadBiceps: 100,
+        MuscleGroup.shortHeadBiceps: 70,
+        MuscleGroup.brachialis: 40,
+      },
+      movementType: "shoulder_extended_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "intermediate",
     ),
-
     "zottman curl": const ExerciseMuscle(
-      primary: MuscleGroup.biceps,
-      secondary: [
-        MuscleGroup.forearms,
-      ],
+      impacts: {
+        MuscleGroup.forearms: 90,
+        MuscleGroup.brachialis: 80,
+        MuscleGroup.longHeadBiceps: 65,
+        MuscleGroup.shortHeadBiceps: 65,
+      },
+      movementType: "supination_pronation_elbow_flexion",
+      mechanics: "isolation",
+      pattern: "pull",
+      level: "intermediate",
     ),
   };
 

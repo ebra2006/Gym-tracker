@@ -1,21 +1,50 @@
 enum MuscleGroup {
-  chest,
-  back,
+  upperChest,
+  middleChest,
+  lowerChest,
+
+  frontDeltoid,
+  lateralDeltoid,
+  rearDeltoid,
+
+  upperBack,
   lats,
+  rhomboids,
   traps,
+  lowerBack,
 
-  shoulders,
-  rearShoulders,
+  longHeadBiceps,
+  shortHeadBiceps,
+  brachialis,
 
-  biceps,
-  triceps,
+  tricepsLongHead,
+  tricepsLateralHead,
+  tricepsMedialHead,
+
   forearms,
 
-  abs,
+  upperAbs,
+  lowerAbs,
   obliques,
+  serratus,
 
-  quadriceps,
-  hamstrings,
-  glutes,
-  calves,
+  rectusFemoris,
+  vastusLateralis,
+  vastusMedialis,
+  vastusIntermedius,
+
+  bicepsFemoris,
+  semitendinosus,
+  semimembranosus,
+
+  gluteMax,
+  gluteMed,
+  gluteMin,
+
+  gastrocnemius,
+  soleus,
+
+  hipFlexors,
+  adductors,
+  tibialisAnterior,
 }

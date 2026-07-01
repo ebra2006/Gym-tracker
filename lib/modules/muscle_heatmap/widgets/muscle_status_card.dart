@@ -24,16 +24,16 @@ class MuscleStatusCard extends StatelessWidget {
       case MuscleStatus.ready:
         statusText = "Ready to train";
         break;
-
       case MuscleStatus.recovering:
-        statusText =
-        "${info.remainingRecovery.inHours} hours remaining";
+        statusText = "${info.remainingRecovery.inHours} hours remaining";
         break;
-
       case MuscleStatus.inactive:
         statusText = "Not trained recently";
         break;
     }
+
+    final fatiguePercent = (info.fatiguePercent * 100).round();
+    final recoveryPercent = (info.recoveryPercent * 100).round();
 
     return Card(
       elevation: 2,
@@ -52,9 +52,7 @@ class MuscleStatusCard extends StatelessWidget {
                   radius: 8,
                   backgroundColor: color,
                 ),
-
                 const SizedBox(width: 10),
-
                 Expanded(
                   child: Text(
                     muscleName,
@@ -64,9 +62,8 @@ class MuscleStatusCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Text(
-                  "${(info.recoveryPercent * 100).round()}%",
+                  "$recoveryPercent%",
                   style: TextStyle(
                     color: color,
                     fontWeight: FontWeight.bold,
@@ -75,9 +72,7 @@ class MuscleStatusCard extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 12),
-
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: LinearProgressIndicator(
@@ -87,9 +82,7 @@ class MuscleStatusCard extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation(color),
               ),
             ),
-
             const SizedBox(height: 12),
-
             Text(
               statusText,
               style: TextStyle(
@@ -97,11 +90,18 @@ class MuscleStatusCard extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-
-            if (info.lastWorkout != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              "Fatigue: $fatiguePercent%  |  Recovery Time: ${info.recoveryHours}h",
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 12,
+              ),
+            ),
+            if (info.lastExerciseName != null) ...[
               const SizedBox(height: 6),
               Text(
-                "Recovery Time: ${info.recoveryHours}h",
+                "Last: ${info.lastExerciseName} (${info.lastImpactPercent ?? 0}%)",
                 style: TextStyle(
                   color: Colors.grey.shade600,
                   fontSize: 12,

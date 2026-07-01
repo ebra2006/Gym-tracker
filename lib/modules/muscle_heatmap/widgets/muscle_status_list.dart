@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/muscle_info.dart';
+import '../utils/recovery_rules.dart';
 import 'muscle_status_card.dart';
 
 class MuscleStatusList extends StatelessWidget {
@@ -15,7 +16,16 @@ class MuscleStatusList extends StatelessWidget {
   Widget build(BuildContext context) {
     final entries = muscleStates.entries.toList();
 
-    entries.sort((a, b) => a.key.compareTo(b.key));
+    entries.sort((a, b) {
+      final aFatigue = a.value.fatiguePercent;
+      final bFatigue = b.value.fatiguePercent;
+
+      if (aFatigue != bFatigue) {
+        return bFatigue.compareTo(aFatigue);
+      }
+
+      return a.key.compareTo(b.key);
+    });
 
     return ListView.builder(
       itemCount: entries.length,
@@ -23,24 +33,13 @@ class MuscleStatusList extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       itemBuilder: (context, index) {
         final entry = entries[index];
+        final definition = RecoveryRules.getDefinition(entry.value.muscle);
 
         return MuscleStatusCard(
-          muscleName: _formatName(entry.key),
+          muscleName: definition.displayName,
           info: entry.value,
         );
       },
     );
-  }
-
-  String _formatName(String slug) {
-    return slug
-        .replaceAll('-', ' ')
-        .split(' ')
-        .map(
-          (word) => word.isEmpty
-          ? word
-          : word[0].toUpperCase() + word.substring(1),
-    )
-        .join(' ');
   }
 }
