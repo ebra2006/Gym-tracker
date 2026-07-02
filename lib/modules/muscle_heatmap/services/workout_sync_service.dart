@@ -1,12 +1,15 @@
+import 'package:flutter/foundation.dart';
+
 import '../data/exercise_database.dart';
 import '../repositories/muscle_repository.dart';
 
 class WorkoutSyncService {
+  static final ValueNotifier<int> muscleHeatmapVersion = ValueNotifier<int>(0);
+
   final MuscleRepository _repository = MuscleRepository();
 
   Future<void> syncWorkout(String exerciseName) async {
-    final normalizedName = exerciseName.trim().toLowerCase();
-    final exercise = ExerciseDatabase.getExercise(normalizedName);
+    final exercise = ExerciseDatabase.getExercise(exerciseName);
 
     if (exercise == null) {
       return;
@@ -15,7 +18,9 @@ class WorkoutSyncService {
     await _repository.updateMuscleImpacts(
       impacts: exercise.impacts,
       date: DateTime.now(),
-      exerciseName: normalizedName,
+      exerciseName: exerciseName,
     );
+
+    muscleHeatmapVersion.value++;
   }
 }

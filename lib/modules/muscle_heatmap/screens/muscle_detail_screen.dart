@@ -23,8 +23,60 @@ class MuscleDetailScreen extends StatelessWidget {
     final fatiguePercent = (info.fatiguePercent * 100).round();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(definition.displayName),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Builder(
+          builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+
+            return Container(
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        borderRadius: BorderRadius.circular(100),
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            definition.displayName,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 48),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

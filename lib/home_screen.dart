@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 //جديد
 import 'package:gym_tracker/modules/muscle_heatmap/screens/muscle_heatmap_screen.dart';
 
-
+import 'package:gym_tracker/modules/muscle_heatmap/services/workout_sync_service.dart';
 import 'package:gym_tracker/modules/muscle_heatmap/widgets/human_body_widget.dart';
 
 
@@ -54,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   double weight = 0.0;
   double height = 0.0;
   int age = 0;
+  // تبع التحديث بتاع الهيت ماب
+  int muscleHeatmapRefreshKey = 0;
   late DateTime selectedDay;
   Map<DateTime, List<Map<String, dynamic>>> workoutData = {};
   bool isDarkMode = false;
@@ -140,11 +142,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Future<void> _checkWorkoutSavedFlag() async {
     final prefs = await SharedPreferences.getInstance();
-    bool? saved = prefs.getBool('workout_saved_today');
+    final saved = prefs.getBool('workout_saved_today');
+
     if (saved == true) {
-      await _loadStreak(); // حدث الستريك
-      await prefs.remove('workout_saved_today'); // نظف العلامة
+      await prefs.remove('workout_saved_today');
+      await refreshHomeAfterWorkoutChange();
     }
+  }
+// تبع التحديث بتاع الهيت ماب
+  Future<void> refreshHomeAfterWorkoutChange() async {
+    await loadWorkoutData();
+    await _loadStreak();
+
+    if (!mounted) return;
+
+    setState(() {
+      muscleHeatmapRefreshKey++;
+    });
   }
 
   Future<void> loadUserInfo() async {
@@ -242,10 +256,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         decoration: const BoxDecoration(),
         child: Align(
           alignment: Alignment.topCenter,
-          child: const SizedBox(
+          child: SizedBox(
             width: 1200,
             height: 1400,
-            child: HumanBodyWidget(),
+            child: ValueListenableBuilder<int>(
+              valueListenable: WorkoutSyncService.muscleHeatmapVersion,
+              builder: (context, version, _) {
+                return HumanBodyWidget(
+                  key: ValueKey(version),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -504,6 +525,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   },
                                 ),
                               );
+                              await refreshHomeAfterWorkoutChange();
                             },
                             child: Container(
                               height: 0.3.sh,

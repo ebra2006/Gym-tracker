@@ -32,8 +32,10 @@ class MuscleStatusCard extends StatelessWidget {
         break;
     }
 
-    final fatiguePercent = (info.fatiguePercent * 100).round();
+    final fatiguePercent =
+    (MuscleColor.calculateFatigueScore(info) * 100).round();
     final recoveryPercent = (info.recoveryPercent * 100).round();
+    final storedFatiguePercent = (info.fatiguePercent * 100).round();
 
     return Card(
       elevation: 2,
@@ -92,7 +94,7 @@ class MuscleStatusCard extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              "Fatigue: $fatiguePercent%  |  Recovery Time: ${info.recoveryHours}h",
+              "Fatigue: $fatiguePercent%  |  Load: $storedFatiguePercent%  |  Recovery Time: ${info.recoveryHours}h",
               style: TextStyle(
                 color: Colors.grey.shade600,
                 fontSize: 12,
