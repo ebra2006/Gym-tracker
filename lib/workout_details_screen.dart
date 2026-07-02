@@ -112,12 +112,10 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
 
 
 
-
     await WorkoutSyncService().syncWorkout(
       widget.categoryName,
+      reps: reps,
     );
-
-
 
 
 
